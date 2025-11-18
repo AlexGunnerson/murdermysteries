@@ -142,19 +142,19 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 5.11 Implement tabs/sections: Discovered Facts, Key People, Records View, Scene View
   - [x] 5.12 Write unit tests for all investigation action API routes and viewer components
 
-- [ ] 6.0 Theory Validation & Detective's Notebook
-  - [ ] 6.1 Create TheorySubmission component with artifact selection interface
-  - [ ] 6.2 Implement multi-select functionality for artifacts from Facts, Records, and Scenes
-  - [ ] 6.3 Add theory description text box to TheorySubmission component
-  - [ ] 6.4 Create API route for theory validation (`app/api/game/actions/validate-theory/route.ts`)
-  - [ ] 6.5 Implement theory validation logic using case-specific fact trees and rules
-  - [ ] 6.6 Create `factValidator` utility for evaluating theory correctness
-  - [ ] 6.7 Implement feedback display (Correct / Partial / Incorrect) in UI
-  - [ ] 6.8 Add Theory Submission History section to DetectiveNotebook
-  - [ ] 6.9 Implement chronological display of past theory submissions with results
-  - [ ] 6.10 Create logic for unlocking new evidence/locations/suspects on correct theories
-  - [ ] 6.11 Implement DP cost deduction for theory validation (-3 DP)
-  - [ ] 6.12 Write unit tests for TheorySubmission component and factValidator utility
+- [x] 6.0 Theory Validation & Detective's Notebook
+  - [x] 6.1 Create TheorySubmission component with artifact selection interface
+  - [x] 6.2 Implement multi-select functionality for artifacts from Facts, Records, and Scenes
+  - [x] 6.3 Add theory description text box to TheorySubmission component
+  - [x] 6.4 Create API route for theory validation (`app/api/game/actions/validate-theory/route.ts`)
+  - [x] 6.5 Implement theory validation logic using case-specific fact trees and rules
+  - [x] 6.6 Create `factValidator` utility for evaluating theory correctness
+  - [x] 6.7 Implement feedback display (Correct / Partial / Incorrect) in UI
+  - [x] 6.8 Add Theory Submission History section to DetectiveNotebook
+  - [x] 6.9 Implement chronological display of past theory submissions with results
+  - [x] 6.10 Create logic for unlocking new evidence/locations/suspects on correct theories
+  - [x] 6.11 Implement DP cost deduction for theory validation (-3 DP)
+  - [x] 6.12 Write unit tests for TheorySubmission component and factValidator utility
 
 - [ ] 7.0 Final Solution Submission & Game Completion
   - [ ] 7.1 Create SolutionSubmission component with fields for killer, motive, and key evidence
