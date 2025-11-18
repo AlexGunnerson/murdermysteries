@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createClient } from '@/lib/supabase/server'
 import { DP_COSTS } from '@/lib/utils/dpCalculator'
+import { createStoryService } from '@/lib/services/storyService'
 
 /**
  * POST /api/game/actions/question
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth()
     const body = await request.json()
-    const { sessionId, suspectId } = body
+    const { sessionId, suspectId, caseId } = body
 
     if (!sessionId || !suspectId) {
       return NextResponse.json(
@@ -38,15 +39,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if suspect exists and is unlocked
-    const { data: suspect, error: suspectError } = await supabase
-      .from('suspects')
-      .select('*')
-      .eq('id', suspectId)
-      .eq('case_id', session.case_id)
-      .single()
+    // Get case ID from session or use provided caseId
+    const activeCaseId = caseId || session.case_id
 
-    if (suspectError || !suspect) {
+    // Load suspect from Story Service
+    const storyService = createStoryService(activeCaseId)
+    const suspect = await storyService.getSuspect(suspectId)
+
+    if (!suspect) {
       return NextResponse.json(
         { error: 'Suspect not found' },
         { status: 404 }
@@ -62,12 +62,23 @@ export async function POST(request: NextRequest) {
       .eq('content_id', suspectId)
       .single()
 
-    if (!unlocked && suspect.is_locked) {
+    if (!suspect.initiallyAvailable && !unlocked) {
       return NextResponse.json(
         { error: 'This suspect has not been unlocked yet' },
         { status: 403 }
       )
     }
+
+    // Get discovered facts for this session to build context-aware prompt
+    const { data: discoveredFacts } = await supabase
+      .from('discovered_facts')
+      .select('fact_key')
+      .eq('game_session_id', sessionId)
+
+    const factKeys = discoveredFacts?.map(f => f.fact_key) || []
+
+    // Generate AI system prompt with discovered facts
+    const systemPrompt = await storyService.getSuspectPrompt(suspectId, factKeys)
 
     // Questioning is free, so no DP deduction needed
     // Just return suspect info for the ChatInterface
@@ -77,8 +88,9 @@ export async function POST(request: NextRequest) {
         id: suspect.id,
         name: suspect.name,
         role: suspect.role,
-        personality: suspect.personality,
-        systemPrompt: suspect.system_prompt,
+        bio: suspect.bio,
+        portraitUrl: suspect.portraitUrl,
+        systemPrompt: systemPrompt,
       },
       cost: DP_COSTS.QUESTION_SUSPECTS,
     })
@@ -100,7 +112,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/game/actions/question?sessionId=xxx
+ * GET /api/game/actions/question?sessionId=xxx&caseId=xxx
  * Get list of available suspects to question
  */
 export async function GET(request: NextRequest) {
@@ -108,6 +120,7 @@ export async function GET(request: NextRequest) {
     const user = await requireAuth()
     const searchParams = request.nextUrl.searchParams
     const sessionId = searchParams.get('sessionId')
+    const caseId = searchParams.get('caseId')
 
     if (!sessionId) {
       return NextResponse.json(
@@ -133,11 +146,12 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get all suspects for the case
-    const { data: allSuspects } = await supabase
-      .from('suspects')
-      .select('*')
-      .eq('case_id', session.case_id)
+    // Get case ID from session or query param
+    const activeCaseId = caseId || session.case_id
+
+    // Load suspects from Story Service
+    const storyService = createStoryService(activeCaseId)
+    const allSuspects = await storyService.getSuspects()
 
     // Get unlocked suspects
     const { data: unlockedContent } = await supabase
@@ -148,16 +162,17 @@ export async function GET(request: NextRequest) {
 
     const unlockedIds = new Set(unlockedContent?.map(u => u.content_id) || [])
 
-    // Filter suspects based on locked status
-    const availableSuspects = allSuspects?.filter(
-      s => !s.is_locked || unlockedIds.has(s.id)
+    // Filter suspects based on availability
+    const availableSuspects = allSuspects.filter(
+      s => s.initiallyAvailable || unlockedIds.has(s.id)
     ).map(s => ({
       id: s.id,
       name: s.name,
       role: s.role,
-      description: s.description,
-      isLocked: s.is_locked && !unlockedIds.has(s.id),
-    })) || []
+      bio: s.bio,
+      portraitUrl: s.portraitUrl,
+      isLocked: !s.initiallyAvailable && !unlockedIds.has(s.id),
+    }))
 
     return NextResponse.json({
       suspects: availableSuspects,

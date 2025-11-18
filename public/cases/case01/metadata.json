@@ -1,0 +1,77 @@
+{
+  "id": "case01",
+  "title": "The Midnight Manor Mystery",
+  "slug": "case01",
+  "description": "A wealthy businessman is found dead in his study. Was it murder or suicide? Question suspects, examine evidence, and uncover the truth.",
+  "difficulty": "medium",
+  "estimatedTime": "45-60 minutes",
+  "suspects": [
+    {
+      "id": "suspect_wife",
+      "name": "Victoria Blackwood",
+      "role": "victim's wife",
+      "bio": "The elegant but troubled wife of the deceased. Married for 15 years.",
+      "portraitUrl": "/cases/case01/images/portraits/victoria.jpg",
+      "initiallyAvailable": true
+    },
+    {
+      "id": "suspect_business_partner",
+      "name": "Marcus Sterling",
+      "role": "business partner",
+      "bio": "Long-time business partner and friend. Recently had disagreements about company direction.",
+      "portraitUrl": "/cases/case01/images/portraits/marcus.jpg",
+      "initiallyAvailable": true
+    },
+    {
+      "id": "suspect_butler",
+      "name": "James Hartford",
+      "role": "butler",
+      "bio": "The loyal butler who has served the family for 20 years. Found the body.",
+      "portraitUrl": "/cases/case01/images/portraits/james.jpg",
+      "initiallyAvailable": true
+    }
+  ],
+  "locations": [
+    {
+      "id": "scene_study",
+      "name": "The Study",
+      "description": "The crime scene where the body was discovered.",
+      "imageUrl": "/cases/case01/images/scenes/study.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "scene_bedroom",
+      "name": "Master Bedroom",
+      "description": "The victim's private quarters.",
+      "imageUrl": "/cases/case01/images/scenes/bedroom.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_marriage_troubles"]
+      }
+    }
+  ],
+  "records": [
+    {
+      "id": "record_will",
+      "name": "Last Will and Testament",
+      "description": "The victim's will, recently updated.",
+      "documentUrl": "/cases/case01/images/documents/will.jpg",
+      "dpCost": 2,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "record_financial",
+      "name": "Financial Records",
+      "description": "Recent bank statements and business transactions.",
+      "documentUrl": "/cases/case01/images/documents/financial.jpg",
+      "dpCost": 2,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_business_dispute"]
+      }
+    }
+  ]
+}
+

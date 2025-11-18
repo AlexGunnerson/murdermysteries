@@ -1,0 +1,174 @@
+{
+  "caseId": "case01",
+  "briefing": {
+    "title": "Case File: The Midnight Manor Mystery",
+    "content": "At 11:47 PM last night, wealthy businessman Richard Blackwood was found dead in his study at Blackwood Manor. The cause of death appears to be a gunshot wound to the chest. A revolver was found near the body.\n\nThe initial investigation suggests three possibilities: suicide, accident, or murder. The manor's residents claim to have been elsewhere at the time of death, but their stories don't quite add up.\n\nYour mission: Question the suspects, investigate the crime scene, review the evidence, and determine what really happened that night.\n\nYou have 25 Detective Points to work with. Use them wisely - every action has a cost, but discovering new facts will earn you more points."
+  },
+  "systemPrompt": "You are roleplaying as {suspect_name}, {suspect_role} in a murder mystery investigation. The victim is Richard Blackwood, found dead in his study at 11:47 PM.\n\nYour character background:\n{suspect_bio}\n\nKey personality traits:\n{suspect_personality}\n\nYour alibi and story:\n{suspect_alibi}\n\nIMPORTANT INSTRUCTIONS:\n1. Stay completely in character. Never break the fourth wall.\n2. Be evasive about sensitive topics initially. Reveal information gradually as the detective asks good questions.\n3. Show realistic human emotions - nervousness, defensiveness, grief, etc.\n4. Don't volunteer information unless directly asked.\n5. If the detective discovers a fact that contradicts your story, you may become more defensive or eventually admit the truth.\n6. Never directly state 'I am the killer' or 'X is the killer' - let the detective deduce.\n7. Your responses should feel natural and conversational, not like an information dump.\n\nKnowledge state based on discovered facts:\n{dynamic_knowledge}\n\nRespond to the detective's question naturally and in character.",
+  "suspects": {
+    "suspect_wife": {
+      "personality": "Elegant, composed on the surface but deeply unhappy. Speaks carefully and measures her words.",
+      "alibi": "Claims she was in the master bedroom reading when she heard the gunshot. Came running downstairs to find James (the butler) already in the study.",
+      "secrets": [
+        "Discovered her husband was having an affair 6 months ago",
+        "Recently consulted with a divorce attorney",
+        "Stands to inherit the entire estate",
+        "Has no alibi witness - was alone in her room"
+      ],
+      "facts": {
+        "fact_marriage_troubles": "Reveals marital problems when asked about their relationship",
+        "fact_inheritance": "Mentions she inherits everything if asked about the will",
+        "fact_no_alibi": "Admits she was alone when pressed about witnesses"
+      }
+    },
+    "suspect_business_partner": {
+      "personality": "Charming but calculating. Becomes defensive when finances are mentioned.",
+      "alibi": "Claims he was at his office working late on a business proposal. Says he received a call from James about the death around midnight.",
+      "secrets": [
+        "The business was failing and Richard wanted to dissolve the partnership",
+        "Had been embezzling funds for the past year",
+        "Would lose everything if Richard exposed the embezzlement",
+        "Actually was at the manor that night but hiding it"
+      ],
+      "facts": {
+        "fact_business_dispute": "Admits to disagreements about company direction",
+        "fact_financial_motive": "Reluctantly reveals the business was in trouble",
+        "fact_present_at_scene": "Eventually admits he was at the manor that night after confronted with evidence"
+      }
+    },
+    "suspect_butler": {
+      "personality": "Proper, loyal, observant. Speaks in formal manner befitting his station.",
+      "alibi": "Was in the kitchen preparing tea when he heard the gunshot. First to discover the body. Called the police immediately.",
+      "secrets": [
+        "Saw Marcus Sterling leaving the study shortly before the gunshot",
+        "Noticed the study window was unlocked from inside",
+        "Found a threatening letter to Richard hidden in the desk",
+        "Is protecting Victoria because he's known her since childhood"
+      ],
+      "facts": {
+        "fact_butler_saw_marcus": "Reveals seeing Marcus if specifically asked about who was in the house",
+        "fact_unlocked_window": "Mentions the window detail if asked about the crime scene",
+        "fact_threatening_letter": "Reveals the letter if trust is built through multiple conversations"
+      }
+    }
+  },
+  "factTree": [
+    {
+      "id": "fact_marriage_troubles",
+      "content": "Victoria and Richard's marriage was deeply troubled. They hadn't shared a bedroom in months.",
+      "category": "relationship",
+      "importance": 2,
+      "sources": ["suspect_wife", "suspect_butler"]
+    },
+    {
+      "id": "fact_business_dispute",
+      "content": "Marcus and Richard had serious disagreements about the business direction. Richard wanted to dissolve the partnership.",
+      "category": "motive",
+      "importance": 1,
+      "sources": ["suspect_business_partner"]
+    },
+    {
+      "id": "fact_inheritance",
+      "content": "Victoria inherits Richard's entire estate, worth over $10 million.",
+      "category": "motive",
+      "importance": 1,
+      "sources": ["suspect_wife", "record_will"]
+    },
+    {
+      "id": "fact_financial_motive",
+      "content": "The business was failing. Marcus had been embezzling funds and would be exposed if the partnership dissolved.",
+      "category": "motive",
+      "importance": 1,
+      "sources": ["suspect_business_partner", "record_financial"]
+    },
+    {
+      "id": "fact_butler_saw_marcus",
+      "content": "James saw Marcus leaving the study shortly before the gunshot was heard.",
+      "category": "timeline",
+      "importance": 1,
+      "sources": ["suspect_butler"]
+    },
+    {
+      "id": "fact_unlocked_window",
+      "content": "The study window was unlocked from the inside, suggesting someone may have staged it to look like a break-in.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["suspect_butler", "scene_study"]
+    },
+    {
+      "id": "fact_gun_ownership",
+      "content": "The gun belonged to Richard and was kept in his study desk drawer.",
+      "category": "evidence",
+      "importance": 2,
+      "sources": ["scene_study", "suspect_butler"]
+    },
+    {
+      "id": "fact_no_powder_residue",
+      "content": "The coroner's report shows no gunpowder residue on Richard's hands, inconsistent with suicide.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["record_coroner"]
+    }
+  ],
+  "theoryRules": [
+    {
+      "id": "theory_business_motive",
+      "requiredFacts": ["fact_business_dispute", "fact_financial_motive"],
+      "result": "partial",
+      "feedback": "You've identified a strong motive for Marcus. The business troubles and embezzlement give him reason to want Richard dead. But motive alone doesn't prove guilt. What about opportunity and evidence?",
+      "unlocks": {
+        "records": ["record_financial", "record_coroner"]
+      }
+    },
+    {
+      "id": "theory_staged_suicide",
+      "requiredFacts": ["fact_unlocked_window", "fact_no_powder_residue", "fact_gun_ownership"],
+      "result": "correct",
+      "feedback": "Excellent deduction! The evidence strongly suggests this was staged to look like suicide. The unlocked window, lack of powder residue, and other forensic details all point to murder disguised as suicide. This revelation unlocks additional investigation options.",
+      "unlocks": {
+        "scenes": ["scene_bedroom"],
+        "suspects": ["suspect_witness"]
+      }
+    }
+  ],
+  "solution": {
+    "killer": "suspect_business_partner",
+    "killerName": "Marcus Sterling",
+    "motive": "Financial desperation and fear of exposure. Marcus had been embezzling from the business for years. When Richard discovered the theft and threatened to dissolve their partnership and press charges, Marcus saw his entire life crashing down. He decided to kill Richard and stage it as suicide.",
+    "method": "Marcus arrived at the manor that night under the pretense of discussing the business. He found Richard alone in the study. They argued, and Marcus shot Richard with Richard's own gun. He then carefully staged the scene to appear as suicide, placing the gun near the body and unlocking the window to suggest a potential break-in narrative if suicide wasn't believed.",
+    "requiredEvidence": [
+      "fact_financial_motive",
+      "fact_butler_saw_marcus",
+      "fact_no_powder_residue"
+    ],
+    "narrativeCorrect": "Brilliant work, Detective!\n\nYou've cracked the case. Marcus Sterling, driven by desperation and greed, murdered his longtime friend and business partner. The embezzlement, the staged suicide, the carefully constructed alibi - it all falls apart under your investigation.\n\nWhen confronted with your evidence, Marcus finally breaks down and confesses. The threatening letter, the forensic evidence, and James's testimony all paint a clear picture. Marcus arrived that night for one last plea to save the partnership. When Richard refused and threatened to expose everything, Marcus snapped.\n\nJustice will be served. Richard Blackwood's family can finally have closure, knowing the truth about that terrible night at Blackwood Manor.",
+    "narrativeIncorrect": "Not quite, Detective.\n\n{incorrect_accusation_feedback}\n\nThe real killer was Marcus Sterling. Driven by financial desperation and fear of exposure for his embezzlement, he murdered Richard and carefully staged it as suicide. The evidence was there: Marcus's presence at the manor that night (witnessed by James), the forensic evidence showing it wasn't suicide, and the financial records revealing his motive.\n\nSometimes the truth is hidden in the details we overlook. Better luck on your next case."
+  },
+  "clues": [
+    {
+      "context": {
+        "minActions": 5,
+        "discoveredFactsCount": { "min": 0, "max": 2 }
+      },
+      "text": "Consider asking the suspects about their relationship with the victim. People's motives often lie in their personal connections.",
+      "priority": 1
+    },
+    {
+      "context": {
+        "discoveredFacts": ["fact_business_dispute"],
+        "missingFacts": ["fact_financial_motive"]
+      },
+      "text": "You know about the business dispute. What were the stakes? Check the financial records to understand what Marcus stood to lose.",
+      "priority": 2
+    },
+    {
+      "context": {
+        "discoveredFacts": ["fact_butler_saw_marcus"],
+        "missingFacts": ["fact_no_powder_residue"]
+      },
+      "text": "Marcus was at the scene, but that doesn't prove murder. What does the forensic evidence tell you about how Richard died?",
+      "priority": 1
+    }
+  ]
+}
+
