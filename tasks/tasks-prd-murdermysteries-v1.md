@@ -169,12 +169,12 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 7.10 Write unit tests for SolutionSubmission component and solution validation logic
 
 - [ ] 8.0 First Case Content Creation & Additional Features
-  - [ ] 8.1 Create modular case directory structure (`public/cases/case01/`)
-  - [ ] 8.2 Write case metadata file (`metadata.json`) with title, description, suspects, locations
-  - [ ] 8.3 Create story configuration file (`story-config.json`) with prompts, fact tree, solution
+  - [x] 8.1 Create modular case directory structure (`public/cases/case01/`)
+  - [x] 8.2 Write case metadata file (`metadata.json`) with title, description, suspects, locations
+  - [x] 8.3 Create story configuration file (`story-config.json`) with prompts, fact tree, solution
   - [ ] 8.4 Design and prepare case asset images (scenes, evidence, characters, documents)
-  - [ ] 8.5 Implement Story Service (`lib/services/storyService.ts`) for loading case content
-  - [ ] 8.6 Create database migration for case content tables
+  - [x] 8.5 Implement Story Service (`lib/services/storyService.ts`) for loading case content
+  - [x] 8.6 Create database migration for case content tables
   - [ ] 8.7 Populate database with first case data (suspects, locations, facts, solution)
   - [x] 8.8 Implement landing page (`app/page.tsx`) with game overview and "Start Investigation" CTA
   - [x] 8.9 Create FeedbackForm component accessible from game menu
@@ -183,5 +183,4 @@ Generated from: `prd-murdermysteries-v1.md`
   - [ ] 8.12 Test complete game flow end-to-end with first case
   - [ ] 8.13 Optimize database queries for performance
   - [ ] 8.14 Implement payment integration for $4.99 one-time purchase (e.g., Stripe)
-  - [ ] 8.15 Write unit tests for storyService and landing page components
-
+  - [x] 8.15 Write unit tests for storyService and landing page components
