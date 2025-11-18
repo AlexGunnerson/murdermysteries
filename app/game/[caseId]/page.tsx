@@ -3,15 +3,23 @@
 import { useState, use } from "react"
 import { ActionPanel } from "@/components/ui/ActionPanel"
 import { MainContentPanel } from "@/components/ui/MainContentPanel"
+import { GameMenu } from "@/components/game/GameMenu"
 import { ProtectedRoute } from "@/lib/auth/protected-route"
 
 export default function GamePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
   const [detectivePoints, setDetectivePoints] = useState(25)
   const [currentView, setCurrentView] = useState("welcome")
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleAction = (action: string) => {
     console.log("Action triggered:", action)
+    
+    if (action === "menu") {
+      setIsMenuOpen(true)
+      return
+    }
+    
     setCurrentView(action)
     // DP logic will be implemented in game state management
   }
@@ -94,15 +102,18 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
 
   return (
     // Temporarily bypassing ProtectedRoute for UI demo
-    <div className="flex min-h-screen bg-gray-900">
-      <ActionPanel 
-        detectivePoints={detectivePoints} 
-        onAction={handleAction} 
-      />
-      <MainContentPanel title={`Case: ${caseId}`}>
-        {renderContent()}
-      </MainContentPanel>
-    </div>
+    <>
+      <div className="flex min-h-screen bg-gray-900">
+        <ActionPanel 
+          detectivePoints={detectivePoints} 
+          onAction={handleAction} 
+        />
+        <MainContentPanel title={`Case: ${caseId}`}>
+          {renderContent()}
+        </MainContentPanel>
+      </div>
+      <GameMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+    </>
   )
 }
 

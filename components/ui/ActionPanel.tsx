@@ -62,10 +62,16 @@ export function ActionPanel({ detectivePoints, onAction }: ActionPanelProps) {
       </div>
 
       {/* Footer */}
-      <div className="mt-6 pt-6 border-t border-gray-700">
+      <div className="mt-6 pt-6 border-t border-gray-700 space-y-2">
+        <button
+          onClick={() => onAction("notebook")}
+          className="w-full py-2 px-4 text-sm text-gray-400 hover:text-white transition-colors text-left"
+        >
+          📓 Notebook
+        </button>
         <button
           onClick={() => onAction("menu")}
-          className="w-full py-2 px-4 text-sm text-gray-400 hover:text-white transition-colors"
+          className="w-full py-2 px-4 text-sm text-gray-400 hover:text-white transition-colors text-left"
         >
           ⚙️ Menu
         </button>

@@ -98,9 +98,9 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 2.5 Create MainContentPanel component for dynamic content display
   - [x] 2.6 Implement responsive two-panel layout with proper spacing and styling
   - [x] 2.7 Create IntroductoryBriefing component that displays on game start
-  - [ ] 2.8 Add navigation and menu structure for accessing different game sections
+  - [x] 2.8 Add navigation and menu structure for accessing different game sections
   - [x] 2.9 Style UI with TailwindCSS to match modern, immersive mystery theme
-  - [ ] 2.10 Write unit tests for ActionPanel and MainContentPanel components
+  - [x] 2.10 Write unit tests for ActionPanel and MainContentPanel components
 
 - [ ] 3.0 Game State Management & Detective Points System
   - [ ] 3.1 Create Zustand store (`lib/store/gameStore.ts`) for game state management
