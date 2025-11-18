@@ -90,7 +90,7 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 1.10 Configure PostHog for analytics
   - [x] 1.11 Create `.env.local.example` file with required environment variables
 
-- [ ] 2.0 Core Game UI & Two-Panel Layout
+- [x] 2.0 Core Game UI & Two-Panel Layout
   - [x] 2.1 Create main game page component at `app/game/[caseId]/page.tsx`
   - [x] 2.2 Implement left-side ActionPanel component with persistent action buttons
   - [x] 2.3 Add Detective Points (DP) display to ActionPanel
@@ -102,17 +102,17 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 2.9 Style UI with TailwindCSS to match modern, immersive mystery theme
   - [x] 2.10 Write unit tests for ActionPanel and MainContentPanel components
 
-- [ ] 3.0 Game State Management & Detective Points System
-  - [ ] 3.1 Create Zustand store (`lib/store/gameStore.ts`) for game state management
-  - [ ] 3.2 Define state shape (DP, discovered facts, chat logs, unlocked suspects/scenes, theory history)
-  - [ ] 3.3 Implement DP initialization (starting at 25 DP per case)
-  - [ ] 3.4 Create `dpCalculator` utility for DP cost calculations and validation
-  - [ ] 3.5 Implement state actions for updating DP after each game action
-  - [ ] 3.6 Create custom hook `useGameState` for components to access game state
-  - [ ] 3.7 Implement game state persistence to Supabase database
-  - [ ] 3.8 Create API route for fetching and updating game state (`app/api/game/state/route.ts`)
-  - [ ] 3.9 Implement state synchronization between client and server
-  - [ ] 3.10 Write unit tests for gameStore, dpCalculator, and useGameState hook
+- [x] 3.0 Game State Management & Detective Points System
+  - [x] 3.1 Create Zustand store (`lib/store/gameStore.ts`) for game state management
+  - [x] 3.2 Define state shape (DP, discovered facts, chat logs, unlocked suspects/scenes, theory history)
+  - [x] 3.3 Implement DP initialization (starting at 25 DP per case)
+  - [x] 3.4 Create `dpCalculator` utility for DP cost calculations and validation
+  - [x] 3.5 Implement state actions for updating DP after each game action
+  - [x] 3.6 Create custom hook `useGameState` for components to access game state
+  - [x] 3.7 Implement game state persistence to Supabase database
+  - [x] 3.8 Create API route for fetching and updating game state (`app/api/game/state/route.ts`)
+  - [x] 3.9 Implement state synchronization between client and server
+  - [x] 3.10 Write unit tests for gameStore, dpCalculator, and useGameState hook
 
 - [ ] 4.0 AI Integration & Suspect Dialogue System
   - [ ] 4.1 Create AI Gateway Service (`lib/services/aiService.ts`) for secure LLM proxy

@@ -5,12 +5,16 @@ import { ActionPanel } from "@/components/ui/ActionPanel"
 import { MainContentPanel } from "@/components/ui/MainContentPanel"
 import { GameMenu } from "@/components/game/GameMenu"
 import { ProtectedRoute } from "@/lib/auth/protected-route"
+import { useGameState, useInitializeGame } from "@/lib/hooks/useGameState"
 
 export default function GamePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
-  const [detectivePoints, setDetectivePoints] = useState(25)
   const [currentView, setCurrentView] = useState("welcome")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  
+  // Initialize game state from Zustand store
+  useInitializeGame(caseId)
+  const { detectivePoints } = useGameState()
 
   const handleAction = (action: string) => {
     console.log("Action triggered:", action)
