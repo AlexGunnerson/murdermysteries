@@ -5,8 +5,9 @@ import { updateSession } from '@/lib/supabase/middleware'
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
+  // TEMPORARY: Disable auth protection for demo/development
   // Define protected and auth routes
-  const isProtectedRoute = path.startsWith('/game') || path.startsWith('/dashboard')
+  // const isProtectedRoute = path.startsWith('/game') || path.startsWith('/dashboard')
   const isAuthRoute = path.startsWith('/auth/login') || path.startsWith('/auth/signup')
 
   // Get the user's session token
@@ -20,12 +21,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // TEMPORARILY COMMENTED OUT FOR UI DEMO:
   // Redirect unauthenticated users to login for protected routes
-  if (isProtectedRoute && !token) {
-    const loginUrl = new URL('/auth/login', request.url)
-    loginUrl.searchParams.set('callbackUrl', path)
-    return NextResponse.redirect(loginUrl)
-  }
+  // if (isProtectedRoute && !token) {
+  //   const loginUrl = new URL('/auth/login', request.url)
+  //   loginUrl.searchParams.set('callbackUrl', path)
+  //   return NextResponse.redirect(loginUrl)
+  // }
 
   // Update Supabase session
   return await updateSession(request)

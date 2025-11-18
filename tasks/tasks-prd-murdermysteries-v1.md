@@ -77,7 +77,7 @@ Generated from: `prd-murdermysteries-v1.md`
 
 ## Tasks
 
-- [ ] 1.0 Project Setup, Infrastructure & Authentication
+- [x] 1.0 Project Setup, Infrastructure & Authentication
   - [x] 1.1 Initialize Next.js project with TypeScript, TailwindCSS, and ShadCN/UI
   - [x] 1.2 Set up Supabase project and configure environment variables
   - [x] 1.3 Create initial database schema migration for users and authentication
@@ -91,15 +91,15 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 1.11 Create `.env.local.example` file with required environment variables
 
 - [ ] 2.0 Core Game UI & Two-Panel Layout
-  - [ ] 2.1 Create main game page component at `app/game/[caseId]/page.tsx`
-  - [ ] 2.2 Implement left-side ActionPanel component with persistent action buttons
-  - [ ] 2.3 Add Detective Points (DP) display to ActionPanel
-  - [ ] 2.4 Implement "How to Play" button and modal in ActionPanel
-  - [ ] 2.5 Create MainContentPanel component for dynamic content display
-  - [ ] 2.6 Implement responsive two-panel layout with proper spacing and styling
-  - [ ] 2.7 Create IntroductoryBriefing component that displays on game start
+  - [x] 2.1 Create main game page component at `app/game/[caseId]/page.tsx`
+  - [x] 2.2 Implement left-side ActionPanel component with persistent action buttons
+  - [x] 2.3 Add Detective Points (DP) display to ActionPanel
+  - [x] 2.4 Implement "How to Play" button and modal in ActionPanel
+  - [x] 2.5 Create MainContentPanel component for dynamic content display
+  - [x] 2.6 Implement responsive two-panel layout with proper spacing and styling
+  - [x] 2.7 Create IntroductoryBriefing component that displays on game start
   - [ ] 2.8 Add navigation and menu structure for accessing different game sections
-  - [ ] 2.9 Style UI with TailwindCSS to match modern, immersive mystery theme
+  - [x] 2.9 Style UI with TailwindCSS to match modern, immersive mystery theme
   - [ ] 2.10 Write unit tests for ActionPanel and MainContentPanel components
 
 - [ ] 3.0 Game State Management & Detective Points System
