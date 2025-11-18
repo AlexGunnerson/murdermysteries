@@ -128,19 +128,19 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 4.11 Ensure AI system prompts are never exposed to frontend
   - [x] 4.12 Write unit tests for aiService and ChatInterface component
 
-- [ ] 5.0 Investigation Actions & Evidence Collection
-  - [ ] 5.1 Create API route for "Question Suspects" action (`app/api/game/actions/question/route.ts`)
-  - [ ] 5.2 Create API route for "Check Records" action (cost: -2 DP)
-  - [ ] 5.3 Implement RecordViewer component to display official documents
-  - [ ] 5.4 Create API route for "Investigate Scenes" action (cost: -3 DP)
-  - [ ] 5.5 Implement SceneViewer component to display scene descriptions and evidence
-  - [ ] 5.6 Create API route for "Get Clue" action (cost: -2 DP)
-  - [ ] 5.7 Implement contextual clue generation logic (subtle hints, no direct answers)
-  - [ ] 5.8 Add fact discovery tracking across all investigation actions
-  - [ ] 5.9 Implement conditional unlocking of records/scenes based on discovered facts
-  - [ ] 5.10 Create DetectiveNotebook component for managing discovered information
-  - [ ] 5.11 Implement tabs/sections: Discovered Facts, Key People, Records View, Scene View
-  - [ ] 5.12 Write unit tests for all investigation action API routes and viewer components
+- [x] 5.0 Investigation Actions & Evidence Collection
+  - [x] 5.1 Create API route for "Question Suspects" action (`app/api/game/actions/question/route.ts`)
+  - [x] 5.2 Create API route for "Check Records" action (cost: -2 DP)
+  - [x] 5.3 Implement RecordViewer component to display official documents
+  - [x] 5.4 Create API route for "Investigate Scenes" action (cost: -3 DP)
+  - [x] 5.5 Implement SceneViewer component to display scene descriptions and evidence
+  - [x] 5.6 Create API route for "Get Clue" action (cost: -2 DP)
+  - [x] 5.7 Implement contextual clue generation logic (subtle hints, no direct answers)
+  - [x] 5.8 Add fact discovery tracking across all investigation actions
+  - [x] 5.9 Implement conditional unlocking of records/scenes based on discovered facts
+  - [x] 5.10 Create DetectiveNotebook component for managing discovered information
+  - [x] 5.11 Implement tabs/sections: Discovered Facts, Key People, Records View, Scene View
+  - [x] 5.12 Write unit tests for all investigation action API routes and viewer components
 
 - [ ] 6.0 Theory Validation & Detective's Notebook
   - [ ] 6.1 Create TheorySubmission component with artifact selection interface
