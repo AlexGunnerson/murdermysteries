@@ -176,9 +176,9 @@ Generated from: `prd-murdermysteries-v1.md`
   - [ ] 8.5 Implement Story Service (`lib/services/storyService.ts`) for loading case content
   - [ ] 8.6 Create database migration for case content tables
   - [ ] 8.7 Populate database with first case data (suspects, locations, facts, solution)
-  - [ ] 8.8 Implement landing page (`app/page.tsx`) with game overview and "Start Investigation" CTA
-  - [ ] 8.9 Create FeedbackForm component accessible from game menu
-  - [ ] 8.10 Create API route for feedback submission (`app/api/feedback/route.ts`)
+  - [x] 8.8 Implement landing page (`app/page.tsx`) with game overview and "Start Investigation" CTA
+  - [x] 8.9 Create FeedbackForm component accessible from game menu
+  - [x] 8.10 Create API route for feedback submission (`app/api/feedback/route.ts`)
   - [ ] 8.11 Implement Row Level Security policies in Supabase for user data protection
   - [ ] 8.12 Test complete game flow end-to-end with first case
   - [ ] 8.13 Optimize database queries for performance
