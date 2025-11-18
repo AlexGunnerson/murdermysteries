@@ -156,17 +156,17 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 6.11 Implement DP cost deduction for theory validation (-3 DP)
   - [x] 6.12 Write unit tests for TheorySubmission component and factValidator utility
 
-- [ ] 7.0 Final Solution Submission & Game Completion
-  - [ ] 7.1 Create SolutionSubmission component with fields for killer, motive, and key evidence
-  - [ ] 7.2 Implement final solution form with dropdowns/inputs for required elements
-  - [ ] 7.3 Create API route for solution submission (`app/api/game/actions/solve/route.ts`)
-  - [ ] 7.4 Implement solution validation against case's correct solution
-  - [ ] 7.5 Generate narrative explanation of the solution (correct or incorrect)
-  - [ ] 7.6 Create game completion screen with solution feedback
-  - [ ] 7.7 Display player's investigation summary (DP remaining, facts discovered, theories tested)
-  - [ ] 7.8 Implement game state update to mark case as completed
-  - [ ] 7.9 Add option to replay case or return to main menu
-  - [ ] 7.10 Write unit tests for SolutionSubmission component and solution validation logic
+- [x] 7.0 Final Solution Submission & Game Completion
+  - [x] 7.1 Create SolutionSubmission component with fields for killer, motive, and key evidence
+  - [x] 7.2 Implement final solution form with dropdowns/inputs for required elements
+  - [x] 7.3 Create API route for solution submission (`app/api/game/actions/solve/route.ts`)
+  - [x] 7.4 Implement solution validation against case's correct solution
+  - [x] 7.5 Generate narrative explanation of the solution (correct or incorrect)
+  - [x] 7.6 Create game completion screen with solution feedback
+  - [x] 7.7 Display player's investigation summary (DP remaining, facts discovered, theories tested)
+  - [x] 7.8 Implement game state update to mark case as completed
+  - [x] 7.9 Add option to replay case or return to main menu
+  - [x] 7.10 Write unit tests for SolutionSubmission component and solution validation logic
 
 - [ ] 8.0 First Case Content Creation & Additional Features
   - [ ] 8.1 Create modular case directory structure (`public/cases/case01/`)
