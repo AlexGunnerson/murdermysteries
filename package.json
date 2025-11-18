@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^3.27.0",
+    "@google/generative-ai": "^0.24.1",
+    "@radix-ui/react-slot": "^1.2.4",
     "@sentry/nextjs": "^10.25.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.0",

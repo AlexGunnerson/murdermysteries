@@ -114,19 +114,19 @@ Generated from: `prd-murdermysteries-v1.md`
   - [x] 3.9 Implement state synchronization between client and server
   - [x] 3.10 Write unit tests for gameStore, dpCalculator, and useGameState hook
 
-- [ ] 4.0 AI Integration & Suspect Dialogue System
-  - [ ] 4.1 Create AI Gateway Service (`lib/services/aiService.ts`) for secure LLM proxy
-  - [ ] 4.2 Set up Gemini API integration with API key management
-  - [ ] 4.3 Implement streaming response handling using Server-Sent Events (SSE)
-  - [ ] 4.4 Create API route for AI chat (`app/api/ai/chat/route.ts`) with streaming support
-  - [ ] 4.5 Design and implement dynamic prompt generation based on discovered facts
-  - [ ] 4.6 Create ChatInterface component for suspect questioning
-  - [ ] 4.7 Implement real-time typing effect for AI responses in ChatInterface
-  - [ ] 4.8 Create fact extraction logic to identify new facts from AI responses
-  - [ ] 4.9 Implement automatic DP reward (+1 DP per new fact) in chat flow
-  - [ ] 4.10 Add chat history tracking and display in ChatInterface
-  - [ ] 4.11 Ensure AI system prompts are never exposed to frontend
-  - [ ] 4.12 Write unit tests for aiService and ChatInterface component
+- [x] 4.0 AI Integration & Suspect Dialogue System
+  - [x] 4.1 Create AI Gateway Service (`lib/services/aiService.ts`) for secure LLM proxy
+  - [x] 4.2 Set up Gemini API integration with API key management
+  - [x] 4.3 Implement streaming response handling using Server-Sent Events (SSE)
+  - [x] 4.4 Create API route for AI chat (`app/api/ai/chat/route.ts`) with streaming support
+  - [x] 4.5 Design and implement dynamic prompt generation based on discovered facts
+  - [x] 4.6 Create ChatInterface component for suspect questioning
+  - [x] 4.7 Implement real-time typing effect for AI responses in ChatInterface
+  - [x] 4.8 Create fact extraction logic to identify new facts from AI responses
+  - [x] 4.9 Implement automatic DP reward (+1 DP per new fact) in chat flow
+  - [x] 4.10 Add chat history tracking and display in ChatInterface
+  - [x] 4.11 Ensure AI system prompts are never exposed to frontend
+  - [x] 4.12 Write unit tests for aiService and ChatInterface component
 
 - [ ] 5.0 Investigation Actions & Evidence Collection
   - [ ] 5.1 Create API route for "Question Suspects" action (`app/api/game/actions/question/route.ts`)
