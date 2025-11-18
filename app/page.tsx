@@ -3,8 +3,12 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Search, Brain, Trophy, Target } from 'lucide-react'
+import { useSession, signOut } from 'next-auth/react'
 
 export default function Home() {
+  const { data: session, status } = useSession()
+  const isAuthenticated = status === 'authenticated'
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 text-gray-100">
       {/* Hero Section */}
@@ -17,6 +21,19 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           {/* Header */}
           <div className="text-center mb-16">
+            {isAuthenticated && (
+              <div className="mb-4 flex items-center justify-center gap-4">
+                <p className="text-gray-400">
+                  Welcome back, <span className="text-amber-400 font-semibold">{session?.user?.name || session?.user?.email}</span>!
+                </p>
+                <button
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="text-sm text-gray-500 hover:text-gray-300 underline"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
             <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">
               MurderMysteries.AI
             </h1>
@@ -25,19 +42,39 @@ export default function Home() {
               gather evidence, and solve intricate murder cases.
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="/auth/signup">
-                <Button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-6 text-lg">
-                  Start Investigation
-                </Button>
-              </Link>
-              <Link href="/auth/login">
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-amber-600 text-amber-400 hover:bg-amber-950 px-8 py-6 text-lg"
-                >
-                  Sign In
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link href="/game/case01">
+                    <Button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-6 text-lg">
+                      Play Now
+                    </Button>
+                  </Link>
+                  <Link href="/dashboard">
+                    <Button
+                      variant="outline"
+                      className="bg-transparent border-amber-600 text-amber-400 hover:bg-amber-950 px-8 py-6 text-lg"
+                    >
+                      My Cases
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/signup">
+                    <Button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-6 text-lg">
+                      Start Investigation
+                    </Button>
+                  </Link>
+                  <Link href="/auth/login">
+                    <Button
+                      variant="outline"
+                      className="bg-transparent border-amber-600 text-amber-400 hover:bg-amber-950 px-8 py-6 text-lg"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -147,17 +184,26 @@ export default function Home() {
           <div className="mt-24 text-center">
             <div className="bg-gradient-to-r from-amber-900/20 to-amber-800/20 border border-amber-700/50 rounded-xl p-12">
               <h2 className="text-3xl font-bold mb-4 text-amber-400">
-                Ready to Crack the Case?
+                {isAuthenticated ? 'Your Investigation Awaits' : 'Ready to Crack the Case?'}
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join detectives worldwide in solving AI-powered murder
-                mysteries. Your investigation awaits.
+                {isAuthenticated 
+                  ? 'Jump into your next case and put your detective skills to the test.'
+                  : 'Join detectives worldwide in solving AI-powered murder mysteries. Your investigation awaits.'}
               </p>
-              <Link href="/auth/signup">
-                <Button className="bg-amber-600 hover:bg-amber-700 text-white px-12 py-6 text-xl">
-                  Begin Your First Case
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link href="/game/case01">
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white px-12 py-6 text-xl">
+                    Start Playing
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/auth/signup">
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white px-12 py-6 text-xl">
+                    Begin Your First Case
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
