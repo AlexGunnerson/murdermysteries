@@ -1,3 +1,253 @@
+# **Product Requirements Document: murdermysteries.ai**
+
+## **1. Introduction**
+
+### **1.1. Product Vision**
+
+Create an immersive, narrative-driven, and endlessly replayable web-based game that puts players in the shoes of a detective. Leveraging generative AI as the core reasoning and dialogue engine for in-game characters, MurderMystery *AI* delivers a dynamic and responsive mystery-solving experience that adapts to the player's unique line of questioning and investigation.
+
+### **1.2. Product Goal**
+
+Build a modular and scalable platform for hosting multiple, distinct murder mystery "cases." The initial launch will feature **one complete case** to prove the core game loop, with a clear path for adding new content packs (new mysteries, suspects, storylines) in the future.
+
+### **1.3. Target Audience**
+
+- **Mystery & Puzzle Enthusiasts:** Love “whodunit” narratives, escape rooms, and logical clue solving.
+- **Casual Gamers:** Story-rich, low-stress, browser-based play at their own pace.
+- **AI & Tech-Forward Users:** Interested in interacting with cutting-edge AI chatbots in a game context.
+
+### **1.4. Monetization**
+
+- One-time purchase: **$4.99** for full access to the initial case.
+- Modular design allows additional cases as future paid content or expansions.
+
+### **1.5. Landing Page**
+
+- domain: murdermysteries.ai
+- Overview of the game, narrative hook, and screenshots.
+- Prominent **“Start Investigation”** button leading to sign-up/login.
+- Highlights core mechanics without revealing solutions
+
 ---
-alwaysApply: true
+
+## **2. Core Features & User Stories**
+
+### **2.1. User Account & Authentication**
+
+**User Stories:**
+
+- “As a new user, I want to create an account using email/password or Google OAuth to save my progress.”
+- “As a returning user, I want to log in to resume in-progress investigations.”
+
+**Requirements:**
+
+- Email/password sign-up and login
+- Google OAuth integration
+- Secure session management
+- Password reset functionality
+
 ---
+
+### **2.2. Game Flow**
+
+- **Single Case Initial Launch:** Directly accessible after sign-up/login.
+- **Modular Architecture:** Future cases can be added without UI changes or redeployment.
+
+---
+
+### **2.3. Core Gameplay UI**
+
+**User Story:**
+
+*"As a player, I want a clean, two-panel interface where I can always see my available actions on one side and the main content (chat, records, scenes, and theory submissions) on the other, and I want to understand my objective at the start of the game."*
+
+### **2.3.1. Game Start / Introductory Briefing**
+
+- Displayed **immediately upon starting the game**:
+
+> “Every truth you find puts pressure on the lies around it. Your objective is simple: surface contradictions in the facts you uncover. Compare evidence, follow the leads, and look for the fractures in the stories around you—where one story cracks, the others usually follow.”
+> 
+- Explains the investigative objective clearly without revealing solutions.
+- Persistent: Can be accessed later via a “Help / Objectives” menu.
+
+---
+
+### **2.3.2. Left-Side Action Panel (Persistent)**
+
+- Displays current **Detective Points (DP)**.
+- How to Play button
+- Buttons for core actions:
+    - **Question Suspects**
+    - **Check Records**
+    - **Investigate Scenes**
+    - **Validate Theory**
+    - **Get Clue**
+    - **Solve the Murder**
+
+---
+
+### **2.3.3. Main Content Panel (Dynamic)**
+
+- Updates according to selected action. Contains:
+    - **Chat Interface** (suspect questioning)
+    - **Record Viewer** (official documents)
+    - **Scene Descriptions** (locations)
+    - **Theory Submission Interface** (for Validate Theory)
+
+---
+
+### **2.3.4. Theory Submission Interface Features**
+
+1. **Artifact Selection:** Choose multiple artifacts from Discovered Facts, Records View or Scene View.
+2. **Theory Description Box:** Input for explaining the contradiction, hypothesis, or reasoning.
+3. **Submit Button:** Sends theory for validation against case logic.
+4. **Feedback Display:** Shows **Correct / Partial / Incorrect** results.
+5. **Theory Submission History:** Chronological list of submissions with artifacts, descriptions, and results.
+- Correct submissions can unlock **new evidence, locations, or suspects**, seamlessly advancing the narrative.
+
+---
+
+### **2.4. Game Mechanics & Actions**
+
+### **2.4.1. Detective Points (DP)**
+
+- Players start with **25 DP** per case.
+- DP is always visible in the Action Panel.
+
+### **2.4.2. Action: Question Suspects (AI Core)**
+
+- **Cost:** 0 DP
+- **Reward:** +1 DP per new fact uncovered
+- AI-driven chat per suspect with dynamic prompts reflecting discovered facts.
+
+### **2.4.3. Action: Check Records**
+
+- **Cost:** -2 DP
+- Search official databases; some require prior discovered facts.
+- Adds new facts to Records View.
+
+### **2.4.4. Action: Investigate Scenes**
+
+- **Cost:** -3 DP
+- Explore locations, discover evidence.
+- Adds new facts to Scene View.
+
+### **2.4.5. Action: Get Clue**
+
+- **Cost:** -2 DP
+- Provides subtle, contextual hints; never direct answers.
+
+### **2.4.6. Action: Solve the Murder**
+
+- **Cost:** 0 DP (one-time)
+- Submit final accusation: killer, motive, key evidence.
+- Game ends with narrative explanation.
+
+### **2.4.7. Action: Validate Theory** ← **New**
+
+- **Cost:** -3 DP (adjustable)
+- **User Story:** “As a detective, I want to submit multiple pieces of evidence to prove or disprove a theory I’m testing.”
+- **Requirements:**
+    - Select multiple artifacts from Discovered Facts, Records View, or Scene View.
+    - Provide a short description explaining the contradiction or hypothesis.
+    - System evaluates correctness and records results in **Theory Submission History**.
+    - Successful submissions may unlock new evidence, locations, or suspects.
+
+---
+
+### **2.5. Information Management (Detective’s Notebook)**
+
+- **Discovered Facts:** Scrollable list.
+- **Key People:** Dossiers with bios, relationships, and related facts.
+- **Records View:** Gallery of documents.
+- **Scene View:** Gallery of evidence.
+- **Theory Submission History:** Tracks previous theory submissions and results.
+
+---
+
+## **3. Non-Functional Requirements**
+
+### **3.1. Architecture (Modular)**
+
+- **Frontend:** Component-based (React / Next.js), decoupled core UI.
+- **Backend:** Service-oriented:
+    - **User Service:** Auth and profiles
+    - **Game State Service:** DP, discovered facts, chat logs, theory submissions
+    - **Story Service:** Case content, suspect definitions, AI prompts, fact trees, final solution
+    - **AI Gateway Service:** Secure proxy for LLM interactions
+
+**Modular Case Asset Packs**
+
+Each murder mystery case includes its own complete asset set:
+
+- Scene images
+- Evidence photos
+- Character portraits
+- Location imagery
+- Document scans or images
+
+All assets are stored in a dedicated folder per case (e.g., `/cases/case01/images`).
+
+This ensures each case is entirely self-contained and enables the platform to easily add, hot-swap, or sell future case packs without modifying core game code.
+
+---
+
+### **3.2. Security**
+
+- AI system prompts never exposed to frontend.
+- Standard encryption and Supabase Row Level Security for user data.
+
+### **3.3. Performance**
+
+- AI responses streamed for faster perception.
+- Database queries optimized for near-instant loading.
+
+### **3.4. Scalability**
+
+- New case packs can be added immediately.
+- Modular design supports future expansion.
+
+---
+
+## **4. Recommended Tech Stack**
+
+### **4.1. Frontend**
+
+- **Next.js (React)**, TailwindCSS + ShadCN/UI
+- **Zustand** for local state
+- **React Query** for server communication
+- **SSE via Next.js API Routes** for real-time streaming
+
+### **4.2. Backend**
+
+- **Supabase** (Postgres, Auth, Storage)
+- **Next.js API Routes / Edge Functions**
+- Services:
+    - **AI Gateway Service** (LLM proxy)
+    - **Story Logic Service** (validates actions, DP, facts)
+
+### **4.3. AI**
+
+- **Gemini**
+- Streaming responses for live-typing feel
+
+### **4.4. Tooling & Infrastructure**
+
+- Deployment: **Vercel**
+- Monitoring: **Sentry**
+- Analytics: **PostHog**
+
+---
+
+### 5. Feedback Submission
+
+The game should include a **Feedback** section accessible from the main menu.
+
+Players may submit any type of feedback, including:
+
+- Bugs or technical issues
+- Confusing interfaces or unclear instructions
+- Narrative or gameplay pacing concerns
+- General suggestions or compliments
+
+Feedback submissions are sent to the Game Service for logging and internal review. No gameplay progression is tied to providing feedback, and feedback does not influence the mystery itself.
