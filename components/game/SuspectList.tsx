@@ -31,16 +31,27 @@ export function SuspectList({ caseId, sessionId, onSelectSuspect }: SuspectListP
   const loadSuspects = async () => {
     try {
       setLoading(true)
-      const response = await fetch(
-        `/api/game/actions/question?sessionId=${sessionId}&caseId=${caseId}`
-      )
+      
+      // Load suspects directly from the case metadata JSON file
+      const response = await fetch(`/cases/${caseId}/metadata.json`)
 
       if (!response.ok) {
-        throw new Error("Failed to load suspects")
+        throw new Error("Failed to load case metadata")
       }
 
-      const data = await response.json()
-      setSuspects(data.suspects || [])
+      const metadata = await response.json()
+      
+      // Map suspects to the format we need
+      const suspectList = metadata.suspects.map((s: any) => ({
+        id: s.id,
+        name: s.name,
+        role: s.role,
+        bio: s.bio,
+        portraitUrl: s.portraitUrl,
+        isLocked: !s.initiallyAvailable
+      }))
+      
+      setSuspects(suspectList)
     } catch (err) {
       console.error("Error loading suspects:", err)
       setError("Failed to load suspects. Please try again.")
