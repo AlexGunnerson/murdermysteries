@@ -4,17 +4,29 @@ import { useState, use } from "react"
 import { ActionPanel } from "@/components/ui/ActionPanel"
 import { MainContentPanel } from "@/components/ui/MainContentPanel"
 import { GameMenu } from "@/components/game/GameMenu"
+import { SuspectList } from "@/components/game/SuspectList"
+import { ChatInterface } from "@/components/game/ChatInterface"
 import { ProtectedRoute } from "@/lib/auth/protected-route"
 import { useGameState, useInitializeGame } from "@/lib/hooks/useGameState"
+
+interface Suspect {
+  id: string
+  name: string
+  role: string
+  bio: string
+  portraitUrl: string
+  isLocked: boolean
+}
 
 export default function GamePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
   const [currentView, setCurrentView] = useState("welcome")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [selectedSuspect, setSelectedSuspect] = useState<Suspect | null>(null)
   
   // Initialize game state from Zustand store
   useInitializeGame(caseId)
-  const { detectivePoints } = useGameState()
+  const { detectivePoints, sessionId } = useGameState()
 
   const handleAction = (action: string) => {
     console.log("Action triggered:", action)
@@ -28,7 +40,51 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
     // DP logic will be implemented in game state management
   }
 
+  const handleSelectSuspect = (suspect: Suspect) => {
+    setSelectedSuspect(suspect)
+  }
+
+  const handleBackToSuspects = () => {
+    setSelectedSuspect(null)
+  }
+
   const renderContent = () => {
+    // If a suspect is selected, show chat interface
+    if (selectedSuspect) {
+      return (
+        <div className="h-full flex flex-col">
+          <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-700">
+            <button
+              onClick={handleBackToSuspects}
+              className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to Suspects
+            </button>
+          </div>
+          <ChatInterface
+            suspectId={selectedSuspect.id}
+            suspectName={selectedSuspect.name}
+            suspectRole={selectedSuspect.role}
+            suspectPersonality={selectedSuspect.bio}
+            systemPrompt={`You are ${selectedSuspect.name}, ${selectedSuspect.role}. Stay in character and respond naturally to the detective's questions.`}
+          />
+        </div>
+      )
+    }
+
     switch (currentView) {
       case "welcome":
         return (
@@ -48,6 +104,14 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
               Select an action from the left panel to begin your investigation.
             </p>
           </div>
+        )
+      case "question":
+        return (
+          <SuspectList
+            caseId={caseId}
+            sessionId={sessionId || "temp-session"}
+            onSelectSuspect={handleSelectSuspect}
+          />
         )
       case "help":
         return (
