@@ -164,7 +164,7 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
             onSelectSuspect={handleSelectSuspect}
           />
         )
-      case "investigate":
+      case "scenes":
         return (
           <SceneList
             caseId={caseId}
