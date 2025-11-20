@@ -66,7 +66,7 @@
       "id": "scene_staircase",
       "name": "Grand Staircase (Private Wing)",
       "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
-      "imageUrl": "/cases/case01/images/scenes/staircase.jpg",
+      "imageUrl": "/cases/case01/images/scenes/staircase.png",
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -74,7 +74,7 @@
       "id": "scene_greenhouse",
       "name": "Grand Conservatory (Greenhouse)",
       "description": "Reginald's pride and joy - a glass-domed greenhouse filled with rare orchids and tropical blooms. He personally led tours here during the afternoon.",
-      "imageUrl": "/cases/case01/images/scenes/greenhouse.jpg",
+      "imageUrl": "/cases/case01/images/scenes/greenhouse.png",
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -82,7 +82,7 @@
       "id": "scene_lawn",
       "name": "Lawn & Terrace",
       "description": "Where the afternoon luncheon was held. White canopies, champagne, and society's polished conversation filled the space earlier that day.",
-      "imageUrl": "/cases/case01/images/scenes/lawn.jpg",
+      "imageUrl": "/cases/case01/images/scenes/north lawn.png",
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -90,7 +90,7 @@
       "id": "scene_ballroom",
       "name": "Ballroom",
       "description": "The grand ballroom where the evening's charity presentation took place. Crystal chandeliers, live music, and dozens of guests filled the space.",
-      "imageUrl": "/cases/case01/images/scenes/ballroom.jpg",
+      "imageUrl": "/cases/case01/images/scenes/ballroom.png",
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -98,7 +98,7 @@
       "id": "scene_master_bedroom",
       "name": "Master Bedroom (Private Wing)",
       "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand portrait on the wall and a piano bench where Veronica keeps sheet music.",
-      "imageUrl": "/cases/case01/images/scenes/bedroom.jpg",
+      "imageUrl": "/cases/case01/images/scenes/bedroom.png",
       "dpCost": 3,
       "initiallyAvailable": false,
       "unlockConditions": {
@@ -109,7 +109,7 @@
       "id": "scene_study",
       "name": "Reginald's Study",
       "description": "Reginald's private office. A place of business and secrets. The study contains a safe where Reginald kept his most sensitive documents.",
-      "imageUrl": "/cases/case01/images/scenes/study.jpg",
+      "imageUrl": "/cases/case01/images/scenes/study.png",
       "dpCost": 3,
       "initiallyAvailable": false,
       "unlockConditions": {

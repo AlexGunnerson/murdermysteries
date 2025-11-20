@@ -5,6 +5,8 @@ import { ActionPanel } from "@/components/ui/ActionPanel"
 import { MainContentPanel } from "@/components/ui/MainContentPanel"
 import { GameMenu } from "@/components/game/GameMenu"
 import { SuspectList } from "@/components/game/SuspectList"
+import { SceneList } from "@/components/game/SceneList"
+import { SceneDetailViewer } from "@/components/game/SceneDetailViewer"
 import { ChatInterface } from "@/components/game/ChatInterface"
 import { ProtectedRoute } from "@/lib/auth/protected-route"
 import { useGameState, useInitializeGame } from "@/lib/hooks/useGameState"
@@ -15,6 +17,15 @@ interface Suspect {
   role: string
   bio: string
   portraitUrl: string
+  isLocked: boolean
+}
+
+interface Scene {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  dpCost: number
   isLocked: boolean
 }
 
@@ -46,6 +57,16 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
 
   const handleBackToSuspects = () => {
     setSelectedSuspect(null)
+  }
+
+  const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
+
+  const handleSelectScene = (scene: Scene) => {
+    setSelectedScene(scene)
+  }
+
+  const handleBackToScenes = () => {
+    setSelectedScene(null)
   }
 
   const renderContent = () => {
@@ -85,6 +106,36 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
       )
     }
 
+    // If a scene is selected, show scene viewer
+    if (selectedScene) {
+      return (
+        <div className="h-full flex flex-col">
+          <div className="flex items-center gap-4 mb-4 pb-4 border-b border-gray-700">
+            <button
+              onClick={handleBackToScenes}
+              className="text-blue-400 hover:text-blue-300 flex items-center gap-2"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              Back to Scenes
+            </button>
+          </div>
+          <SceneDetailViewer scene={selectedScene} />
+        </div>
+      )
+    }
+
     switch (currentView) {
       case "welcome":
         return (
@@ -111,6 +162,14 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
             caseId={caseId}
             sessionId={sessionId || "temp-session"}
             onSelectSuspect={handleSelectSuspect}
+          />
+        )
+      case "investigate":
+        return (
+          <SceneList
+            caseId={caseId}
+            sessionId={sessionId || "temp-session"}
+            onSelectScene={handleSelectScene}
           />
         )
       case "help":
