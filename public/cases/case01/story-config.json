@@ -1,174 +1,362 @@
 {
   "caseId": "case01",
+  
   "briefing": {
-    "title": "Case File: The Midnight Manor Mystery",
-    "content": "At 11:47 PM last night, wealthy businessman Richard Blackwood was found dead in his study at Blackwood Manor. The cause of death appears to be a gunshot wound to the chest. A revolver was found near the body.\n\nThe initial investigation suggests three possibilities: suicide, accident, or murder. The manor's residents claim to have been elsewhere at the time of death, but their stories don't quite add up.\n\nYour mission: Question the suspects, investigate the crime scene, review the evidence, and determine what really happened that night.\n\nYou have 25 Detective Points to work with. Use them wisely - every action has a cost, but discovering new facts will earn you more points."
+    "title": "Death at the Ashcombe Gala",
+    "content": "The Ashcombe Estate rests on a gentle rise above the countryside — an expanse of gardens, glass, and grandeur. Every spring, Reginald Ashcombe's Annual Gala draws the region's most distinguished guests: philanthropists, family friends, and society's polished few.\n\nThis year's gathering was meant to be especially meaningful — Reginald's chance to reaffirm the family's legacy after a season of quiet rumors. The day was perfectly choreographed: luncheon on the lawn, an afternoon greenhouse tour of rare orchids, and an evening gala banquet with charity presentation.\n\nBy nightfall, the air was warm, perfumed with lilacs and wine. Reginald appeared radiant, laughing easily as he greeted guests from the landing.\n\nBut when dawn came, that laughter was gone.\n\nReginald Ashcombe was found lifeless at the bottom of the grand staircase — an apparent accident. A wine glass lay near him, dark liquid pooling across the marble.\n\nThe constable calls it misfortune. The guests murmur condolences.\n\nBut Veronica Ashcombe, his widow, doesn't believe it. She's hired you privately to investigate. She suspects someone in Reginald's inner circle had reason to silence him — but she needs proof before casting accusations.\n\n\"Reginald always said our family's reputation was like fine crystal — beautiful, but fragile. Some things, perhaps, are better left in drawers than dragged into daylight.\"\n\nYour mission: Investigate the scene, question the widow, examine the evidence, and determine if this was truly an accident... or murder."
   },
-  "systemPrompt": "You are roleplaying as {suspect_name}, {suspect_role} in a murder mystery investigation. The victim is Richard Blackwood, found dead in his study at 11:47 PM.\n\nYour character background:\n{suspect_bio}\n\nKey personality traits:\n{suspect_personality}\n\nYour alibi and story:\n{suspect_alibi}\n\nIMPORTANT INSTRUCTIONS:\n1. Stay completely in character. Never break the fourth wall.\n2. Be evasive about sensitive topics initially. Reveal information gradually as the detective asks good questions.\n3. Show realistic human emotions - nervousness, defensiveness, grief, etc.\n4. Don't volunteer information unless directly asked.\n5. If the detective discovers a fact that contradicts your story, you may become more defensive or eventually admit the truth.\n6. Never directly state 'I am the killer' or 'X is the killer' - let the detective deduce.\n7. Your responses should feel natural and conversational, not like an information dump.\n\nKnowledge state based on discovered facts:\n{dynamic_knowledge}\n\nRespond to the detective's question naturally and in character.",
+  
+  "systemPrompt": "You are roleplaying as {suspect_name}, {suspect_role}, in a murder mystery investigation. Reginald Ashcombe was found dead at the bottom of the grand staircase after his annual charity gala.\n\nYour character background:\n{suspect_bio}\n\nKey personality traits:\n{suspect_personality}\n\nYour alibi and story:\n{suspect_alibi}\n\nYour secrets:\n{suspect_secrets}\n\nIMPORTANT INSTRUCTIONS:\n1. Stay completely in character. Never break the fourth wall.\n2. Be evasive about sensitive topics initially. Reveal information gradually as the detective asks good questions.\n3. Show realistic human emotions - nervousness, defensiveness, grief, shock, etc.\n4. Don't volunteer information unless directly asked or it's natural to the conversation.\n5. If the detective discovers evidence that contradicts your story, you may become defensive or eventually admit partial truths.\n6. Never directly confess to murder unless overwhelming evidence is presented and you're the killer.\n7. Your responses should feel natural and conversational, not like an information dump.\n8. Remember the detective's discovered facts: {dynamic_knowledge}\n\nRespond to the detective's question naturally and in character.",
+  
   "suspects": {
-    "suspect_wife": {
-      "personality": "Elegant, composed on the surface but deeply unhappy. Speaks carefully and measures her words.",
-      "alibi": "Claims she was in the master bedroom reading when she heard the gunshot. Came running downstairs to find James (the butler) already in the study.",
+    "suspect_veronica": {
+      "personality": "Graceful, composed, deeply emotional but controlled. Protective of family reputation. Speaks with quiet authority and genuine grief.",
+      "alibi": "Was working on her charity speech with Mrs. Portwell in the master bedroom. Left around 8:57 PM to find Reginald. Discovered his body at 9:05 PM at the bottom of the grand staircase.",
       "secrets": [
-        "Discovered her husband was having an affair 6 months ago",
-        "Recently consulted with a divorce attorney",
-        "Stands to inherit the entire estate",
-        "Has no alibi witness - was alone in her room"
+        "Found blackmail papers scattered near Reginald's body",
+        "Hid the blackmail papers in the piano bench to protect the family",
+        "Knows Reginald kept incriminating evidence on everyone as 'motivation' to be better",
+        "Suspected foul play from the start but wanted proof before accusing anyone"
       ],
       "facts": {
-        "fact_marriage_troubles": "Reveals marital problems when asked about their relationship",
-        "fact_inheritance": "Mentions she inherits everything if asked about the will",
-        "fact_no_alibi": "Admits she was alone when pressed about witnesses"
+        "fact_veronica_timeline": "Shares her timeline of the evening when asked",
+        "fact_inner_circle_access": "Mentions only inner circle had access to private wing",
+        "fact_reginald_athletic": "Emphasizes Reginald was athletic and familiar with the stairs",
+        "fact_blackmail_papers_exist": "Eventually reveals she found papers near body (after Act I complete)"
       }
     },
-    "suspect_business_partner": {
-      "personality": "Charming but calculating. Becomes defensive when finances are mentioned.",
-      "alibi": "Claims he was at his office working late on a business proposal. Says he received a call from James about the death around midnight.",
+    "suspect_martin": {
+      "personality": "Charming, defensive, trying to maintain dignity despite obvious flaws. Deflects with humor. Becomes hostile when pressed about money or past indiscretions.",
+      "alibi": "Was in the ballroom, very drunk, throughout the evening. Multiple guests can confirm. Has no memory of the specific time period when Reginald died.",
       "secrets": [
-        "The business was failing and Richard wanted to dissolve the partnership",
-        "Had been embezzling funds for the past year",
-        "Would lose everything if Richard exposed the embezzlement",
-        "Actually was at the manor that night but hiding it"
+        "Had an affair with Clara, a young maid at the estate years ago",
+        "Paid Clara hush money to keep the affair secret",
+        "Reginald kept the NDA and threatening letter from Clara in his safe",
+        "Financially dependent on Reginald and the estate",
+        "Was terrified Reginald would expose the affair"
       ],
       "facts": {
-        "fact_business_dispute": "Admits to disagreements about company direction",
-        "fact_financial_motive": "Reluctantly reveals the business was in trouble",
-        "fact_present_at_scene": "Eventually admits he was at the manor that night after confronted with evidence"
+        "fact_martin_drunk": "Admits he was very drunk during the gala",
+        "fact_martin_financial": "Reluctantly reveals financial dependence on Reginald",
+        "fact_martin_affair": "Defensively admits to the affair if confronted with the NDA",
+        "fact_martin_threatened": "Admits Clara threatened to go public if pressed hard"
       }
     },
-    "suspect_butler": {
-      "personality": "Proper, loyal, observant. Speaks in formal manner befitting his station.",
-      "alibi": "Was in the kitchen preparing tea when he heard the gunshot. First to discover the body. Called the police immediately.",
+    "suspect_colin": {
+      "personality": "Professional, measured, nervous beneath the surface. Loyal and competent facade. Becomes increasingly uncomfortable when questioned about his whereabouts or the safe.",
+      "alibi": "Claims he was circulating throughout the manor ensuring everything ran smoothly. Can't provide specific witnesses for the 9:00-9:05 PM window. Responded to Veronica's scream.",
       "secrets": [
-        "Saw Marcus Sterling leaving the study shortly before the gunshot",
-        "Noticed the study window was unlocked from inside",
-        "Found a threatening letter to Richard hidden in the desk",
-        "Is protecting Victoria because he's known her since childhood"
+        "Attempted to sell Reginald's grandmother's ring (Dorothy's ring, most prized heirloom) on black market",
+        "Was in the study during the murder trying to swap his blackmail evidence",
+        "Got into a physical confrontation with Reginald",
+        "Accidentally killed Reginald during the struggle",
+        "Staged the fall to look like an accident",
+        "Swapped his real blackmail page (the ring) for a fake one (pocket watch)"
       ],
       "facts": {
-        "fact_butler_saw_marcus": "Reveals seeing Marcus if specifically asked about who was in the house",
-        "fact_unlocked_window": "Mentions the window detail if asked about the crime scene",
-        "fact_threatening_letter": "Reveals the letter if trust is built through multiple conversations"
+        "fact_colin_no_alibi": "Can't provide a solid alibi for time of death",
+        "fact_colin_at_scene": "Admits he was one of first to arrive after Veronica screamed",
+        "fact_colin_access_safe": "Eventually admits he has access to the study and safe",
+        "fact_colin_confession": "Full confession when confronted with all evidence (gloves, rug, swapped papers)"
+      }
+    },
+    "suspect_lydia": {
+      "personality": "Polished, cool, ambitious. PR-trained responses. Defensive about finances and charity operations. Maintains professional composure even under pressure.",
+      "alibi": "Was helping Veronica rehearse her charity speech in the master bedroom from approximately 8:30-9:05 PM. Veronica left briefly to find Reginald. Can confirm timeline.",
+      "secrets": [
+        "Has been embezzling from the Ashcombe Foundation",
+        "Underreports donations and pockets the difference",
+        "Reginald discovered a $50,000 donation reported as only $10,000",
+        "Feared exposure would destroy her career and reputation",
+        "The proof is in Reginald's safe"
+      ],
+      "facts": {
+        "fact_lydia_with_veronica": "Confirms she was with Veronica during time of death",
+        "fact_lydia_financial_access": "Admits she manages all foundation finances",
+        "fact_lydia_embezzlement": "Defensive admission if confronted with donation receipts",
+        "fact_lydia_feared_exposure": "Admits Reginald confronted her about discrepancies"
+      }
+    },
+    "suspect_vale": {
+      "personality": "Elegant, calculating, professionally detached. Speaks in measured medical terms. Becomes evasive when questioned about his whereabouts. Protective of his reputation.",
+      "alibi": "CLAIMS: Was on an urgent phone call in his guest room from 8:50-9:10 PM. TRUTH: Was in the greenhouse stealing rare orchids to sell. Lies to protect his professional reputation.",
+      "secrets": [
+        "Prescribes stimulants and sedatives under false pretenses",
+        "Charges inflated 'medical supply' fees and sells extra privately",
+        "Was in the greenhouse during the murder stealing plants",
+        "Knows about the greenhouse security camera that uploads to study",
+        "Removed his blackmail page from the floor set to protect himself",
+        "Wanted to delete greenhouse footage but couldn't access study after death"
+      ],
+      "facts": {
+        "fact_vale_phone_alibi": "Claims he was on a phone call in his room",
+        "fact_vale_no_phone_record": "Phone logs contradict his story when checked",
+        "fact_vale_greenhouse": "Admits he was in greenhouse when confronted with evidence",
+        "fact_greenhouse_camera": "Reveals greenhouse has security camera uploading to study",
+        "fact_vale_took_page": "Admits removing his page from floor papers to hide his crimes"
       }
     }
   },
+  
   "factTree": [
     {
-      "id": "fact_marriage_troubles",
-      "content": "Victoria and Richard's marriage was deeply troubled. They hadn't shared a bedroom in months.",
-      "category": "relationship",
-      "importance": 2,
-      "sources": ["suspect_wife", "suspect_butler"]
-    },
-    {
-      "id": "fact_business_dispute",
-      "content": "Marcus and Richard had serious disagreements about the business direction. Richard wanted to dissolve the partnership.",
-      "category": "motive",
-      "importance": 1,
-      "sources": ["suspect_business_partner"]
-    },
-    {
-      "id": "fact_inheritance",
-      "content": "Victoria inherits Richard's entire estate, worth over $10 million.",
-      "category": "motive",
-      "importance": 1,
-      "sources": ["suspect_wife", "record_will"]
-    },
-    {
-      "id": "fact_financial_motive",
-      "content": "The business was failing. Marcus had been embezzling funds and would be exposed if the partnership dissolved.",
-      "category": "motive",
-      "importance": 1,
-      "sources": ["suspect_business_partner", "record_financial"]
-    },
-    {
-      "id": "fact_butler_saw_marcus",
-      "content": "James saw Marcus leaving the study shortly before the gunshot was heard.",
+      "id": "fact_veronica_timeline",
+      "content": "Veronica discovered Reginald's body at approximately 9:05 PM after leaving the master bedroom to find him about a speech revision.",
       "category": "timeline",
-      "importance": 1,
-      "sources": ["suspect_butler"]
-    },
-    {
-      "id": "fact_unlocked_window",
-      "content": "The study window was unlocked from the inside, suggesting someone may have staged it to look like a break-in.",
-      "category": "evidence",
-      "importance": 1,
-      "sources": ["suspect_butler", "scene_study"]
-    },
-    {
-      "id": "fact_gun_ownership",
-      "content": "The gun belonged to Richard and was kept in his study desk drawer.",
-      "category": "evidence",
       "importance": 2,
-      "sources": ["scene_study", "suspect_butler"]
+      "sources": ["suspect_veronica"]
     },
     {
-      "id": "fact_no_powder_residue",
-      "content": "The coroner's report shows no gunpowder residue on Richard's hands, inconsistent with suicide.",
+      "id": "fact_wine_spill_pattern",
+      "content": "The wine spill is tightly clustered near the body with no trail up the stairs, inconsistent with a tumbling fall.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["scene_staircase", "record_crime_scene_photos"]
+    },
+    {
+      "id": "fact_coroner_top_fall",
+      "content": "The coroner's report indicates the fatal injury required a fall from the TOP of the staircase, not a stumble partway down.",
       "category": "evidence",
       "importance": 1,
       "sources": ["record_coroner"]
+    },
+    {
+      "id": "fact_staged_scene",
+      "content": "The wine was placed AFTER the fall - the scene was staged to look like an accident. This was murder.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["theory_act_one"]
+    },
+    {
+      "id": "fact_blackmail_papers_exist",
+      "content": "Veronica found blackmail papers scattered near Reginald's body. She hid them to protect the family's reputation.",
+      "category": "motive",
+      "importance": 1,
+      "sources": ["suspect_veronica"]
+    },
+    {
+      "id": "fact_vale_page_missing",
+      "content": "The blackmail papers Veronica found are missing Dr. Vale's page, though Reginald supposedly had dirt on everyone.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["record_blackmail_floor"]
+    },
+    {
+      "id": "fact_complete_set_exists",
+      "content": "A complete set of blackmail papers, including Vale's page, was found hidden behind the portrait in the master bedroom.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["scene_master_bedroom", "record_blackmail_portrait"]
+    },
+    {
+      "id": "fact_vale_alibi_suspicious",
+      "content": "Dr. Vale claims he was on a phone call during the murder, but someone deliberately removed his blackmail page.",
+      "category": "timeline",
+      "importance": 2,
+      "sources": ["suspect_vale"]
+    },
+    {
+      "id": "fact_vale_no_phone_record",
+      "content": "Phone records show no outgoing or incoming calls from Dr. Vale's room during his claimed alibi window.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["record_phone_logs"]
+    },
+    {
+      "id": "fact_vale_greenhouse",
+      "content": "Dr. Vale admits he was actually in the greenhouse stealing rare orchids during the time of the murder.",
+      "category": "timeline",
+      "importance": 1,
+      "sources": ["suspect_vale"]
+    },
+    {
+      "id": "fact_greenhouse_camera",
+      "content": "The greenhouse has a security camera that automatically uploads footage to the computer in Reginald's study.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["suspect_vale"]
+    },
+    {
+      "id": "fact_vale_cleared",
+      "content": "Dr. Vale is guilty of theft and prescription fraud, but the greenhouse footage confirms he couldn't have murdered Reginald.",
+      "category": "timeline",
+      "importance": 1,
+      "sources": ["record_greenhouse_footage"]
+    },
+    {
+      "id": "fact_study_rug_displaced",
+      "content": "The rug in Reginald's study is displaced, revealing lighter floorboards underneath. There was a struggle here.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["scene_study"]
+    },
+    {
+      "id": "fact_tie_clip_study",
+      "content": "Reginald's tie clip was found under the sofa in the study, indicating he fell or struggled in this room.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["scene_study"]
+    },
+    {
+      "id": "fact_white_gloves_safe",
+      "content": "White gloves matching Colin's gala attire were found on top of the safe in the study.",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["scene_study", "record_gala_photos"]
+    },
+    {
+      "id": "fact_colin_swapped_papers",
+      "content": "Colin swapped his blackmail page - the real one (Dorothy's ring) with a fake less-damning one (pocket watch).",
+      "category": "evidence",
+      "importance": 1,
+      "sources": ["record_blackmail_floor", "record_blackmail_portrait"]
+    },
+    {
+      "id": "fact_colin_confession",
+      "content": "Colin admits he confronted Reginald in the study about the blackmail. They struggled. Reginald died. Colin panicked and staged the accident.",
+      "category": "solution",
+      "importance": 1,
+      "sources": ["suspect_colin"]
+    },
+    {
+      "id": "fact_martin_affair",
+      "content": "Martin had an affair with Clara, a maid, and paid her hush money. Reginald kept proof of this in his safe.",
+      "category": "motive",
+      "importance": 2,
+      "sources": ["suspect_martin", "record_blackmail_portrait"]
+    },
+    {
+      "id": "fact_lydia_embezzlement",
+      "content": "Lydia has been embezzling from the Ashcombe Foundation by underreporting donations. Reginald discovered the fraud.",
+      "category": "motive",
+      "importance": 2,
+      "sources": ["suspect_lydia", "record_blackmail_portrait"]
+    },
+    {
+      "id": "fact_vale_prescription_fraud",
+      "content": "Dr. Vale has been prescribing drugs under false pretenses and selling them privately for profit.",
+      "category": "motive",
+      "importance": 2,
+      "sources": ["suspect_vale", "record_blackmail_portrait"]
+    },
+    {
+      "id": "fact_colin_ring_theft",
+      "content": "Colin attempted to sell Dorothy's ring (Reginald's grandmother's most prized heirloom) on the black market.",
+      "category": "motive",
+      "importance": 1,
+      "sources": ["record_blackmail_portrait"]
     }
   ],
+  
   "theoryRules": [
     {
-      "id": "theory_business_motive",
-      "requiredFacts": ["fact_business_dispute", "fact_financial_motive"],
-      "result": "partial",
-      "feedback": "You've identified a strong motive for Marcus. The business troubles and embezzlement give him reason to want Richard dead. But motive alone doesn't prove guilt. What about opportunity and evidence?",
+      "id": "theory_act_one",
+      "requiredFacts": ["fact_wine_spill_pattern", "fact_coroner_top_fall"],
+      "result": "correct",
+      "feedback": "Excellent deduction! You've proven this was not an accident.\n\nThe wine spill pattern is tightly clustered near the body - if Reginald had tumbled from the top of the stairs as the coroner suggests, the wine would have scattered across multiple steps, possibly broken the glass, or left splashes on the railing.\n\nInstead, the wine was clearly placed or spilled AFTER Reginald's body was positioned. Someone staged this scene to make murder look like an accident.\n\nVeronica thanks you for confirming her suspicions. She now reveals something she's been hiding: she found blackmail papers scattered near Reginald's body. She was afraid the secrets would destroy what remained of the family, so she hid them. But now she realizes you must see them.\n\nThe inner circle is now available for questioning. Someone among them is a killer.",
       "unlocks": {
-        "records": ["record_financial", "record_coroner"]
+        "suspects": ["suspect_martin", "suspect_colin", "suspect_lydia", "suspect_vale"],
+        "records": ["record_blackmail_floor"]
       }
     },
     {
-      "id": "theory_staged_suicide",
-      "requiredFacts": ["fact_unlocked_window", "fact_no_powder_residue", "fact_gun_ownership"],
-      "result": "correct",
-      "feedback": "Excellent deduction! The evidence strongly suggests this was staged to look like suicide. The unlocked window, lack of powder residue, and other forensic details all point to murder disguised as suicide. This revelation unlocks additional investigation options.",
+      "id": "theory_vale_removed_page",
+      "requiredFacts": ["fact_blackmail_papers_exist", "fact_vale_page_missing"],
+      "result": "partial",
+      "feedback": "Good observation! Veronica confirms these are the papers she collected from the floor, but she's confused - she thought Reginald kept dirt on EVERYONE in the inner circle. Why is Dr. Vale's page missing?\n\nSomeone must have removed it from the scene. But why would they take only Vale's page and leave the others?\n\nPerhaps there's another copy of these papers somewhere. Veronica mentions Reginald kept his original blackmail documents hidden behind the portrait in the master bedroom. You should investigate there.",
       "unlocks": {
-        "scenes": ["scene_bedroom"],
-        "suspects": ["suspect_witness"]
+        "scenes": ["scene_master_bedroom"]
       }
+    },
+    {
+      "id": "theory_vale_suspicious",
+      "requiredFacts": ["fact_complete_set_exists", "fact_vale_alibi_suspicious", "fact_vale_no_phone_record"],
+      "result": "correct",
+      "feedback": "Your instincts are sharp. Dr. Vale's alibi doesn't hold up - there are no phone records matching his claim. And someone definitely removed his page from the crime scene papers.\n\nWhen confronted with this evidence, Vale may crack and reveal what he was really doing during the murder. Press him hard.\n\nYou can now confront Dr. Vale with this contradiction.",
+      "unlocks": {}
+    },
+    {
+      "id": "theory_greenhouse_investigation",
+      "requiredFacts": ["fact_vale_greenhouse", "fact_greenhouse_camera"],
+      "result": "correct",
+      "feedback": "Dr. Vale admits the truth: he was stealing rare orchids from Reginald's greenhouse during the murder. He knew about the security camera that automatically uploads to the study computer.\n\nHe removed his blackmail page from the scene because he was terrified of being connected to the study - he wanted to delete the greenhouse footage but couldn't risk going near the study after Reginald's death.\n\nVale is guilty of theft and fraud... but ironically, the greenhouse footage may be his alibi for murder. You should examine the study where the footage would be stored.",
+      "unlocks": {
+        "scenes": ["scene_study"],
+        "records": ["record_greenhouse_footage"]
+      }
+    },
+    {
+      "id": "theory_colin_in_study",
+      "requiredFacts": ["fact_study_rug_displaced", "fact_tie_clip_study", "fact_white_gloves_safe"],
+      "result": "correct",
+      "feedback": "The evidence is damning:\n\n• The displaced rug and Reginald's tie clip show there was a physical struggle in the study, not on the staircase.\n• Colin's white gloves on top of the safe prove he was in this room.\n• Colin swapped his own blackmail page - replacing the evidence of stealing Dorothy's beloved ring with a less damaging fake.\n\nReginald didn't fall down the stairs. He died in the study during a confrontation with Colin. The staircase scene was staged afterward.\n\nYou have enough evidence to confront Colin Dorsey with the truth.",
+      "unlocks": {}
     }
   ],
+  
   "solution": {
-    "killer": "suspect_business_partner",
-    "killerName": "Marcus Sterling",
-    "motive": "Financial desperation and fear of exposure. Marcus had been embezzling from the business for years. When Richard discovered the theft and threatened to dissolve their partnership and press charges, Marcus saw his entire life crashing down. He decided to kill Richard and stage it as suicide.",
-    "method": "Marcus arrived at the manor that night under the pretense of discussing the business. He found Richard alone in the study. They argued, and Marcus shot Richard with Richard's own gun. He then carefully staged the scene to appear as suicide, placing the gun near the body and unlocking the window to suggest a potential break-in narrative if suicide wasn't believed.",
+    "killer": "suspect_colin",
+    "killerName": "Colin Dorsey",
+    "motive": "Colin attempted to sell Dorothy Ashcombe's ring - the most prized and sentimental family heirloom - on the black market. Reginald discovered this betrayal and kept the proof in his safe. Colin couldn't bear the thought of everyone knowing he'd tried to steal the ring belonging to the one Ashcombe everyone loved. He went to the study during the gala to swap his blackmail page for a less damaging fake.",
+    "method": "Colin confronted Reginald in the study during the gala charity presentation. They argued about the blackmail documents. The argument escalated into a physical struggle - the rug was displaced, Reginald's tie clip fell under the sofa. Colin shoved Reginald during the fight, and Reginald fell, striking his head and dying. Colin panicked. He swapped his blackmail page as planned, then moved Reginald's body to the grand staircase and staged it to look like an accidental fall, placing a wine glass nearby for effect.",
     "requiredEvidence": [
-      "fact_financial_motive",
-      "fact_butler_saw_marcus",
-      "fact_no_powder_residue"
+      "fact_white_gloves_safe",
+      "fact_study_rug_displaced",
+      "fact_tie_clip_study",
+      "fact_colin_swapped_papers"
     ],
-    "narrativeCorrect": "Brilliant work, Detective!\n\nYou've cracked the case. Marcus Sterling, driven by desperation and greed, murdered his longtime friend and business partner. The embezzlement, the staged suicide, the carefully constructed alibi - it all falls apart under your investigation.\n\nWhen confronted with your evidence, Marcus finally breaks down and confesses. The threatening letter, the forensic evidence, and James's testimony all paint a clear picture. Marcus arrived that night for one last plea to save the partnership. When Richard refused and threatened to expose everything, Marcus snapped.\n\nJustice will be served. Richard Blackwood's family can finally have closure, knowing the truth about that terrible night at Blackwood Manor.",
-    "narrativeIncorrect": "Not quite, Detective.\n\n{incorrect_accusation_feedback}\n\nThe real killer was Marcus Sterling. Driven by financial desperation and fear of exposure for his embezzlement, he murdered Richard and carefully staged it as suicide. The evidence was there: Marcus's presence at the manor that night (witnessed by James), the forensic evidence showing it wasn't suicide, and the financial records revealing his motive.\n\nSometimes the truth is hidden in the details we overlook. Better luck on your next case."
+    "narrativeCorrect": "**Brilliant work, Detective.**\n\nWhen you present the evidence - the white gloves, the displaced rug, the tie clip, and most damningly, the swapped blackmail pages - Colin's composure finally cracks.\n\nHe sinks into a chair, head in his hands.\n\n\"I didn't mean to kill him,\" he whispers. \"I just... I couldn't let everyone know about the ring. Dorothy was the only one in this family who was truly good. When people heard I tried to sell her ring... I'd be finished. Not just here, everywhere.\"\n\nHe explains: He went to the study during the charity presentation to swap his blackmail page - replacing the black market listing of Dorothy's ring with a less damaging fake. But Reginald was there, waiting.\n\nThey argued. Reginald refused to let him alter the evidence. The argument became physical. Colin shoved him. Reginald fell, struck his head on the corner of the desk. He was dead.\n\nColin panicked. He completed the swap of papers, then moved the body to the grand staircase. He staged the fall, placed the wine glass, and tried to make it look like a tragic accident.\n\n\"I didn't plan it,\" Colin says, voice hollow. \"But I did it. And I tried to hide it. I'm sorry.\"\n\nThe truth is finally known. Justice can now be served, and the Ashcombe family can begin to heal from the wounds of that terrible night.\n\n**Case Closed.**",
+    "narrativeIncorrect": "**Not quite, Detective.**\n\n{incorrect_accusation_feedback}\n\nThe real killer was **Colin Dorsey**, the estate manager.\n\nColin went to the study during the gala to swap his blackmail page - he'd attempted to sell Dorothy Ashcombe's ring, the most beloved family heirloom, and couldn't bear the shame if it was exposed. Reginald confronted him. They struggled. Colin shoved Reginald, who fell and struck his head fatally.\n\nPanicked, Colin staged the scene: swapped the blackmail papers, moved the body to the grand staircase, and placed a wine glass to make it look like an accident.\n\nThe evidence was there:\n• White gloves on the safe matching Colin's attire\n• Displaced rug in the study showing a struggle\n• Reginald's tie clip under the study sofa\n• Swapped blackmail papers (ring replaced with pocket watch)\n\nSometimes the truth hides in the details we overlook. Better luck on your next case, Detective."
   },
+  
   "clues": [
     {
       "context": {
-        "minActions": 5,
-        "discoveredFactsCount": { "min": 0, "max": 2 }
+        "minActions": 3,
+        "discoveredFactsCount": { "min": 0, "max": 1 }
       },
-      "text": "Consider asking the suspects about their relationship with the victim. People's motives often lie in their personal connections.",
+      "text": "Focus on the crime scene itself. Does the evidence match the coroner's conclusion? Look closely at how the wine spilled.",
       "priority": 1
     },
     {
       "context": {
-        "discoveredFacts": ["fact_business_dispute"],
-        "missingFacts": ["fact_financial_motive"]
+        "discoveredFacts": ["fact_staged_scene"],
+        "missingFacts": ["fact_vale_page_missing"]
       },
-      "text": "You know about the business dispute. What were the stakes? Check the financial records to understand what Marcus stood to lose.",
+      "text": "Veronica mentioned Reginald kept blackmail on everyone. Examine those papers carefully - is anything missing?",
       "priority": 2
     },
     {
       "context": {
-        "discoveredFacts": ["fact_butler_saw_marcus"],
-        "missingFacts": ["fact_no_powder_residue"]
+        "discoveredFacts": ["fact_vale_page_missing"],
+        "missingFacts": ["fact_complete_set_exists"]
       },
-      "text": "Marcus was at the scene, but that doesn't prove murder. What does the forensic evidence tell you about how Richard died?",
+      "text": "If one set of papers is incomplete, perhaps there's another copy. Where would Reginald hide his most sensitive documents?",
+      "priority": 1
+    },
+    {
+      "context": {
+        "discoveredFacts": ["fact_vale_alibi_suspicious"],
+        "missingFacts": ["fact_vale_no_phone_record"]
+      },
+      "text": "Dr. Vale claims he was on a phone call. Phone records could confirm or disprove that alibi.",
+      "priority": 2
+    },
+    {
+      "context": {
+        "discoveredFacts": ["fact_greenhouse_camera"],
+        "missingFacts": ["fact_study_rug_displaced"]
+      },
+      "text": "The greenhouse camera uploads to Reginald's study. You should investigate that room thoroughly - who else might have been there?",
+      "priority": 1
+    },
+    {
+      "context": {
+        "discoveredFacts": ["fact_study_rug_displaced", "fact_white_gloves_safe"],
+        "missingFacts": ["fact_colin_swapped_papers"]
+      },
+      "text": "Colin was clearly in the study near the safe. Compare the blackmail papers from both sets - did someone alter their own evidence?",
       "priority": 1
     }
   ]
 }
-

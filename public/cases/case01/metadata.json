@@ -1,77 +1,190 @@
 {
   "id": "case01",
-  "title": "The Midnight Manor Mystery",
+  "title": "Death at the Ashcombe Gala",
   "slug": "case01",
-  "description": "A wealthy businessman is found dead in his study. Was it murder or suicide? Question suspects, examine evidence, and uncover the truth.",
+  "description": "Reginald Ashcombe, patriarch and philanthropist, is found dead at the bottom of his grand staircase following his annual charity gala. The constable calls it an accident. But his widow suspects murder. Question suspects, examine evidence, and uncover the truth behind the fall.",
   "difficulty": "medium",
-  "estimatedTime": "45-60 minutes",
+  "estimatedTime": "60-90 minutes",
+  
   "suspects": [
     {
-      "id": "suspect_wife",
-      "name": "Victoria Blackwood",
-      "role": "victim's wife",
-      "bio": "The elegant but troubled wife of the deceased. Married for 15 years.",
-      "portraitUrl": "/cases/case01/images/portraits/victoria.jpg",
+      "id": "suspect_veronica",
+      "name": "Veronica Ashcombe",
+      "role": "The Widow",
+      "bio": "62 years old, graceful and intelligent. Once a concert pianist, now manages the social and charitable side of Ashcombe Estate. Found Reginald's body at the bottom of the grand staircase.",
+      "portraitUrl": "/cases/case01/images/portraits/veronica.jpg",
       "initiallyAvailable": true
     },
     {
-      "id": "suspect_business_partner",
-      "name": "Marcus Sterling",
-      "role": "business partner",
-      "bio": "Long-time business partner and friend. Recently had disagreements about company direction.",
-      "portraitUrl": "/cases/case01/images/portraits/marcus.jpg",
-      "initiallyAvailable": true
+      "id": "suspect_martin",
+      "name": "Martin Ashcombe",
+      "role": "The Irresponsible Brother",
+      "bio": "61 years old, Reginald's younger brother. Charming but financially dependent. Former academic who squandered opportunities through gambling. Was very drunk during the gala.",
+      "portraitUrl": "/cases/case01/images/portraits/martin.jpg",
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
     },
     {
-      "id": "suspect_butler",
-      "name": "James Hartford",
-      "role": "butler",
-      "bio": "The loyal butler who has served the family for 20 years. Found the body.",
-      "portraitUrl": "/cases/case01/images/portraits/james.jpg",
-      "initiallyAvailable": true
+      "id": "suspect_colin",
+      "name": "Colin Dorsey",
+      "role": "The Estate Manager",
+      "bio": "53 years old, Reginald's right hand and estate manager. Competent and loyal on the surface. Responded to Veronica's scream after the body was discovered.",
+      "portraitUrl": "/cases/case01/images/portraits/colin.jpg",
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "suspect_lydia",
+      "name": "Lydia Portwell",
+      "role": "The Charity Director",
+      "bio": "51 years old, polished and ambitious. Oversees the Ashcombe Foundation's fundraising campaigns. Was helping Veronica rehearse her speech when the murder occurred.",
+      "portraitUrl": "/cases/case01/images/portraits/lydia.jpg",
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "suspect_vale",
+      "name": "Dr. Leonard Vale",
+      "role": "The Physician",
+      "bio": "58 years old, elegant and calculating. Longtime friend of the Ashcombe family and attending physician. Left the ballroom early for an 'urgent phone call' before Reginald's death.",
+      "portraitUrl": "/cases/case01/images/portraits/vale.jpg",
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
     }
   ],
+  
   "locations": [
     {
-      "id": "scene_study",
-      "name": "The Study",
-      "description": "The crime scene where the body was discovered.",
-      "imageUrl": "/cases/case01/images/scenes/study.jpg",
+      "id": "scene_staircase",
+      "name": "Grand Staircase (Private Wing)",
+      "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
+      "imageUrl": "/cases/case01/images/scenes/staircase.jpg",
       "dpCost": 3,
       "initiallyAvailable": true
     },
     {
-      "id": "scene_bedroom",
-      "name": "Master Bedroom",
-      "description": "The victim's private quarters.",
+      "id": "scene_greenhouse",
+      "name": "Grand Conservatory (Greenhouse)",
+      "description": "Reginald's pride and joy - a glass-domed greenhouse filled with rare orchids and tropical blooms. He personally led tours here during the afternoon.",
+      "imageUrl": "/cases/case01/images/scenes/greenhouse.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "scene_lawn",
+      "name": "Lawn & Terrace",
+      "description": "Where the afternoon luncheon was held. White canopies, champagne, and society's polished conversation filled the space earlier that day.",
+      "imageUrl": "/cases/case01/images/scenes/lawn.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "scene_ballroom",
+      "name": "Ballroom",
+      "description": "The grand ballroom where the evening's charity presentation took place. Crystal chandeliers, live music, and dozens of guests filled the space.",
+      "imageUrl": "/cases/case01/images/scenes/ballroom.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "scene_master_bedroom",
+      "name": "Master Bedroom (Private Wing)",
+      "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand portrait on the wall and a piano bench where Veronica keeps sheet music.",
       "imageUrl": "/cases/case01/images/scenes/bedroom.jpg",
       "dpCost": 3,
       "initiallyAvailable": false,
       "unlockConditions": {
-        "requiredFacts": ["fact_marriage_troubles"]
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "scene_study",
+      "name": "Reginald's Study",
+      "description": "Reginald's private office. A place of business and secrets. The study contains a safe where Reginald kept his most sensitive documents.",
+      "imageUrl": "/cases/case01/images/scenes/study.jpg",
+      "dpCost": 3,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_greenhouse_camera"]
       }
     }
   ],
+  
   "records": [
     {
-      "id": "record_will",
-      "name": "Last Will and Testament",
-      "description": "The victim's will, recently updated.",
-      "documentUrl": "/cases/case01/images/documents/will.jpg",
+      "id": "record_coroner",
+      "name": "Coroner's Report",
+      "description": "Official autopsy and scene analysis. Rules the death as accidental.",
+      "dpCost": 2,
+      "initiallyAvailable": true,
+      "content": "CAUSE OF DEATH: Fatal skull fracture\n\nFINDINGS: Injury pattern consistent with fall from TOP of staircase. Single point of impact. No secondary bruising or defensive wounds.\n\nTOXICOLOGY: Alcohol present, within social drinking range.\n\nRULING: Accidental fall. No evidence of foul play."
+    },
+    {
+      "id": "record_crime_scene_photos",
+      "name": "Crime Scene Photographs",
+      "description": "Photos taken at the scene, including close-ups of the body, wine spill, and staircase.",
+      "documentUrl": "/cases/case01/images/documents/crime_photos.jpg",
       "dpCost": 2,
       "initiallyAvailable": true
     },
     {
-      "id": "record_financial",
-      "name": "Financial Records",
-      "description": "Recent bank statements and business transactions.",
-      "documentUrl": "/cases/case01/images/documents/financial.jpg",
+      "id": "record_gala_photos",
+      "name": "Gala Event Photos",
+      "description": "Photos from the evening's festivities, showing guests, staff, and the inner circle throughout the event.",
+      "documentUrl": "/cases/case01/images/documents/gala_photos.jpg",
+      "dpCost": 2,
+      "initiallyAvailable": true
+    },
+    {
+      "id": "record_blackmail_floor",
+      "name": "Blackmail Papers (Found at Scene)",
+      "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",
+      "documentUrl": "/cases/case01/images/documents/blackmail_floor.jpg",
       "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
-        "requiredFacts": ["fact_business_dispute"]
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait",
+      "name": "Blackmail Papers (Behind Portrait)",
+      "description": "The complete original set of blackmail documents hidden behind a portrait in the master bedroom. Includes ALL pages, including Dr. Vale's.",
+      "documentUrl": "/cases/case01/images/documents/blackmail_portrait.jpg",
+      "dpCost": 2,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "record_phone_logs",
+      "name": "Phone Records",
+      "description": "Estate phone logs from the evening of the gala, showing all incoming and outgoing calls.",
+      "dpCost": 2,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_alibi_suspicious"]
+      }
+    },
+    {
+      "id": "record_greenhouse_footage",
+      "name": "Greenhouse Security Footage",
+      "description": "Automatically uploaded security camera footage from the greenhouse, timestamped during the gala.",
+      "documentUrl": "/cases/case01/images/documents/greenhouse_footage.jpg",
+      "dpCost": 2,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_greenhouse_camera"]
       }
     }
   ]
 }
-
