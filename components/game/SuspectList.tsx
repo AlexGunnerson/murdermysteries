@@ -113,17 +113,17 @@ export function SuspectList({ caseId, sessionId, onSelectSuspect }: SuspectListP
           >
             {/* Portrait */}
             <div className="flex-shrink-0">
-              <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-700">
+              <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-gray-700">
                 {suspect.portraitUrl ? (
                   <Image
                     src={suspect.portraitUrl}
                     alt={suspect.name}
                     fill
                     className="object-cover"
-                    sizes="80px"
+                    sizes="128px"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-2xl">
+                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-3xl">
                     ?
                   </div>
                 )}
