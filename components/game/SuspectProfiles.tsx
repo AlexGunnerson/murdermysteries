@@ -43,7 +43,7 @@ export function SuspectProfiles({ suspects }: SuspectProfilesProps) {
           {/* Photo */}
           <button
             onClick={() => setSelectedPhoto({ url: suspect.portraitUrl, name: suspect.name })}
-            className="w-[150px] h-[150px] mx-auto mb-4 border-8 border-white shadow-md overflow-hidden -rotate-[0.5deg] cursor-pointer hover:border-amber-200 transition-colors"
+            className="block w-[150px] h-[150px] mx-auto mb-4 border-8 border-white shadow-md overflow-hidden -rotate-[0.5deg] cursor-pointer hover:border-amber-200 transition-colors"
             aria-label={`View ${suspect.name}'s portrait`}
           >
             <Image
