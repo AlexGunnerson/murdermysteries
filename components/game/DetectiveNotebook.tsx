@@ -1,15 +1,60 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useGameState } from "@/lib/hooks/useGameState"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
+import { SuspectProfiles } from "@/components/game/SuspectProfiles"
 import Image from "next/image"
 import { FileText, Camera, Lightbulb, ClipboardList, Users } from "lucide-react"
+
+interface Suspect {
+  id: string
+  name: string
+  age: number
+  role: string
+  portraitUrl: string
+  veronicaNote: string
+}
 
 export function DetectiveNotebook() {
   const { discoveredFacts, theoryHistory, chatHistory } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
+  const [suspects, setSuspects] = useState<Suspect[]>([])
+  const [loading, setLoading] = useState(true)
+
+  // Load suspect data from metadata
+  useEffect(() => {
+    async function loadSuspects() {
+      try {
+        const response = await fetch('/cases/case01/metadata.json')
+        const data = await response.json()
+        
+        // Extract age from name (e.g., "Martin Ashcombe (61)" -> 61)
+        const suspectsWithNotes = data.suspects
+          .filter((s: any) => s.veronicaNote) // Only include suspects with notes
+          .map((s: any) => {
+            const ageMatch = s.bio.match(/(\d+) years old/)
+            return {
+              id: s.id,
+              name: s.name,
+              age: ageMatch ? parseInt(ageMatch[1]) : 0,
+              role: s.role,
+              portraitUrl: s.portraitUrl,
+              veronicaNote: s.veronicaNote
+            }
+          })
+        
+        setSuspects(suspectsWithNotes)
+      } catch (error) {
+        console.error('Failed to load suspects:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    loadSuspects()
+  }, [])
 
   // Group facts by category
   const factsByCategory = discoveredFacts.reduce((acc, fact) => {
@@ -20,7 +65,7 @@ export function DetectiveNotebook() {
   }, {} as Record<string, typeof discoveredFacts>)
 
   // Get unique suspects from chat history
-  const suspects = Array.from(
+  const chatSuspects = Array.from(
     new Set(chatHistory.map(msg => msg.suspectId))
   )
 
@@ -148,27 +193,20 @@ export function DetectiveNotebook() {
 
           {/* People Tab */}
           <TabsContent value="people" className="space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-4">People of Interest</h2>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-amber-400 mb-2 text-center">People of Interest</h2>
+              <p className="text-gray-400 mb-6 text-center text-sm">
+                Veronica&apos;s handwritten notes on the inner circle
+              </p>
               
-              {suspects.length === 0 ? (
+              {loading ? (
+                <p className="text-gray-400 text-center py-8">Loading profiles...</p>
+              ) : suspects.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">
-                  No interviews conducted yet. Question suspects to learn more.
+                  No profiles available yet.
                 </p>
               ) : (
-                <div className="space-y-4">
-                  {suspects.map(suspectId => {
-                    const messages = chatHistory.filter(msg => msg.suspectId === suspectId)
-                    return (
-                      <div key={suspectId} className="bg-gray-900 border border-gray-700 rounded-lg p-4">
-                        <h3 className="font-semibold text-gray-100 mb-2">{suspectId}</h3>
-                        <p className="text-sm text-gray-400">
-                          {messages.length} message{messages.length !== 1 ? 's' : ''} exchanged
-                        </p>
-                      </div>
-                    )
-                  })}
-                </div>
+                <SuspectProfiles suspects={suspects} />
               )}
             </div>
           </TabsContent>
