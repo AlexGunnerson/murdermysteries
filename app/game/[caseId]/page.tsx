@@ -158,11 +158,11 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
               Select an action from the left panel to begin your investigation.
             </p>
           </div>
-        )
+          )
       case "notebook":
         return <DetectiveNotebook />
       case "question":
-        return (
+          return (
           <SuspectList
             caseId={caseId}
             sessionId={sessionId || "temp-session"}
