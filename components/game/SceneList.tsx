@@ -113,7 +113,7 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
           >
             {/* Scene Image */}
             <div className="w-full">
-              <div className="relative w-full h-48 rounded-lg overflow-hidden bg-gray-700">
+              <div className="relative w-full h-64 rounded-lg overflow-hidden bg-gray-700">
                 {scene.imageUrl ? (
                   <Image
                     src={scene.imageUrl}

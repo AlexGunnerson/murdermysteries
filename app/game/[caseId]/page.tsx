@@ -8,6 +8,7 @@ import { SuspectList } from "@/components/game/SuspectList"
 import { SceneList } from "@/components/game/SceneList"
 import { SceneDetailViewer } from "@/components/game/SceneDetailViewer"
 import { ChatInterface } from "@/components/game/ChatInterface"
+import { VeronicaLetter } from "@/components/game/VeronicaLetter"
 import { ProtectedRoute } from "@/lib/auth/protected-route"
 import { useGameState, useInitializeGame } from "@/lib/hooks/useGameState"
 
@@ -31,6 +32,7 @@ interface Scene {
 
 export default function GamePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
+  const [hasReadLetter, setHasReadLetter] = useState(false)
   const [currentView, setCurrentView] = useState("welcome")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedSuspect, setSelectedSuspect] = useState<Suspect | null>(null)
@@ -225,6 +227,11 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
           </div>
         )
     }
+  }
+
+  // Show Veronica's letter first
+  if (!hasReadLetter) {
+    return <VeronicaLetter onBeginInvestigation={() => setHasReadLetter(true)} />
   }
 
   return (

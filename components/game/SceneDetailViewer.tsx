@@ -19,7 +19,7 @@ export function SceneDetailViewer({ scene }: SceneDetailViewerProps) {
     <div className="h-full overflow-y-auto">
       <div className="max-w-4xl mx-auto">
         {/* Large Scene Image */}
-        <div className="relative w-full h-96 rounded-lg overflow-hidden bg-gray-700 mb-6">
+        <div className="relative w-full h-[32rem] rounded-lg overflow-hidden bg-gray-700 mb-6">
           <Image
             src={scene.imageUrl}
             alt={scene.name}
