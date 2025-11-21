@@ -81,13 +81,13 @@ export function SuspectProfiles({ suspects }: SuspectProfilesProps) {
             className="relative max-w-4xl max-h-[90vh] bg-white p-8 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full h-full">
+            <div className="relative w-full h-full flex items-center justify-center">
               <Image
                 src={selectedPhoto.url}
                 alt={selectedPhoto.name}
                 width={1024}
                 height={1024}
-                className="w-auto h-auto max-w-full max-h-[80vh] object-contain mx-auto"
+                className="w-auto h-auto max-w-full max-h-[80vh] object-contain"
               />
             </div>
             <p className="text-center mt-4 text-gray-700 font-semibold text-lg">
