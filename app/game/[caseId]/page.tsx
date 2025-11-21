@@ -4,6 +4,7 @@ import { useState, use } from "react"
 import { ActionPanel } from "@/components/ui/ActionPanel"
 import { MainContentPanel } from "@/components/ui/MainContentPanel"
 import { GameMenu } from "@/components/game/GameMenu"
+import { DetectiveNotebook } from "@/components/game/DetectiveNotebook"
 import { SuspectList } from "@/components/game/SuspectList"
 import { SceneList } from "@/components/game/SceneList"
 import { SceneDetailViewer } from "@/components/game/SceneDetailViewer"
@@ -158,6 +159,8 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
             </p>
           </div>
         )
+      case "notebook":
+        return <DetectiveNotebook />
       case "question":
         return (
           <SuspectList
