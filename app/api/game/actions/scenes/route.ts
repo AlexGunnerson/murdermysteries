@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
 
 /**
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     // Verify session belongs to user
     const { data: session, error: sessionError } = await supabase
@@ -47,15 +47,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if scene exists
+    // Check if scene exists in case_scenes table
     const { data: scene, error: sceneError } = await supabase
-      .from('scenes')
+      .from('case_scenes')
       .select('*')
-      .eq('id', sceneId)
+      .eq('scene_id', sceneId)
       .eq('case_id', session.case_id)
       .single()
 
     if (sceneError || !scene) {
+      console.error('Scene query error:', sceneError)
       return NextResponse.json(
         { error: 'Scene not found' },
         { status: 404 }
@@ -153,7 +154,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     // Verify session
     const { data: session } = await supabase

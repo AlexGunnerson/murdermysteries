@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { X } from "lucide-react"
+import { X, RefreshCw } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface Scene {
   id: string
@@ -25,7 +26,11 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [confirmScene, setConfirmScene] = useState<Scene | null>(null)
-  const [investigatedScenes, setInvestigatedScenes] = useState<Set<string>>(new Set())
+  const [unlocking, setUnlocking] = useState(false)
+  const [sessionExpired, setSessionExpired] = useState(false)
+  
+  // Use game store for persistent unlocked state
+  const { unlockedContent, unlockScene, detectivePoints, subtractDetectivePoints, isLoading: gameLoading, initializeGame } = useGameState()
 
   useEffect(() => {
     loadScenes()
@@ -63,6 +68,15 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
     }
   }
 
+  // Show loading if game session is still initializing
+  if (gameLoading || !sessionId) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-gray-400">Initializing game session...</div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -93,22 +107,96 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
     )
   }
 
-  const handleConfirmUnlock = () => {
-    if (confirmScene) {
-      // Mark this scene as investigated
-      setInvestigatedScenes(prev => new Set(prev).add(confirmScene.id))
+  const handleConfirmUnlock = async () => {
+    if (!confirmScene) return
+    
+    // Check if session is initialized
+    if (!sessionId) {
+      setError('Game session not initialized. Please refresh the page.')
+      setConfirmScene(null)
+      return
+    }
+    
+    // Check if player has enough DP
+    if (detectivePoints < confirmScene.dpCost) {
+      setError(`Not enough Detective Points. You need ${confirmScene.dpCost} DP but only have ${detectivePoints} DP.`)
+      setConfirmScene(null)
+      return
+    }
+    
+    try {
+      setUnlocking(true)
+      setError(null)
+      
+      // Call API to unlock the scene
+      const response = await fetch('/api/game/actions/scenes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          sceneId: confirmScene.id,
+        }),
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        
+        // If session is not found, it means the stored sessionId is invalid
+        // This can happen when database is reset or user switched accounts
+        if (response.status === 404 && errorData.error?.includes('Session not found')) {
+          setError('Your game session has expired. Please reset your session to continue.')
+          setSessionExpired(true)
+          setConfirmScene(null)
+          return
+        }
+        
+        throw new Error(errorData.error || 'Failed to unlock scene')
+      }
+      
+      const data = await response.json()
+      
+      // Update game store
+      unlockScene(confirmScene.id)
+      subtractDetectivePoints(Math.abs(data.cost))
+      
+      // Open the scene
       onSelectScene(confirmScene)
       setConfirmScene(null)
+    } catch (err) {
+      console.error('Error unlocking scene:', err)
+      setError(err instanceof Error ? err.message : 'Failed to unlock scene')
+    } finally {
+      setUnlocking(false)
     }
   }
 
   const handleSceneClick = (scene: Scene) => {
+    // Clear any previous errors
+    setError(null)
+    
     // If already investigated, open directly without confirmation
-    if (investigatedScenes.has(scene.id)) {
+    if (unlockedContent.scenes.has(scene.id)) {
       onSelectScene(scene)
     } else {
       // Show confirmation dialog for first-time investigation
       setConfirmScene(scene)
+    }
+  }
+
+  const handleResetSession = async () => {
+    setLoading(true)
+    setError(null)
+    setSessionExpired(false)
+    try {
+      await initializeGame(caseId, true)
+      // Reload the page to ensure clean state
+      window.location.reload()
+    } catch (err) {
+      console.error('Error resetting session:', err)
+      setError('Failed to reset session. Please try refreshing the page.')
+      setLoading(false)
     }
   }
 
@@ -122,9 +210,28 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
           </p>
         </div>
 
+        {error && (
+          <div className="bg-red-900/30 border border-red-700 text-red-200 px-4 py-3 rounded mb-4">
+            <div className="flex items-center justify-between">
+              <span>{error}</span>
+              {sessionExpired && (
+                <Button
+                  onClick={handleResetSession}
+                  variant="outline"
+                  size="sm"
+                  className="ml-4 flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Reset Session
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-4">
           {availableScenes.map((scene) => {
-            const isInvestigated = investigatedScenes.has(scene.id)
+            const isInvestigated = unlockedContent.scenes.has(scene.id)
             
             return (
               <button
@@ -239,14 +346,16 @@ export function SceneList({ caseId, sessionId, onSelectScene }: SceneListProps) 
                 onClick={() => setConfirmScene(null)}
                 variant="outline"
                 className="flex-1"
+                disabled={unlocking}
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleConfirmUnlock}
                 className="flex-1 bg-blue-600 hover:bg-blue-700"
+                disabled={unlocking}
               >
-                Investigate
+                {unlocking ? "Unlocking..." : "Investigate"}
               </Button>
             </div>
           </div>

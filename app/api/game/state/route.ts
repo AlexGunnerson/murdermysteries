@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { requireAuth } from '@/lib/auth/session'
 
 // GET - Fetch game state
@@ -7,16 +7,32 @@ export async function GET(request: NextRequest) {
   try {
     const user = await requireAuth()
     const searchParams = request.nextUrl.searchParams
-    const caseId = searchParams.get('caseId')
+    const caseSlug = searchParams.get('caseId') // This is actually a slug like "case01"
 
-    if (!caseId) {
+    if (!caseSlug) {
       return NextResponse.json(
         { error: 'caseId is required' },
         { status: 400 }
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
+
+    // First, look up the case UUID by slug
+    const { data: caseData, error: caseError } = await supabase
+      .from('cases')
+      .select('id')
+      .eq('slug', caseSlug)
+      .single()
+
+    if (caseError || !caseData) {
+      return NextResponse.json(
+        { error: 'Case not found' },
+        { status: 404 }
+      )
+    }
+
+    const caseId = caseData.id
 
     // Fetch game session
     const { data: session, error: sessionError } = await supabase
@@ -100,16 +116,32 @@ export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth()
     const body = await request.json()
-    const { caseId, detectivePoints, isCompleted, isSolvedCorrectly } = body
+    const { caseId: caseSlug, detectivePoints, isCompleted, isSolvedCorrectly } = body
 
-    if (!caseId) {
+    if (!caseSlug) {
       return NextResponse.json(
         { error: 'caseId is required' },
         { status: 400 }
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
+
+    // First, look up the case UUID by slug
+    const { data: caseData, error: caseError } = await supabase
+      .from('cases')
+      .select('id')
+      .eq('slug', caseSlug)
+      .single()
+
+    if (caseError || !caseData) {
+      return NextResponse.json(
+        { error: 'Case not found' },
+        { status: 404 }
+      )
+    }
+
+    const caseId = caseData.id
 
     // Check if session exists
     const { data: existingSession } = await supabase
@@ -182,7 +214,7 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     // Verify session belongs to user
     const { data: session } = await supabase

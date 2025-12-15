@@ -16,13 +16,16 @@ export function useGameState() {
     chatHistory: store.chatHistory,
     theoryHistory: store.theoryHistory,
     unlockedContent: store.unlockedContent,
+    revealedContent: store.revealedContent,
     isCompleted: store.isCompleted,
     isSolvedCorrectly: store.isSolvedCorrectly,
+    hasReadVeronicaLetter: store.hasReadVeronicaLetter,
     isLoading: store.isLoading,
     isSyncing: store.isSyncing,
     
     // Actions
     initializeGame: store.initializeGame,
+    setSessionId: store.setSessionId,
     setDetectivePoints: store.setDetectivePoints,
     addDetectivePoints: store.addDetectivePoints,
     subtractDetectivePoints: store.subtractDetectivePoints,
@@ -32,8 +35,10 @@ export function useGameState() {
     unlockSuspect: store.unlockSuspect,
     unlockScene: store.unlockScene,
     unlockRecord: store.unlockRecord,
+    revealSuspect: store.revealSuspect,
     completeGame: store.completeGame,
     resetGame: store.resetGame,
+    markLetterAsRead: store.markLetterAsRead,
     setLoading: store.setLoading,
     setSyncing: store.setSyncing,
   }
@@ -48,7 +53,9 @@ export function useInitializeGame(caseId: string) {
   useEffect(() => {
     // Only initialize if this is a new case
     if (currentCaseId !== caseId) {
-      initializeGame(caseId)
+      initializeGame(caseId).catch(error => {
+        console.error('Failed to initialize game:', error)
+      })
     }
   }, [caseId, currentCaseId, initializeGame])
 }

@@ -20,7 +20,7 @@
       "name": "Martin Ashcombe",
       "role": "The Irresponsible Brother",
       "bio": "61 years old, Reginald's younger brother. Charming but financially dependent. Former academic who squandered opportunities through gambling. Was very drunk during the gala.",
-      "portraitUrl": "/cases/case01/images/portraits/martin.jpg",
+      "portraitUrl": "/cases/case01/images/portraits/martin.png",
       "veronicaNote": "Reginald's younger brother. Sixty-one, yet he possesses the impulse control of a schoolboy. He has spent a lifetime in my husband's shadow, and I fear he has grown to resent the lack of light. A gambler in both finance and life.",
       "initiallyAvailable": false,
       "unlockConditions": {
@@ -32,7 +32,7 @@
       "name": "Colin Dorsey",
       "role": "The Estate Manager",
       "bio": "53 years old, Reginald's right hand and estate manager. Competent and loyal on the surface. Responded to Veronica's scream after the body was discovered.",
-      "portraitUrl": "/cases/case01/images/portraits/colin.jpg",
+      "portraitUrl": "/cases/case01/images/portraits/colin.png",
       "veronicaNote": "The Estate Manager. He was once Reginald's right hand, but that hand has withered. Competent, yes, but there is a desperation in him now. He and my husband quarreled years ago—trust once broken is never truly mended.",
       "initiallyAvailable": false,
       "unlockConditions": {
@@ -56,7 +56,7 @@
       "name": "Dr. Leonard Vale",
       "role": "The Physician",
       "bio": "58 years old, elegant and calculating. Longtime friend of the Ashcombe family and attending physician. Left the ballroom early for an 'urgent phone call' before Reginald's death.",
-      "portraitUrl": "/cases/case01/images/portraits/vale.jpg",
+      "portraitUrl": "/cases/case01/images/portraits/vale.png",
       "veronicaNote": "The Physician. A \"friend\" of the family for decades. He is elegant and calculating, with a bedside manner that is almost too calm. He pronounced Reginald dead without a flicker of emotion. I have always found his stillness... unsettling.",
       "initiallyAvailable": false,
       "unlockConditions": {
@@ -70,7 +70,11 @@
       "id": "scene_staircase",
       "name": "Grand Staircase (Private Wing)",
       "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
-      "imageUrl": "/cases/case01/images/scenes/staircase.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_1.png",
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_2.png"
+      ],
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -78,7 +82,18 @@
       "id": "scene_greenhouse",
       "name": "Grand Conservatory (Greenhouse)",
       "description": "Reginald's pride and joy - a glass-domed greenhouse filled with rare orchids and tropical blooms. He personally led tours here during the afternoon.",
-      "imageUrl": "/cases/case01/images/scenes/greenhouse.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_1.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_2.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_3.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_4.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_5.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_5.1.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_5.2.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_6.png",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_9.png"
+      ],
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -86,7 +101,11 @@
       "id": "scene_lawn",
       "name": "Lawn & Terrace",
       "description": "Where the afternoon luncheon was held. White canopies, champagne, and society's polished conversation filled the space earlier that day.",
-      "imageUrl": "/cases/case01/images/scenes/north lawn.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 3 - North Lawn/north_lawn_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 3 - North Lawn/north_lawn_1.png",
+        "/cases/case01/images/scenes/Scene 3 - North Lawn/north_lawn_2.png"
+      ],
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -94,7 +113,13 @@
       "id": "scene_ballroom",
       "name": "Ballroom",
       "description": "The grand ballroom where the evening's charity presentation took place. Crystal chandeliers, live music, and dozens of guests filled the space.",
-      "imageUrl": "/cases/case01/images/scenes/ballroom.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_1.png",
+        "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_2.png",
+        "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_3.png",
+        "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_4.png"
+      ],
       "dpCost": 3,
       "initiallyAvailable": true
     },
@@ -102,9 +127,12 @@
       "id": "scene_master_bedroom",
       "name": "Master Bedroom (Private Wing)",
       "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand portrait on the wall and a piano bench where Veronica keeps sheet music.",
-      "imageUrl": "/cases/case01/images/scenes/bedroom.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom.png"
+      ],
       "dpCost": 3,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
       }
@@ -113,9 +141,14 @@
       "id": "scene_study",
       "name": "Reginald's Study",
       "description": "Reginald's private office. A place of business and secrets. The study contains a safe where Reginald kept his most sensitive documents.",
-      "imageUrl": "/cases/case01/images/scenes/study.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 4 -  Study/study_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 4 -  Study/study_1.png",
+        "/cases/case01/images/scenes/Scene 4 -  Study/study_2.png",
+        "/cases/case01/images/scenes/Scene 4 -  Study/study_3.png"
+      ],
       "dpCost": 3,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
       }
@@ -135,7 +168,10 @@
       "id": "record_crime_scene_photos",
       "name": "Crime Scene Photographs",
       "description": "Photos taken at the scene, including close-ups of the body, wine spill, and staircase.",
-      "documentUrl": "/cases/case01/images/documents/crime_photos.jpg",
+      "documentUrl": "/cases/case01/images/crime_scene/reginald_wine_spill.png",
+      "images": [
+        "/cases/case01/images/crime_scene/reginald_wine_spill.png"
+      ],
       "dpCost": 2,
       "initiallyAvailable": true
     },
@@ -143,7 +179,11 @@
       "id": "record_gala_photos",
       "name": "Gala Event Photos",
       "description": "Photos from the evening's festivities, showing guests, staff, and the inner circle throughout the event.",
-      "documentUrl": "/cases/case01/images/documents/gala_photos.jpg",
+      "documentUrl": "/cases/case01/images/gala_photos/itinerary.png",
+      "images": [
+        "/cases/case01/images/gala_photos/itinerary.png",
+        "/cases/case01/images/gala_photos/colin_white_gloves.png"
+      ],
       "dpCost": 2,
       "initiallyAvailable": true
     },
@@ -151,9 +191,9 @@
       "id": "record_blackmail_floor",
       "name": "Blackmail Papers (Found at Scene)",
       "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",
-      "documentUrl": "/cases/case01/images/documents/blackmail_floor.jpg",
+      "isHTML": true,
       "dpCost": 2,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }

@@ -33,14 +33,14 @@ interface Scene {
 
 export default function GamePage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
-  const [hasReadLetter, setHasReadLetter] = useState(false)
   const [currentView, setCurrentView] = useState("welcome")
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedSuspect, setSelectedSuspect] = useState<Suspect | null>(null)
+  const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   
   // Initialize game state from Zustand store
   useInitializeGame(caseId)
-  const { detectivePoints, sessionId } = useGameState()
+  const { detectivePoints, sessionId, isLoading, hasReadVeronicaLetter, markLetterAsRead } = useGameState()
 
   const handleAction = (action: string) => {
     console.log("Action triggered:", action)
@@ -160,20 +160,34 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
           </div>
           )
       case "notebook":
-        return <DetectiveNotebook />
+        return <DetectiveNotebook onAction={handleAction} onOpenMenu={() => setIsMenuOpen(true)} />
       case "question":
+        if (!sessionId) {
           return (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-400">Initializing game session...</div>
+            </div>
+          )
+        }
+        return (
           <SuspectList
             caseId={caseId}
-            sessionId={sessionId || "temp-session"}
+            sessionId={sessionId}
             onSelectSuspect={handleSelectSuspect}
           />
         )
       case "scenes":
+        if (!sessionId) {
+          return (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-gray-400">Initializing game session...</div>
+            </div>
+          )
+        }
         return (
           <SceneList
             caseId={caseId}
-            sessionId={sessionId || "temp-session"}
+            sessionId={sessionId}
             onSelectScene={handleSelectScene}
           />
         )
@@ -232,18 +246,40 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
     }
   }
 
-  // Show Veronica's letter first
-  if (!hasReadLetter) {
-    return <VeronicaLetter onBeginInvestigation={() => setHasReadLetter(true)} />
+  const handleOpenLetter = () => {
+    setShowVeronicaLetter(true)
   }
 
+  const handleCloseLetter = () => {
+    setShowVeronicaLetter(false)
+    markLetterAsRead()
+  }
+
+  // Show Veronica's letter as modal if opened
+  if (showVeronicaLetter) {
+    return <VeronicaLetter onBeginInvestigation={handleCloseLetter} isFirstView={!hasReadVeronicaLetter} />
+  }
+
+  // Show full-width detective board for notebook view
+  if (currentView === "notebook") {
+    return (
+      <>
+        <DetectiveNotebook onAction={handleAction} onOpenMenu={() => setIsMenuOpen(true)} />
+        <GameMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      </>
+    )
+  }
+
+  // Show regular layout with ActionPanel for other views
   return (
     // Temporarily bypassing ProtectedRoute for UI demo
     <>
       <div className="flex min-h-screen bg-gray-900">
         <ActionPanel 
           detectivePoints={detectivePoints} 
-          onAction={handleAction} 
+          onAction={handleAction}
+          hasUnreadMessage={!hasReadVeronicaLetter}
+          onOpenMessage={handleOpenLetter}
         />
         <MainContentPanel title={`Case: ${caseId}`}>
           {renderContent()}

@@ -35,7 +35,7 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact } = useGameState()
+  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact, unlockScene, isLoading: gameLoading } = useGameState()
 
   // Fetch available scenes
   useEffect(() => {
@@ -73,6 +73,12 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
       return
     }
 
+    // Check if session is initialized
+    if (!sessionId) {
+      setError('Game session not initialized. Please refresh the page.')
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
@@ -97,6 +103,9 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
 
       // Update DP
       subtractDetectivePoints(Math.abs(data.cost))
+      
+      // Update game store
+      unlockScene(scene.id)
 
       // Update scene with full content
       const fullScene = { ...scene, ...data.scene, isInvestigated: true }

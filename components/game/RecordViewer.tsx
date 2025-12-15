@@ -28,7 +28,7 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact } = useGameState()
+  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact, unlockRecord, isLoading: gameLoading } = useGameState()
 
   // Fetch available records
   useEffect(() => {
@@ -66,6 +66,12 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
       return
     }
 
+    // Check if session is initialized
+    if (!sessionId) {
+      setError('Game session not initialized. Please refresh the page.')
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
@@ -90,6 +96,9 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
 
       // Update DP
       subtractDetectivePoints(Math.abs(data.cost))
+      
+      // Update game store
+      unlockRecord(record.id)
 
       // Update record with full content
       const fullRecord = { ...record, ...data.record, isViewed: true }

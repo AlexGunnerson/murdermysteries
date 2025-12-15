@@ -38,6 +38,10 @@ export interface UnlockedContent {
   records: Set<string>
 }
 
+export interface RevealedContent {
+  suspects: Set<string>
+}
+
 export interface GameState {
   // Game session info
   caseId: string | null
@@ -54,16 +58,21 @@ export interface GameState {
   // Unlocked content
   unlockedContent: UnlockedContent
   
+  // Revealed content (suspects whose cards have been viewed)
+  revealedContent: RevealedContent
+  
   // Game status
   isCompleted: boolean
   isSolvedCorrectly: boolean | null
+  hasReadVeronicaLetter: boolean
   
   // Loading states
   isLoading: boolean
   isSyncing: boolean
   
   // Actions
-  initializeGame: (caseId: string) => void
+  initializeGame: (caseId: string, forceReinitialize?: boolean) => Promise<void>
+  setSessionId: (sessionId: string) => void
   setDetectivePoints: (points: number) => void
   addDetectivePoints: (points: number) => void
   subtractDetectivePoints: (points: number) => void
@@ -76,8 +85,11 @@ export interface GameState {
   unlockScene: (sceneId: string) => void
   unlockRecord: (recordId: string) => void
   
+  revealSuspect: (suspectId: string) => void
+  
   completeGame: (isCorrect: boolean) => void
   resetGame: () => void
+  markLetterAsRead: () => void
   
   setLoading: (loading: boolean) => void
   setSyncing: (syncing: boolean) => void
@@ -95,8 +107,12 @@ const initialState = {
     scenes: new Set<string>(),
     records: new Set<string>(),
   },
+  revealedContent: {
+    suspects: new Set<string>(),
+  },
   isCompleted: false,
   isSolvedCorrectly: null,
+  hasReadVeronicaLetter: false,
   isLoading: false,
   isSyncing: false,
 }
@@ -107,22 +123,118 @@ export const useGameStore = create<GameState>()(
       (set, get) => ({
         ...initialState,
 
-        initializeGame: (caseId: string) => {
-          set({
-            caseId,
-            sessionId: `session_${Date.now()}`,
-            detectivePoints: 25,
-            discoveredFacts: [],
-            chatHistory: [],
-            theoryHistory: [],
-            unlockedContent: {
-              suspects: new Set<string>(),
-              scenes: new Set<string>(),
-              records: new Set<string>(),
-            },
-            isCompleted: false,
-            isSolvedCorrectly: null,
-          })
+        initializeGame: async (caseId: string, forceReinitialize = false) => {
+          // Check if we already have a session for this case
+          const currentState = get()
+          if (!forceReinitialize && currentState.caseId === caseId && currentState.sessionId) {
+            // Verify the session is still valid
+            try {
+              const verifyResponse = await fetch(`/api/game/state?caseId=${caseId}`)
+              if (verifyResponse.ok) {
+                const verifyData = await verifyResponse.json()
+                if (verifyData.session && verifyData.session.id === currentState.sessionId) {
+                  // Session is valid, no need to reinitialize
+                  return
+                }
+              }
+              // If verification fails, continue to reinitialize
+              console.log('Session verification failed, reinitializing...')
+            } catch (error) {
+              console.log('Session verification error, reinitializing...', error)
+            }
+          }
+
+          // Set loading state
+          set({ isLoading: true })
+
+          try {
+            // Try to fetch existing session or create a new one
+            const response = await fetch('/api/game/state', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                caseId,
+                detectivePoints: 25,
+                isCompleted: false,
+              }),
+            })
+
+            if (!response.ok) {
+              throw new Error('Failed to initialize game session')
+            }
+
+            const data = await response.json()
+            
+            // Set the state with the real database session ID
+            set({
+              caseId,
+              sessionId: data.session.id,
+              detectivePoints: data.session.detective_points,
+              discoveredFacts: [],
+              chatHistory: [],
+              theoryHistory: [],
+              unlockedContent: {
+                suspects: new Set<string>(),
+                scenes: new Set<string>(),
+                records: new Set<string>(),
+              },
+              revealedContent: {
+                suspects: new Set<string>(),
+              },
+              isCompleted: data.session.is_completed || false,
+              isSolvedCorrectly: data.session.is_solved_correctly || null,
+              isLoading: false,
+            })
+
+            // Load existing game state if session already exists
+            const stateResponse = await fetch(`/api/game/state?caseId=${caseId}`)
+            if (stateResponse.ok) {
+              const stateData = await stateResponse.json()
+              
+              if (stateData.session) {
+                // Restore unlocked content
+                set({
+                  unlockedContent: {
+                    suspects: new Set(stateData.unlockedContent.suspects || []),
+                    scenes: new Set(stateData.unlockedContent.scenes || []),
+                    records: new Set(stateData.unlockedContent.records || []),
+                  },
+                  revealedContent: {
+                    suspects: new Set(stateData.revealedContent?.suspects || []),
+                  },
+                  detectivePoints: stateData.session.detective_points,
+                })
+              }
+            }
+          } catch (error) {
+            console.error('Error initializing game:', error)
+            // Fallback to local-only mode if API fails
+            set({
+              caseId,
+              sessionId: null,
+              detectivePoints: 25,
+              discoveredFacts: [],
+              chatHistory: [],
+              theoryHistory: [],
+              unlockedContent: {
+                suspects: new Set<string>(),
+                scenes: new Set<string>(),
+                records: new Set<string>(),
+              },
+              revealedContent: {
+                suspects: new Set<string>(),
+              },
+              isCompleted: false,
+              isSolvedCorrectly: null,
+              isLoading: false,
+            })
+          }
+        },
+
+        setSessionId: (sessionId: string) => {
+          set({ sessionId })
         },
 
         setDetectivePoints: (points: number) => {
@@ -231,6 +343,19 @@ export const useGameStore = create<GameState>()(
           })
         },
 
+        revealSuspect: (suspectId: string) => {
+          set((state) => {
+            const newRevealed = new Set(state.revealedContent.suspects)
+            newRevealed.add(suspectId)
+            return {
+              revealedContent: {
+                ...state.revealedContent,
+                suspects: newRevealed,
+              },
+            }
+          })
+        },
+
         completeGame: (isCorrect: boolean) => {
           set({
             isCompleted: true,
@@ -240,6 +365,79 @@ export const useGameStore = create<GameState>()(
 
         resetGame: () => {
           set(initialState)
+        },
+
+        markLetterAsRead: () => {
+          const currentState = get()
+          
+          // Only add facts if letter hasn't been read before
+          if (!currentState.hasReadVeronicaLetter) {
+            const letterFacts: DiscoveredFact[] = [
+              {
+                id: `fact_letter_${Date.now()}_1`,
+                content: "Reginald Ashcombe, Veronica's husband, is dead.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_2`,
+                content: "He was found at the bottom of a grand staircase.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_3`,
+                content: "The official ruling by the constable is that the death was an accident—a slip after too much wine and celebration.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_4`,
+                content: "Veronica was the person who found Reginald's body.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_5`,
+                content: "Veronica was seeking approval of a speech revision from Reginald. She left Mrs. Portwell in the Master bedroom to find him when she found his body at the bottom of the grand staircase.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_6`,
+                content: "A wine glass was found near the body. Wine spilled next to it.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_7`,
+                content: "Colin, Lydia, and Dr. Vale came running immediately after Veronica screamed.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+              {
+                id: `fact_letter_${Date.now()}_8`,
+                content: "Dr. Vale checked for a pulse and confirmed Reginald's death.",
+                source: 'record',
+                sourceId: 'veronica_letter',
+                discoveredAt: new Date(),
+              },
+            ]
+            
+            set({ 
+              hasReadVeronicaLetter: true,
+              discoveredFacts: [...currentState.discoveredFacts, ...letterFacts]
+            })
+          } else {
+            set({ hasReadVeronicaLetter: true })
+          }
         },
 
         setLoading: (loading: boolean) => {
@@ -260,7 +458,34 @@ export const useGameStore = create<GameState>()(
             scenes: Array.from(state.unlockedContent.scenes),
             records: Array.from(state.unlockedContent.records),
           },
+          revealedContent: {
+            suspects: Array.from(state.revealedContent.suspects),
+          },
         }),
+        // Deserialize arrays back to Sets when loading from storage
+        merge: (persistedState: any, currentState: GameState) => {
+          const merged = {
+            ...currentState,
+            ...persistedState,
+          }
+          
+          // Convert arrays back to Sets if they exist
+          if (persistedState?.unlockedContent) {
+            merged.unlockedContent = {
+              suspects: new Set(persistedState.unlockedContent.suspects || []),
+              scenes: new Set(persistedState.unlockedContent.scenes || []),
+              records: new Set(persistedState.unlockedContent.records || []),
+            }
+          }
+          
+          if (persistedState?.revealedContent) {
+            merged.revealedContent = {
+              suspects: new Set(persistedState.revealedContent.suspects || []),
+            }
+          }
+          
+          return merged
+        },
       }
     ),
     {

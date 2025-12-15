@@ -3,9 +3,11 @@
 interface ActionPanelProps {
   detectivePoints: number
   onAction: (action: string) => void
+  hasUnreadMessage?: boolean
+  onOpenMessage?: () => void
 }
 
-export function ActionPanel({ detectivePoints, onAction }: ActionPanelProps) {
+export function ActionPanel({ detectivePoints, onAction, hasUnreadMessage, onOpenMessage }: ActionPanelProps) {
   const actions = [
     { id: "question", label: "Question Suspects", cost: 0, icon: "💬" },
     { id: "records", label: "Check Records", cost: -2, icon: "📄" },
@@ -23,6 +25,25 @@ export function ActionPanel({ detectivePoints, onAction }: ActionPanelProps) {
         <div className="text-4xl font-bold text-white mt-1">{detectivePoints}</div>
         <div className="text-xs text-blue-200 mt-2">Use wisely to solve the case</div>
       </div>
+
+      {/* Message Notification */}
+      {hasUnreadMessage && onOpenMessage && (
+        <button
+          onClick={onOpenMessage}
+          className="mb-4 w-full p-4 bg-amber-900/50 hover:bg-amber-900/70 border-2 border-amber-500 rounded-lg transition-colors relative animate-pulse"
+        >
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <span className="text-3xl">✉️</span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-gray-800"></span>
+            </div>
+            <div className="text-left flex-1">
+              <div className="font-semibold text-amber-300">New Message</div>
+              <div className="text-xs text-amber-200">From Veronica Ashcombe</div>
+            </div>
+          </div>
+        </button>
+      )}
 
       {/* How to Play Button */}
       <button

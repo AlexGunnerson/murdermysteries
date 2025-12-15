@@ -2,11 +2,24 @@
 
 import { useState, useEffect } from "react"
 import { useGameState } from "@/lib/hooks/useGameState"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
-import { SuspectProfiles } from "@/components/game/SuspectProfiles"
+import { BoardHeader } from "@/components/game/BoardHeader"
 import Image from "next/image"
-import { FileText, Camera, Lightbulb, ClipboardList, Users } from "lucide-react"
+import { X } from "lucide-react"
+import { BoardSection } from "./detective-board/BoardSection"
+import { PolaroidPhoto } from "./detective-board/PolaroidPhoto"
+import { PortraitFrame } from "./detective-board/PortraitFrame"
+import { DocumentCard } from "./detective-board/DocumentCard"
+import { StickyNote } from "./detective-board/StickyNote"
+import { SuspectCard } from "./detective-board/SuspectCard"
+import { VictimCard } from "./detective-board/VictimCard"
+import { SceneViewer } from "./detective-board/SceneViewer"
+import { DocumentViewer } from "./detective-board/DocumentViewer"
+import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
+import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from "./documents/MartinBlackmailDocs"
+import { ColinBlackmailPage1, ColinBlackmailPage2 } from "./documents/ColinBlackmailDocs"
+import { LydiaBlackmailPage1, LydiaBlackmailPage2, LydiaBlackmailPage3 } from "./documents/LydiaBlackmailDocs"
+import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackmailPage4, ValeBlackmailPage5 } from "./documents/ValeBlackmailDocs"
 
 interface Suspect {
   id: string
@@ -17,269 +30,503 @@ interface Suspect {
   veronicaNote: string
 }
 
-export function DetectiveNotebook() {
-  const { discoveredFacts, theoryHistory, chatHistory } = useGameState()
+interface Scene {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  images: string[]
+  initiallyAvailable?: boolean
+}
+
+interface Document {
+  id: string
+  name: string
+  description: string
+  documentUrl?: string
+  images?: string[]
+  content?: string
+  initiallyAvailable?: boolean
+}
+
+interface DetectiveNotebookProps {
+  onAction: (action: string) => void
+  onOpenMenu: () => void
+}
+
+export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
+  const [scenes, setScenes] = useState<Scene[]>([])
+  const [documents, setDocuments] = useState<Document[]>([])
+  const [selectedSuspectForReveal, setSelectedSuspectForReveal] = useState<Suspect | null>(null)
+  const [showVictimCard, setShowVictimCard] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [selectedHTMLDocument, setSelectedHTMLDocument] = useState<string | null>(null)
 
-  // Load suspect data from metadata
+  // Load suspect and scene data from metadata
   useEffect(() => {
-    async function loadSuspects() {
+    async function loadMetadata() {
       try {
         const response = await fetch('/cases/case01/metadata.json')
         const data = await response.json()
         
-        // Extract age from name (e.g., "Martin Ashcombe (61)" -> 61)
-        const suspectsWithNotes = data.suspects
-          .filter((s: any) => s.veronicaNote) // Only include suspects with notes
-          .map((s: any) => {
-            const ageMatch = s.bio.match(/(\d+) years old/)
-            return {
-              id: s.id,
-              name: s.name,
-              age: ageMatch ? parseInt(ageMatch[1]) : 0,
-              role: s.role,
-              portraitUrl: s.portraitUrl,
-              veronicaNote: s.veronicaNote
-            }
-          })
+        // Get all suspects including Veronica
+        const allSuspects = data.suspects.map((s: any) => {
+          const ageMatch = s.bio.match(/(\d+) years old/)
+          return {
+            id: s.id,
+            name: s.name,
+            age: ageMatch ? parseInt(ageMatch[1]) : 0,
+            role: s.role,
+            portraitUrl: s.portraitUrl,
+            veronicaNote: s.veronicaNote
+          }
+        })
         
-        setSuspects(suspectsWithNotes)
+        const allScenes = data.locations.map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          description: s.description,
+          imageUrl: s.imageUrl,
+          images: s.images || [s.imageUrl],
+          initiallyAvailable: s.initiallyAvailable
+        }))
+
+        const allDocuments = data.records.map((r: any) => ({
+          id: r.id,
+          name: r.name,
+          description: r.description,
+          documentUrl: r.documentUrl,
+          images: r.images || (r.documentUrl ? [r.documentUrl] : []),
+          content: r.content,
+          initiallyAvailable: r.initiallyAvailable
+        }))
+        
+        setSuspects(allSuspects)
+        setScenes(allScenes)
+        setDocuments(allDocuments)
       } catch (error) {
-        console.error('Failed to load suspects:', error)
+        console.error('Failed to load metadata:', error)
       } finally {
         setLoading(false)
       }
     }
     
-    loadSuspects()
+    loadMetadata()
   }, [])
 
-  // Group facts by category
-  const factsByCategory = discoveredFacts.reduce((acc, fact) => {
-    const category = fact.source || 'other'
-    if (!acc[category]) acc[category] = []
-    acc[category].push(fact)
-    return acc
-  }, {} as Record<string, typeof discoveredFacts>)
+  const handleCloseLetter = () => {
+    setShowVeronicaLetter(false)
+    markLetterAsRead()
+  }
 
-  // Get unique suspects from chat history
-  const chatSuspects = Array.from(
-    new Set(chatHistory.map(msg => msg.suspectId))
+  const handleSuspectClick = (suspect: Suspect) => {
+    setSelectedSuspectForReveal(suspect)
+  }
+
+  const handleCloseSuspectCard = () => {
+    if (selectedSuspectForReveal && !revealedContent.suspects.has(selectedSuspectForReveal.id)) {
+      // Mark as revealed
+      revealSuspect(selectedSuspectForReveal.id)
+      
+      // Add suspect info to discovered facts
+      addDiscoveredFact({
+        content: `${selectedSuspectForReveal.name} - ${selectedSuspectForReveal.role}: ${selectedSuspectForReveal.veronicaNote}`,
+        source: 'record',
+        sourceId: selectedSuspectForReveal.id
+      })
+    }
+    setSelectedSuspectForReveal(null)
+  }
+
+  const handleVictimClick = () => {
+    setShowVictimCard(true)
+  }
+
+  const handleCloseVictimCard = () => {
+    if (!revealedContent.suspects.has('victim_reginald')) {
+      // Mark as revealed
+      revealSuspect('victim_reginald')
+      
+      // Add victim info to discovered facts
+      addDiscoveredFact({
+        content: `Reginald Ashcombe (68) - Patriarch & Philanthropist: Built the Ashcombe fortune through strategic investments in global commodities. Known for his annual charity gala and quiet devotion to his wife, Veronica.`,
+        source: 'record',
+        sourceId: 'victim_reginald'
+      })
+    }
+    setShowVictimCard(false)
+  }
+
+  // Show scenes that are either initially available OR have been unlocked
+  const unlockedScenes = scenes.filter(scene => 
+    scene.initiallyAvailable || unlockedContent.scenes.has(scene.id)
   )
-
-  // Placeholder for investigated scenes (would come from game state)
-  const investigatedScenes: string[] = []
+  // Show documents that are either initially available OR have been unlocked
+  const unlockedDocuments = documents.filter(doc => 
+    doc.initiallyAvailable || unlockedContent.records.has(doc.id)
+  )
+  const chatSuspects = Array.from(new Set(chatHistory.map(msg => msg.suspectId)))
 
   if (showVeronicaLetter) {
     return (
       <div className="relative">
         <button
-          onClick={() => setShowVeronicaLetter(false)}
+          onClick={handleCloseLetter}
           className="absolute top-4 left-4 z-10 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600"
         >
-          ← Back to Notebook
+          ← Back to Board
         </button>
-        <VeronicaLetter onBeginInvestigation={() => setShowVeronicaLetter(false)} />
+        <VeronicaLetter onBeginInvestigation={handleCloseLetter} />
       </div>
     )
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-amber-400 mb-6">Detective&apos;s Notebook</h1>
-        <p className="text-gray-400 mb-6">
-          Your investigation records. Review discovered facts, artifacts, and clues to piece together the mystery.
-        </p>
+    <>
+      {/* Header Bar */}
+      <BoardHeader
+        detectivePoints={detectivePoints}
+        hasUnreadMessage={!hasReadVeronicaLetter}
+        onOpenMessage={() => setShowVeronicaLetter(true)}
+        onOpenMenu={onOpenMenu}
+        onOpenHelp={() => onAction('help')}
+        factsCount={discoveredFacts.length}
+        scenesCount={unlockedScenes.length}
+        questionedCount={chatSuspects.length}
+        theoriesCount={theoryHistory.length}
+        onGetClue={() => onAction('clue')}
+        onSolveMurder={() => onAction('solve')}
+      />
 
-        <Tabs defaultValue="facts" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-gray-800">
-            <TabsTrigger value="facts" className="flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" />
-              <span className="hidden sm:inline">Facts</span>
-            </TabsTrigger>
-            <TabsTrigger value="people" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">People</span>
-            </TabsTrigger>
-            <TabsTrigger value="documents" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Documents</span>
-            </TabsTrigger>
-            <TabsTrigger value="scenes" className="flex items-center gap-2">
-              <Camera className="h-4 w-4" />
-              <span className="hidden sm:inline">Scenes</span>
-            </TabsTrigger>
-            <TabsTrigger value="clues" className="flex items-center gap-2">
-              <Lightbulb className="h-4 w-4" />
-              <span className="hidden sm:inline">Clues</span>
-            </TabsTrigger>
-          </TabsList>
+      {/* Board */}
+      <div 
+        className="min-h-screen p-4 md:p-6 overflow-y-auto"
+        style={{
+          backgroundColor: '#8B7355',
+          backgroundImage: `
+            radial-gradient(circle at 20% 50%, rgba(0,0,0,0.05) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 50%),
+            url("/cases/case01/images/ui/corkboard_1.jpg")
+          `,
+          backgroundSize: '512px 512px',
+          backgroundRepeat: 'repeat'
+        }}
+      >
+        <div className="max-w-7xl mx-auto">
 
-          {/* Facts Tab */}
-          <TabsContent value="facts" className="space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-4">Discovered Facts</h2>
-              
-              {discoveredFacts.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">
-                  No facts discovered yet. Start investigating to uncover clues!
-                </p>
-              ) : (
-                <div className="space-y-6">
-                  {Object.entries(factsByCategory).map(([category, facts]) => (
-                    <div key={category}>
-                      <h3 className="text-sm font-semibold text-blue-300 uppercase mb-3">
-                        {category === 'chat' ? '💬 From Conversations' : 
-                         category === 'scene' ? '🔍 From Scenes' :
-                         category === 'record' ? '📄 From Records' :
-                         category === 'clue' ? '💡 From Clues' : '📋 Other'}
-                      </h3>
-                      <div className="space-y-2">
-                        {facts.map((fact, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-gray-900 border border-gray-700 rounded p-4"
-                          >
-                            <p className="text-gray-200">{fact.content}</p>
-                            {fact.sourceId && (
-                              <p className="text-xs text-gray-500 mt-2">
-                                Source: {fact.sourceId}
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+        {/* Objective Banner */}
+        <div 
+          className="relative bg-[#fef8e0] p-8 mb-6 shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
+          style={{ 
+            transform: 'rotate(-0.8deg)',
+            backgroundImage: `
+              linear-gradient(to bottom, transparent 95%, rgba(150, 150, 150, 0.1) 100%),
+              linear-gradient(to bottom, rgba(250, 240, 200, 0.5) 0%, transparent 100%)
+            `
+          }}
+        >
+          {/* Push pin at top */}
+          <div 
+            className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-red-600 rounded-full shadow-md"
+            style={{
+              boxShadow: '0 2px 4px rgba(0,0,0,0.3), inset 0 -2px 2px rgba(0,0,0,0.2)'
+            }}
+          />
+          
+          <h2 
+            className="text-3xl text-gray-800 mb-4 flex items-center gap-3"
+            style={{ fontFamily: "'Caveat', cursive" }}
+          >
+            <span className="text-4xl">🎯</span> Your Objective
+          </h2>
+          <p 
+            className="text-2xl text-gray-900 leading-relaxed"
+            style={{ fontFamily: "'Caveat', cursive" }}
+          >
+            Veronica Ashcombe believes her husband&apos;s death was <span className="font-bold text-red-700">not an accident</span>. 
+            Your task is to investigate and provide <span className="font-bold text-blue-800">evidence or develop a theory</span> that 
+            supports her suspicion of foul play.
+          </p>
+        </div>
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          {/* The Victim */}
+          <BoardSection 
+            title="The Victim" 
+            icon="💀" 
+            rotating={0.8}
+          >
+            <div className="grid grid-cols-1 gap-3 max-w-[200px] mx-auto">
+              <PortraitFrame
+                imageUrl="/cases/case01/images/portraits/reginald.png"
+                name="Reginald"
+                role="The Victim"
+                onClick={handleVictimClick}
+                rotating={-1}
+                isRevealed={revealedContent.suspects.has('victim_reginald')}
+              />
             </div>
+          </BoardSection>
 
-            {/* Theory History */}
-            {theoryHistory.length > 0 && (
-              <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-                <h2 className="text-xl font-semibold text-amber-400 mb-4">Theory Submissions</h2>
-                <div className="space-y-3">
-                  {theoryHistory.map((theory, idx) => (
-                    <div
-                      key={idx}
-                      className="bg-gray-900 border border-gray-700 rounded p-4"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-400">
-                          Theory #{theoryHistory.length - idx}
-                        </span>
-                        <span className={`text-sm font-semibold ${
-                          theory.result === 'correct' ? 'text-green-400' :
-                          theory.result === 'partial' ? 'text-yellow-400' :
-                          'text-red-400'
-                        }`}>
-                          {theory.result.toUpperCase()}
-                        </span>
-                      </div>
-                      <p className="text-gray-200 mb-2">{theory.description}</p>
-                      {theory.feedback && (
-                        <p className="text-sm text-blue-300 italic">{theory.feedback}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+          {/* People of Interest */}
+          <BoardSection 
+            title="People of Interest" 
+            icon="👥"
+            rotating={-0.8}
+            className="md:col-span-2"
+          >
+            {suspects.length === 0 ? (
+              <p className="text-gray-600 text-center py-8 italic">Loading suspects...</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {suspects.slice(0, 5).map((suspect, idx) => (
+                  <PortraitFrame
+                    key={suspect.id}
+                    imageUrl={suspect.portraitUrl}
+                    name={suspect.name.split(' ')[0]}
+                    role={suspect.role}
+                    rotating={[-1.5, 1, -0.5, 1.5, -1][idx % 5]}
+                    isRevealed={revealedContent.suspects.has(suspect.id)}
+                    onClick={() => handleSuspectClick(suspect)}
+                  />
+                ))}
               </div>
             )}
-          </TabsContent>
+          </BoardSection>
 
-          {/* People Tab */}
-          <TabsContent value="people" className="space-y-4">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-2 text-center">People of Interest</h2>
-              <p className="text-gray-400 mb-6 text-center text-sm">
-                Veronica&apos;s handwritten notes on the inner circle
+          {/* Documents */}
+          <BoardSection 
+            title="Documents" 
+            icon="📄"
+            rotating={0.3}
+          >
+            <div className="space-y-2">
+              <DocumentCard
+                title="Veronica's Letter"
+                preview="October 14th, 1924 - Ashcombe Manor"
+                onClick={() => setShowVeronicaLetter(true)}
+                rotating={-0.5}
+              />
+              {unlockedDocuments.map((doc, idx) => (
+                <DocumentCard
+                  key={doc.id}
+                  title={doc.name}
+                  preview={doc.description}
+                  onClick={() => {
+                    // Check if it's an HTML document (Martin's blackmail)
+                    if (doc.id === 'record_blackmail_floor') {
+                      setSelectedHTMLDocument('martin_blackmail')
+                    }
+                    // Otherwise open image viewer if document has images
+                    else if (doc.images && doc.images.length > 0) {
+                      setSelectedDocument(doc)
+                    }
+                  }}
+                  rotating={[-0.5, 1, -0.5, 0.5][idx % 4]}
+                />
+              ))}
+            </div>
+          </BoardSection>
+
+          {/* Scenes */}
+          <BoardSection 
+            title="Investigate Scenes" 
+            icon="🔍"
+            onClick={() => onAction('scenes')}
+            rotating={0.5}
+            className="md:col-span-2 md:row-span-2 relative group"
+          >
+            {/* DP Cost Badge */}
+            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
+              -3 DP
+            </div>
+
+            {unlockedScenes.length === 0 ? (
+              <p className="text-gray-600 text-center py-8 italic">
+                No scenes investigated yet. Click this section to explore locations.
               </p>
-              
-              {loading ? (
-                <p className="text-gray-400 text-center py-8">Loading profiles...</p>
-              ) : suspects.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">
-                  No profiles available yet.
-                </p>
-              ) : (
-                <SuspectProfiles suspects={suspects} />
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4" onClick={(e) => e.stopPropagation()}>
+                {unlockedScenes.map((scene, idx) => (
+                  <PolaroidPhoto
+                    key={scene.id}
+                    imageUrl={scene.imageUrl}
+                    title={scene.name}
+                    onClick={() => setSelectedScene(scene)}
+                    rotating={[-2, 1, -1, 2, -1.5, 1.5][idx % 6]}
+                  />
+                ))}
+              </div>
+            )}
+          </BoardSection>
+
+          {/* Facts */}
+          <BoardSection 
+            title="Facts Discovered" 
+            icon="📋"
+            rotating={-0.3}
+            className="md:col-span-2"
+          >
+            {discoveredFacts.length === 0 ? (
+              <p className="text-gray-600 text-center py-8 italic">
+                No facts discovered yet. Begin investigating to uncover clues!
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
+                {discoveredFacts.map((fact, idx) => (
+                  <StickyNote
+                    key={fact.id}
+                    content={fact.content}
+                    source={fact.sourceId === 'veronica_letter' ? "Veronica's Letter" : fact.sourceId}
+                    rotating={[
+                      -1.5, 0.5, -0.5, 1, -2, 1.5, -1, 0.5
+                    ][idx % 8]}
+                    color={['yellow', 'blue', 'pink', 'green'][idx % 4] as any}
+                  />
+                ))}
+              </div>
+            )}
+          </BoardSection>
+
+          {/* Theory Submission */}
+          <BoardSection 
+            title="Validate Theory" 
+            icon="💭"
+            onClick={() => onAction('validate')}
+            rotating={0.7}
+            className="relative group"
+          >
+            {/* DP Cost Badge */}
+            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
+              -3 DP
+            </div>
+
+            {/* Hover hint */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-lg pointer-events-none flex items-center justify-center">
+              <span className="text-gray-800 font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 px-4 py-2 rounded-lg shadow-lg">
+                Click to Submit Theory
+              </span>
+            </div>
+
+            <div className="text-center py-8">
+              <div className="text-6xl mb-4">📁</div>
+              <p className="text-sm text-gray-700 mb-4">
+                Submit your theory when ready
+              </p>
+              {theoryHistory.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-300">
+                  <p className="text-xs text-gray-600">
+                    Theories submitted: {theoryHistory.length}
+                  </p>
+                </div>
               )}
             </div>
-          </TabsContent>
-
-          {/* Documents Tab */}
-          <TabsContent value="documents" className="space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-4">Documents & Letters</h2>
-              
-              <div className="space-y-3">
-                {/* Veronica's Letter - Always available */}
-                <button
-                  onClick={() => setShowVeronicaLetter(true)}
-                  className="w-full text-left bg-gray-900 border border-gray-700 hover:border-amber-500 rounded-lg p-4 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <FileText className="h-8 w-8 text-amber-400" />
-                    <div>
-                      <h3 className="font-semibold text-gray-100">Letter from Veronica Ashcombe</h3>
-                      <p className="text-sm text-gray-400">October 14th, 1924 - Ashcombe Manor</p>
-                    </div>
-                  </div>
-                </button>
-
-                {/* Placeholder for other documents */}
-                <div className="text-gray-500 text-center py-8 border-2 border-dashed border-gray-700 rounded-lg">
-                  <FileText className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                  <p>Additional documents will appear here as you discover them</p>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Scenes Tab */}
-          <TabsContent value="scenes" className="space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-4">Investigated Scenes</h2>
-              
-              {investigatedScenes.length === 0 ? (
-                <div className="text-gray-400 text-center py-8">
-                  <Camera className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                  <p>No scenes investigated yet.</p>
-                  <p className="text-sm mt-2">Use &quot;Investigate Scenes&quot; to examine locations.</p>
-                </div>
-              ) : (
-                <div className="grid gap-4">
-                  {investigatedScenes.map(sceneId => (
-                    <div key={sceneId} className="bg-gray-900 border border-gray-700 rounded-lg overflow-hidden">
-                      {/* Scene images would go here */}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-gray-100">{sceneId}</h3>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </TabsContent>
-
-          {/* Clues Tab */}
-          <TabsContent value="clues" className="space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-amber-400 mb-4">Clues Received</h2>
-              
-              <div className="text-gray-400 text-center py-8">
-                <Lightbulb className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                <p>No clues requested yet.</p>
-                <p className="text-sm mt-2">Use &quot;Get Clue&quot; action (costs 2 DP) for hints.</p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+          </BoardSection>
+        </div>
       </div>
-    </div>
+      </div>
+
+      {/* Scene Viewer with Navigation */}
+      {selectedScene && (
+        <SceneViewer
+          sceneName={selectedScene.name}
+          images={selectedScene.images}
+          onClose={() => setSelectedScene(null)}
+        />
+      )}
+
+      {/* Document Viewer with Navigation */}
+      {selectedDocument && selectedDocument.images && selectedDocument.images.length > 0 && (
+        <DocumentViewer
+          documentName={selectedDocument.name}
+          images={selectedDocument.images}
+          onClose={() => setSelectedDocument(null)}
+        />
+      )}
+
+      {/* HTML Document Viewer */}
+      {selectedHTMLDocument === 'martin_blackmail' && (
+        <DocumentHTMLViewer
+          documentName="Blackmail Papers (Found at Scene)"
+          pages={[
+            {
+              label: "MARTIN ASHCOMBE - DOCUMENT 1 OF 3",
+              content: <MartinBlackmailPage1 />
+            },
+            {
+              label: "MARTIN ASHCOMBE - DOCUMENT 2 OF 3",
+              content: <MartinBlackmailPage2 />
+            },
+            {
+              label: "MARTIN ASHCOMBE - DOCUMENT 3 OF 3",
+              content: <MartinBlackmailPage3 />
+            },
+            {
+              label: "COLIN DORSEY - DOCUMENT 1 OF 2",
+              content: <ColinBlackmailPage1 />
+            },
+            {
+              label: "COLIN DORSEY - DOCUMENT 2 OF 2",
+              content: <ColinBlackmailPage2 />
+            },
+            {
+              label: "LYDIA PORTWELL - DOCUMENT 1 OF 3",
+              content: <LydiaBlackmailPage1 />
+            },
+            {
+              label: "LYDIA PORTWELL - DOCUMENT 2 OF 3",
+              content: <LydiaBlackmailPage2 />
+            },
+            {
+              label: "LYDIA PORTWELL - DOCUMENT 3 OF 3",
+              content: <LydiaBlackmailPage3 />
+            },
+            {
+              label: "DR. LEONARD VALE - DOCUMENT 1 OF 5",
+              content: <ValeBlackmailPage1 />
+            },
+            {
+              label: "DR. LEONARD VALE - DOCUMENT 2 OF 5",
+              content: <ValeBlackmailPage2 />
+            },
+            {
+              label: "DR. LEONARD VALE - DOCUMENT 3 OF 5",
+              content: <ValeBlackmailPage3 />
+            },
+            {
+              label: "DR. LEONARD VALE - DOCUMENT 4 OF 5",
+              content: <ValeBlackmailPage4 />
+            },
+            {
+              label: "DR. LEONARD VALE - DOCUMENT 5 OF 5",
+              content: <ValeBlackmailPage5 />
+            }
+          ]}
+          onClose={() => setSelectedHTMLDocument(null)}
+        />
+      )}
+
+      {/* Suspect Reveal Card Modal */}
+      {selectedSuspectForReveal && (
+        <SuspectCard
+          suspect={selectedSuspectForReveal}
+          onClose={handleCloseSuspectCard}
+        />
+      )}
+
+      {/* Victim Card Modal */}
+      {showVictimCard && (
+        <VictimCard
+          onClose={handleCloseVictimCard}
+        />
+      )}
+    </>
   )
 }

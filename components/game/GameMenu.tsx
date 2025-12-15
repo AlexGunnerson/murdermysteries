@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface GameMenuProps {
   isOpen: boolean
@@ -12,6 +13,7 @@ interface GameMenuProps {
 export function GameMenu({ isOpen, onClose }: GameMenuProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
+  const { resetGame } = useGameState()
 
   if (!isOpen) return null
 
@@ -96,6 +98,21 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
             >
               ⚙️ Settings
             </button>
+
+            <div className="pt-4 border-t border-gray-700 mt-4">
+              <div className="text-xs text-gray-500 mb-2 px-4">Development Tools</div>
+              <button
+                onClick={() => {
+                  if (confirm('Reset all game progress? This will clear all facts, unlocked content, and the letter will appear again.')) {
+                    resetGame()
+                    window.location.reload()
+                  }
+                }}
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors text-orange-400"
+              >
+                🔄 Reset Game State
+              </button>
+            </div>
 
             <div className="pt-4 border-t border-gray-700 mt-4">
               <button

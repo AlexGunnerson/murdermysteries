@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
-import { createClient } from '@/lib/supabase/server'
+import { createServiceRoleClient } from '@/lib/supabase/server'
 import { DP_COSTS } from '@/lib/utils/dpCalculator'
 import { createStoryService } from '@/lib/services/storyService'
 
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     // Verify session belongs to user
     const { data: session, error: sessionError } = await supabase
@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
+    const supabase = createServiceRoleClient()
 
     // Verify session
     const { data: session } = await supabase
