@@ -200,11 +200,11 @@
     },
     {
       "id": "record_blackmail_portrait",
-      "name": "Blackmail Papers (Behind Portrait)",
-      "description": "The complete original set of blackmail documents hidden behind a portrait in the master bedroom. Includes ALL pages, including Dr. Vale's.",
-      "documentUrl": "/cases/case01/images/documents/blackmail_portrait.jpg",
+      "name": "Blackmail Papers (Found Behind Portrait)",
+      "description": "The complete set of blackmail documents hidden behind a portrait in the master bedroom. Contains incriminating evidence on Martin, Colin, Lydia, and Dr. Vale that Reginald had collected.",
+      "isHTML": true,
       "dpCost": 2,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
       }

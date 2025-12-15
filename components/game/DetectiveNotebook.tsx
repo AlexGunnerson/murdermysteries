@@ -16,10 +16,8 @@ import { VictimCard } from "./detective-board/VictimCard"
 import { SceneViewer } from "./detective-board/SceneViewer"
 import { DocumentViewer } from "./detective-board/DocumentViewer"
 import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
-import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from "./documents/MartinBlackmailDocs"
-import { ColinBlackmailPage1, ColinBlackmailPage2 } from "./documents/ColinBlackmailDocs"
-import { LydiaBlackmailPage1, LydiaBlackmailPage2, LydiaBlackmailPage3 } from "./documents/LydiaBlackmailDocs"
-import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackmailPage4, ValeBlackmailPage5 } from "./documents/ValeBlackmailDocs"
+import { BlackmailViewer } from "./detective-board/BlackmailViewer"
+import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
 
 interface Suspect {
   id: string
@@ -65,7 +63,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [loading, setLoading] = useState(true)
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
-  const [selectedHTMLDocument, setSelectedHTMLDocument] = useState<string | null>(null)
+  const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
+  const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -320,9 +319,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                   title={doc.name}
                   preview={doc.description}
                   onClick={() => {
-                    // Check if it's an HTML document (Martin's blackmail)
+                    // Check if it's blackmail documents (scene version)
                     if (doc.id === 'record_blackmail_floor') {
-                      setSelectedHTMLDocument('martin_blackmail')
+                      setShowBlackmailSceneViewer(true)
+                    }
+                    // Check if it's blackmail documents (portrait version)
+                    else if (doc.id === 'record_blackmail_portrait') {
+                      setShowBlackmailViewer(true)
                     }
                     // Otherwise open image viewer if document has images
                     else if (doc.images && doc.images.length > 0) {
@@ -451,65 +454,17 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         />
       )}
 
-      {/* HTML Document Viewer */}
-      {selectedHTMLDocument === 'martin_blackmail' && (
-        <DocumentHTMLViewer
-          documentName="Blackmail Papers (Found at Scene)"
-          pages={[
-            {
-              label: "MARTIN ASHCOMBE - DOCUMENT 1 OF 3",
-              content: <MartinBlackmailPage1 />
-            },
-            {
-              label: "MARTIN ASHCOMBE - DOCUMENT 2 OF 3",
-              content: <MartinBlackmailPage2 />
-            },
-            {
-              label: "MARTIN ASHCOMBE - DOCUMENT 3 OF 3",
-              content: <MartinBlackmailPage3 />
-            },
-            {
-              label: "COLIN DORSEY - DOCUMENT 1 OF 2",
-              content: <ColinBlackmailPage1 />
-            },
-            {
-              label: "COLIN DORSEY - DOCUMENT 2 OF 2",
-              content: <ColinBlackmailPage2 />
-            },
-            {
-              label: "LYDIA PORTWELL - DOCUMENT 1 OF 3",
-              content: <LydiaBlackmailPage1 />
-            },
-            {
-              label: "LYDIA PORTWELL - DOCUMENT 2 OF 3",
-              content: <LydiaBlackmailPage2 />
-            },
-            {
-              label: "LYDIA PORTWELL - DOCUMENT 3 OF 3",
-              content: <LydiaBlackmailPage3 />
-            },
-            {
-              label: "DR. LEONARD VALE - DOCUMENT 1 OF 5",
-              content: <ValeBlackmailPage1 />
-            },
-            {
-              label: "DR. LEONARD VALE - DOCUMENT 2 OF 5",
-              content: <ValeBlackmailPage2 />
-            },
-            {
-              label: "DR. LEONARD VALE - DOCUMENT 3 OF 5",
-              content: <ValeBlackmailPage3 />
-            },
-            {
-              label: "DR. LEONARD VALE - DOCUMENT 4 OF 5",
-              content: <ValeBlackmailPage4 />
-            },
-            {
-              label: "DR. LEONARD VALE - DOCUMENT 5 OF 5",
-              content: <ValeBlackmailPage5 />
-            }
-          ]}
-          onClose={() => setSelectedHTMLDocument(null)}
+      {/* Blackmail Document Viewer (Portrait - Complete) */}
+      {showBlackmailViewer && (
+        <BlackmailViewer
+          onClose={() => setShowBlackmailViewer(false)}
+        />
+      )}
+
+      {/* Blackmail Document Viewer (Scene - Missing Vale) */}
+      {showBlackmailSceneViewer && (
+        <BlackmailSceneViewer
+          onClose={() => setShowBlackmailSceneViewer(false)}
         />
       )}
 

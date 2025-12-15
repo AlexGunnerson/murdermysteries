@@ -60,10 +60,10 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
         </div>
 
         {/* Document container */}
-        <div className="relative bg-[#f4e8d8] p-8 md:p-12 shadow-2xl border border-[#8b7355]">
+        <div className="relative bg-[#f4e8d8] shadow-2xl border border-[#8b7355] max-h-[85vh] flex flex-col">
           {/* Paper texture overlay */}
           <div 
-            className="absolute inset-0 pointer-events-none opacity-30"
+            className="absolute inset-0 pointer-events-none opacity-30 z-0"
             style={{
               backgroundImage: `repeating-linear-gradient(
                 0deg,
@@ -75,8 +75,8 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
             }}
           />
           
-          {/* Content */}
-          <div className="relative z-10" style={{ fontFamily: "'Courier New', monospace" }}>
+          {/* Content with scrolling */}
+          <div className="relative z-10 overflow-y-auto p-8 md:p-12" style={{ fontFamily: "'Courier New', monospace" }}>
             {pages[currentIndex].content}
           </div>
 
@@ -85,7 +85,7 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
             <>
               <button
                 onClick={goToPrevious}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg z-20"
                 aria-label="Previous page"
               >
                 <ChevronLeft className="w-6 h-6" />
@@ -93,7 +93,7 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
 
               <button
                 onClick={goToNext}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg z-20"
                 aria-label="Next page"
               >
                 <ChevronRight className="w-6 h-6" />
