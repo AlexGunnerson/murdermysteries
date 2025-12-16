@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useGameState } from "@/lib/hooks/useGameState"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
+import { VeronicaThankYouNote } from "@/components/game/VeronicaThankYouNote"
 import { BoardHeader } from "@/components/game/BoardHeader"
 import Image from "next/image"
 import { X } from "lucide-react"
@@ -18,6 +19,7 @@ import { DocumentViewer } from "./detective-board/DocumentViewer"
 import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
 import { BlackmailViewer } from "./detective-board/BlackmailViewer"
 import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
+import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 
 interface Suspect {
   id: string
@@ -44,6 +46,7 @@ interface Document {
   documentUrl?: string
   images?: string[]
   content?: string
+  isLetter?: boolean
   initiallyAvailable?: boolean
 }
 
@@ -55,6 +58,7 @@ interface DetectiveNotebookProps {
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
+  const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
   const [scenes, setScenes] = useState<Scene[]>([])
   const [documents, setDocuments] = useState<Document[]>([])
@@ -65,6 +69,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
+  const [showValeNotes, setShowValeNotes] = useState(false)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -102,6 +107,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           documentUrl: r.documentUrl,
           images: r.images || (r.documentUrl ? [r.documentUrl] : []),
           content: r.content,
+          isLetter: r.isLetter,
           initiallyAvailable: r.initiallyAvailable
         }))
         
@@ -183,6 +189,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <VeronicaLetter onBeginInvestigation={handleCloseLetter} />
       </div>
     )
+  }
+
+  if (showThankYouNote) {
+    return <VeronicaThankYouNote onClose={() => setShowThankYouNote(false)} />
   }
 
   return (
@@ -309,7 +319,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             <div className="space-y-2">
               <DocumentCard
                 title="Veronica's Letter"
-                preview="October 14th, 1924 - Ashcombe Manor"
+                preview="May 11th, 1986 - Ashcombe Manor"
                 onClick={() => setShowVeronicaLetter(true)}
                 rotating={-0.5}
               />
@@ -319,8 +329,16 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                   title={doc.name}
                   preview={doc.description}
                   onClick={() => {
+                    // Check if it's Veronica's thank you note
+                    if (doc.id === 'record_veronica_thankyou') {
+                      setShowThankYouNote(true)
+                    }
+                    // Check if it's Dr. Vale's medical notes
+                    else if (doc.id === 'record_vale_notes') {
+                      setShowValeNotes(true)
+                    }
                     // Check if it's blackmail documents (scene version)
-                    if (doc.id === 'record_blackmail_floor') {
+                    else if (doc.id === 'record_blackmail_floor') {
                       setShowBlackmailSceneViewer(true)
                     }
                     // Check if it's blackmail documents (portrait version)
@@ -465,6 +483,24 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {showBlackmailSceneViewer && (
         <BlackmailSceneViewer
           onClose={() => setShowBlackmailSceneViewer(false)}
+        />
+      )}
+
+      {/* Dr. Vale's Medical Notes Viewer */}
+      {showValeNotes && (
+        <DocumentHTMLViewer
+          documentName="Dr. Vale's Medical Notes"
+          pages={[
+            {
+              label: "PAGE 1 OF 2",
+              content: <ValeNotesPage1 />
+            },
+            {
+              label: "PAGE 2 OF 2",
+              content: <ValeNotesPage2 />
+            }
+          ]}
+          onClose={() => setShowValeNotes(false)}
         />
       )}
 

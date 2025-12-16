@@ -188,6 +188,28 @@
       "initiallyAvailable": true
     },
     {
+      "id": "record_veronica_thankyou",
+      "name": "Veronica's Thank-You Note",
+      "description": "A private message from Veronica, grateful for confirming her suspicions. She explains why she hid the blackmail papers and supplies them for investigation.",
+      "isLetter": true,
+      "dpCost": 0,
+      "initiallyAvailable": true,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "record_vale_notes",
+      "name": "Dr. Vale's Medical Notes",
+      "description": "Handwritten medical log entries from Dr. Vale documenting his care of Reginald and Veronica Ashcombe. Contains routine check-ups and a notable wine allergy incident.",
+      "isHTML": true,
+      "dpCost": 2,
+      "initiallyAvailable": true,
+      "unlockConditions": {
+        "requiredFacts": []
+      }
+    },
+    {
       "id": "record_blackmail_floor",
       "name": "Blackmail Papers (Found at Scene)",
       "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",

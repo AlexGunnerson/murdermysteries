@@ -3,27 +3,26 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
-interface VeronicaLetterProps {
-  onBeginInvestigation: () => void
-  isFirstView?: boolean
+interface VeronicaThankYouNoteProps {
+  onClose: () => void
 }
 
-export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: VeronicaLetterProps) {
+export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
   const [isFlipped, setIsFlipped] = useState(false)
 
   return (
     <div 
       className="min-h-screen bg-[#1a1a1a] py-8 px-4 flex flex-col justify-center relative"
-      onClick={onBeginInvestigation}
+      onClick={onClose}
     >
       {/* Top Left Button */}
       <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
         <Button
-          onClick={onBeginInvestigation}
+          onClick={onClose}
           className="bg-amber-600 hover:bg-amber-700 text-white"
           size="lg"
         >
-          {isFirstView ? 'Begin Investigation' : '← Back to Board'}
+          ← Back to Board
         </Button>
       </div>
 
@@ -245,41 +244,36 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
               {/* Date/Location */}
               <div className="text-right text-gray-600 text-base mb-5 pr-4 opacity-80">
                 Ashcombe Manor<br />
-                May 11th, 1986
+                May 14th, 1986
               </div>
 
               <div className="ink-text">
                 <p>To the Inquiry Agent,</p>
 
                 <p>
-                  I write this with a trembling hand, though I pray my resolve remains steady. By now, 
-                  the countryside is awash with the news. The constable calls it a misfortune—a slip of 
-                  the foot after too much wine and celebration. He calls it an accident.
-                </p>
-
-                <p className="font-bold" style={{ color: '#202020' }}>
-                  I call it impossible.
+                  Thank you. I cannot express what it means to have my suspicions confirmed. You were right—Reginald 
+                  didn&apos;t simply fall. Someone <span className="font-bold" style={{ color: '#202020' }}>staged</span> his 
+                  death to look like an accident.
                 </p>
 
                 <p>
-                  Reginald was a man of immense vitality. Even at his age, he moved with the grace of a 
-                  man twenty years his junior. He has descended that grand staircase thousands of times—in 
-                  darkness, in haste, in joy. To suggest he simply &quot;slipped&quot; is an insult to his memory, 
-                  and to my intelligence.
+                  The thought turns my blood to ice. One of them-someone who called themselves 
+                  family—murdered my husband with such calculated cruelty.
                 </p>
 
                 <p>
-                  I was the one who found him. Mrs. Portwell and I were looking to revise a speech, and as 
-                  I descended the stairs... he was just there at the bottom. He wasn&apos;t moving. A wine glass 
-                  lay shattered near him, the dark liquid pooling across the marble like a terrible shadow. 
-                  I screamed, and it must have been loud because Colin, Lydia, and Dr. Vale came running 
-                  immediately.
+                  I owe you an explanation, and a confession.
                 </p>
 
                 <p>
-                  Dr. Vale knelt beside him and checked for a pulse. The way he looked up at me... I knew 
-                  Reginald was gone. I just stood there, frozen, unable to comprehend the silence where his 
-                  laughter should have been.
+                  When I found Reginald at the base of the stairs, there were papers scattered near his body. Documents 
+                  containing damaging information about members of our inner circle. Blackmail, to be blunt about it.
+                </p>
+
+                <p>
+                  I made a choice in that moment. I gathered them up and hid them away—deliberately. The 
+                  official ruling was an accident. As long as everyone believed it was just a tragic fall, I saw no reason 
+                  to expose these secrets and destroy the reputations of people who might well be innocent.
                 </p>
               </div>
 
@@ -296,27 +290,34 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
             <div className="parchment parchment-back relative rounded-sm pt-[45px] px-[40px] pb-[70px]">
               <div className="ink-text">
                 <p>
-                  Reginald was a generous man, but generosity often breeds resentment in the shadows. There 
-                  are those under this very roof who had reason to wish him silenced. Legacies are heavy 
-                  burdens, and not everyone in our circle carries them with grace.
+                  Reginald kept these records as leverage—as incentive for the inner circle to straighten out 
+                  their lives and mend their relationships with one another. Until they did, the papers served 
+                  as blackmail, plain and simple. But Reginald&apos;s hope was always that they would improve, that 
+                  they would become better people. He promised to burn the evidence when that day finally came.
                 </p>
 
                 <p>
-                  However, I will not have the Ashcombe name dragged through the mud on mere speculation. 
-                  I cannot allow a circus of accusations while my husband is not yet cold. Therefore 
-                  Reginald&apos;s inner circle, his closest family and friends are unavailable for your questioning 
-                  until you can bring me some type of proof that this was foul play.
+                  The fact that he brought them out that night tells me he believed that day had arrived. Perhaps 
+                  he intended to destroy them at last.
                 </p>
 
                 <p>
-                  Do not disturb them. Do not alert them. Investigate the grounds and the physical evidence. 
-                  Prove to me that my worst fears are true, and I will give you the keys to the kingdom. 
-                  Until then, tread lightly.
+                  But now that you&apos;ve proven this was murder, everything changes. These papers are no longer 
+                  just shameful secrets—they are <span className="font-bold" style={{ color: '#202020' }}>evidence</span>. 
+                  One of these people had reason enough to kill him, and these documents may reveal why.
                 </p>
 
-                <p>Bring me the truth.</p>
+                <p>
+                  I&apos;m enclosing the papers I found at the scene. Study them carefully.
+                </p>
 
-                <div className="signature mt-8">
+                <p>
+                  Find the truth. Find who did this to him.
+                </p>
+
+                <p className="mt-6">With gratitude and determination,</p>
+
+                <div className="signature mt-4">
                   Veronica Ashcombe
                 </div>
               </div>
