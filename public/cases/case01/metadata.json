@@ -127,9 +127,11 @@
       "id": "scene_master_bedroom",
       "name": "Master Bedroom (Private Wing)",
       "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand portrait on the wall and a piano bench where Veronica keeps sheet music.",
-      "imageUrl": "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom_1.jpg",
       "images": [
-        "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom.png"
+        "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom_1.jpg",
+        "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom_2.png",
+        "/cases/case01/images/scenes/Scene 5 - Master Bedroom/bedroom_3.png"
       ],
       "dpCost": 3,
       "initiallyAvailable": true,
