@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useGameState } from "@/lib/hooks/useGameState"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
 import { VeronicaThankYouNote } from "@/components/game/VeronicaThankYouNote"
+import { CallLog } from "@/components/game/CallLog"
+import { SpeechNotes } from "@/components/game/SpeechNotes"
 import { BoardHeader } from "@/components/game/BoardHeader"
 import Image from "next/image"
 import { X } from "lucide-react"
@@ -70,6 +72,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
   const [showValeNotes, setShowValeNotes] = useState(false)
+  const [showCallLog, setShowCallLog] = useState(false)
+  const [showSpeechNotes, setShowSpeechNotes] = useState(false)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -193,6 +197,14 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
 
   if (showThankYouNote) {
     return <VeronicaThankYouNote onClose={() => setShowThankYouNote(false)} />
+  }
+
+  if (showCallLog) {
+    return <CallLog onClose={() => setShowCallLog(false)} />
+  }
+
+  if (showSpeechNotes) {
+    return <SpeechNotes onClose={() => setShowSpeechNotes(false)} />
   }
 
   return (
@@ -336,6 +348,14 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     // Check if it's Dr. Vale's medical notes
                     else if (doc.id === 'record_vale_notes') {
                       setShowValeNotes(true)
+                    }
+                    // Check if it's the call log
+                    else if (doc.id === 'record_phone_logs') {
+                      setShowCallLog(true)
+                    }
+                    // Check if it's speech notes
+                    else if (doc.id === 'record_speech_notes') {
+                      setShowSpeechNotes(true)
                     }
                     // Check if it's blackmail documents (scene version)
                     else if (doc.id === 'record_blackmail_floor') {

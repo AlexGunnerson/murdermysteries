@@ -22,7 +22,7 @@
       "bio": "61 years old, Reginald's younger brother. Charming but financially dependent. Former academic who squandered opportunities through gambling. Was very drunk during the gala.",
       "portraitUrl": "/cases/case01/images/portraits/martin.png",
       "veronicaNote": "Reginald's younger brother. Sixty-one, yet he possesses the impulse control of a schoolboy. He has spent a lifetime in my husband's shadow, and I fear he has grown to resent the lack of light. A gambler in both finance and life.",
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -34,7 +34,7 @@
       "bio": "53 years old, Reginald's right hand and estate manager. Competent and loyal on the surface. Responded to Veronica's scream after the body was discovered.",
       "portraitUrl": "/cases/case01/images/portraits/colin.png",
       "veronicaNote": "The Estate Manager. He was once Reginald's right hand, but that hand has withered. Competent, yes, but there is a desperation in him now. He and my husband quarreled years ago—trust once broken is never truly mended.",
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -46,7 +46,7 @@
       "bio": "51 years old, polished and ambitious. Oversees the Ashcombe Foundation's fundraising campaigns. Was helping Veronica rehearse her speech when the murder occurred.",
       "portraitUrl": "/cases/case01/images/portraits/lydia.jpg",
       "veronicaNote": "Director of the Foundation. She is polished, ambitious, and curates her public image as carefully as she does our charity galas. She claims to serve the family, but I suspect she serves only her own ascent.",
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -58,7 +58,7 @@
       "bio": "58 years old, elegant and calculating. Longtime friend of the Ashcombe family and attending physician. Left the ballroom early for an 'urgent phone call' before Reginald's death.",
       "portraitUrl": "/cases/case01/images/portraits/vale.png",
       "veronicaNote": "The Physician. A \"friend\" of the family for decades. He is elegant and calculating, with a bedside manner that is almost too calm. He pronounced Reginald dead without a flicker of emotion. I have always found his stillness... unsettling.",
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -238,9 +238,20 @@
       "name": "Phone Records",
       "description": "Estate phone logs from the evening of the gala, showing all incoming and outgoing calls.",
       "dpCost": 2,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_alibi_suspicious"]
+      }
+    },
+    {
+      "id": "record_speech_notes",
+      "name": "Reginald's Speech Notes",
+      "description": "Handwritten notes for Reginald's opening remarks at the gala. Contains his planned speech with personal annotations.",
+      "isHTML": true,
+      "dpCost": 2,
+      "initiallyAvailable": true,
+      "unlockConditions": {
+        "requiredFacts": []
       }
     },
     {
@@ -249,7 +260,7 @@
       "description": "Automatically uploaded security camera footage from the greenhouse, timestamped during the gala.",
       "documentUrl": "/cases/case01/images/documents/greenhouse_footage.jpg",
       "dpCost": 2,
-      "initiallyAvailable": false,
+      "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
       }

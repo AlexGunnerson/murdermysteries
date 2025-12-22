@@ -267,7 +267,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
 
                 <p>
                   When I found Reginald at the base of the stairs, there were papers scattered near his body. Documents 
-                  containing damaging information about members of our inner circle. Blackmail, to be blunt about it.
+                  containing damaging information about every single member of our inner circle. Blackmail, to be blunt about it.
                 </p>
 
                 <p>

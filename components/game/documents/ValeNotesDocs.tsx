@@ -150,3 +150,4 @@ export const ValeNotesPage2 = () => (
   </div>
 )
 
+
