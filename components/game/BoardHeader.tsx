@@ -8,11 +8,6 @@ interface BoardHeaderProps {
   onOpenMessage?: () => void
   onOpenMenu: () => void
   onOpenHelp: () => void
-  // Stats
-  factsCount: number
-  scenesCount: number
-  questionedCount: number
-  theoriesCount: number
   // Actions
   onGetClue: () => void
   onSolveMurder: () => void
@@ -24,10 +19,6 @@ export function BoardHeader({
   onOpenMessage,
   onOpenMenu,
   onOpenHelp,
-  factsCount,
-  scenesCount,
-  questionedCount,
-  theoriesCount,
   onGetClue,
   onSolveMurder
 }: BoardHeaderProps) {
@@ -39,7 +30,7 @@ export function BoardHeader({
         <div className="flex items-center gap-3">
           <span className="text-2xl">🕵️</span>
           <h1 className="text-xl md:text-2xl font-bold text-amber-400" style={{ fontFamily: 'serif' }}>
-            Detective Board
+            Board
           </h1>
         </div>
 
@@ -87,67 +78,27 @@ export function BoardHeader({
         </div>
       </div>
 
-      {/* Bottom Row: Stats and Actions */}
+      {/* Bottom Row: Actions */}
       <div className="px-4 md:px-6 py-3">
-        <div className="flex flex-wrap items-center gap-4">
-          {/* Stats */}
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
-              <span className="text-lg">📋</span>
-              <div className="text-sm">
-                <span className="font-bold text-blue-400">{factsCount}</span>
-                <span className="text-gray-400 ml-1 hidden sm:inline">Facts</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
-              <span className="text-lg">🔍</span>
-              <div className="text-sm">
-                <span className="font-bold text-green-400">{scenesCount}</span>
-                <span className="text-gray-400 ml-1 hidden sm:inline">Scenes</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
-              <span className="text-lg">💬</span>
-              <div className="text-sm">
-                <span className="font-bold text-purple-400">{questionedCount}</span>
-                <span className="text-gray-400 ml-1 hidden sm:inline">Questioned</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
-              <span className="text-lg">💭</span>
-              <div className="text-sm">
-                <span className="font-bold text-yellow-400">{theoriesCount}</span>
-                <span className="text-gray-400 ml-1 hidden sm:inline">Theories</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Spacer */}
-          <div className="flex-1 hidden lg:block" />
-
+        <div className="flex items-center justify-end gap-3">
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 w-full lg:w-auto">
-            <button
-              onClick={onGetClue}
-              disabled={detectivePoints < 2}
-              className="flex-1 lg:flex-initial bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-2 px-4 rounded shadow-md transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 text-sm"
-            >
-              <span className="text-base mr-1">💡</span>
-              <span className="hidden sm:inline">Get Clue (-2 DP)</span>
-              <span className="sm:hidden">Clue</span>
-            </button>
-            <button
-              onClick={onSolveMurder}
-              className="flex-1 lg:flex-initial bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-2 px-4 rounded shadow-md transition-all hover:-translate-y-0.5 text-sm"
-            >
-              <span className="text-base mr-1">⚖️</span>
-              <span className="hidden sm:inline">Solve Murder</span>
-              <span className="sm:hidden">Solve</span>
-            </button>
-          </div>
+          <button
+            onClick={onGetClue}
+            disabled={detectivePoints < 2}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-bold py-2 px-4 rounded shadow-md transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 text-sm"
+          >
+            <span className="text-base mr-1">💡</span>
+            <span className="hidden sm:inline">Get Clue (-2 DP)</span>
+            <span className="sm:hidden">Clue</span>
+          </button>
+          <button
+            onClick={onSolveMurder}
+            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-2 px-4 rounded shadow-md transition-all hover:-translate-y-0.5 text-sm"
+          >
+            <span className="text-base mr-1">⚖️</span>
+            <span className="hidden sm:inline">Solve Murder</span>
+            <span className="sm:hidden">Solve</span>
+          </button>
         </div>
       </div>
     </header>

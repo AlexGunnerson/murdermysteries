@@ -232,7 +232,7 @@ export const ValeBlackmailPage5 = () => (
       </p>
 
       <p>
-        A trusted family friend for thirty years. A man who sat at our dinner table. And this is what he's been doing under our roof.
+        A man who sat at our dinner table. And this is what he's been doing under our roof.
       </p>
 
       <p>

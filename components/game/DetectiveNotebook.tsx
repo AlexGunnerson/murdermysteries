@@ -216,10 +216,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onOpenMessage={() => setShowVeronicaLetter(true)}
         onOpenMenu={onOpenMenu}
         onOpenHelp={() => onAction('help')}
-        factsCount={discoveredFacts.length}
-        scenesCount={unlockedScenes.length}
-        questionedCount={chatSuspects.length}
-        theoriesCount={theoryHistory.length}
         onGetClue={() => onAction('clue')}
         onSolveMurder={() => onAction('solve')}
       />
