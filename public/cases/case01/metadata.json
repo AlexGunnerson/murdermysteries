@@ -143,11 +143,13 @@
       "id": "scene_study",
       "name": "Reginald's Study",
       "description": "Reginald's private office. A place of business and secrets. The study contains a safe where Reginald kept his most sensitive documents.",
-      "imageUrl": "/cases/case01/images/scenes/Scene 4 -  Study/study_1.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
       "images": [
-        "/cases/case01/images/scenes/Scene 4 -  Study/study_1.png",
-        "/cases/case01/images/scenes/Scene 4 -  Study/study_2.png",
-        "/cases/case01/images/scenes/Scene 4 -  Study/study_3.png"
+        "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_2.png",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_3.jpg",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_4.png",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_5.png"
       ],
       "dpCost": 3,
       "initiallyAvailable": true,
@@ -184,7 +186,19 @@
       "documentUrl": "/cases/case01/images/gala_photos/itinerary.png",
       "images": [
         "/cases/case01/images/gala_photos/itinerary.png",
-        "/cases/case01/images/gala_photos/colin_white_gloves.png"
+        "/cases/case01/images/gala_photos/colin_white_gloves.png",
+        "/cases/case01/images/gala_photos/colin_champagne.png",
+        "/cases/case01/images/gala_photos/lydia_networking.jpg",
+        "/cases/case01/images/gala_photos/lydia_shaking_hands.jpg",
+        "/cases/case01/images/gala_photos/martin_mingling.jpg",
+        "/cases/case01/images/gala_photos/martin_shaking_hands.png",
+        "/cases/case01/images/gala_photos/martin_lounging.png",
+        "/cases/case01/images/gala_photos/vale_greenhouse.png",
+        "/cases/case01/images/gala_photos/vale_gala.png",
+        "/cases/case01/images/gala_photos/vale_gala_2.png",
+        "/cases/case01/images/gala_photos/veronica_champagne.jpg",
+        "/cases/case01/images/gala_photos/veronica_outside.png",
+        "/cases/case01/images/gala_photos/veronica_blurry_moving.png"
       ],
       "dpCost": 2,
       "initiallyAvailable": true
