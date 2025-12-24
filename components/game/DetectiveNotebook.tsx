@@ -12,7 +12,10 @@ import { X } from "lucide-react"
 import { BoardSection } from "./detective-board/BoardSection"
 import { PolaroidPhoto } from "./detective-board/PolaroidPhoto"
 import { PortraitFrame } from "./detective-board/PortraitFrame"
+import { PinnedPhoto } from "./detective-board/PinnedPhoto"
+import { TypewrittenLabel } from "./detective-board/TypewrittenLabel"
 import { DocumentCard } from "./detective-board/DocumentCard"
+import { DocumentStack } from "./detective-board/DocumentStack"
 import { StickyNote } from "./detective-board/StickyNote"
 import { SuspectCard } from "./detective-board/SuspectCard"
 import { VictimCard } from "./detective-board/VictimCard"
@@ -85,11 +88,18 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         // Get all suspects including Veronica
         const allSuspects = data.suspects.map((s: any) => {
           const ageMatch = s.bio.match(/(\d+) years old/)
+          
+          // Customize role for Martin
+          let role = s.role
+          if (s.id === 'suspect_martin') {
+            role = 'The Brother'
+          }
+          
           return {
             id: s.id,
             name: s.name,
             age: ageMatch ? parseInt(ageMatch[1]) : 0,
-            role: s.role,
+            role: role,
             portraitUrl: s.portraitUrl,
             veronicaNote: s.veronicaNote
           }
@@ -228,7 +238,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           backgroundImage: `
             radial-gradient(circle at 20% 50%, rgba(0,0,0,0.05) 0%, transparent 50%),
             radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 50%),
-            url("/cases/case01/images/ui/corkboard_1.jpg")
+            url("/cases/case01/images/ui/corkboard.jpg")
           `,
           backgroundSize: '512px 512px',
           backgroundRepeat: 'repeat'
@@ -353,69 +363,69 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* The Victim */}
-          <BoardSection 
-            title="The Victim" 
-            icon="💀" 
-            rotating={0.8}
-          >
-            <div className="grid grid-cols-1 gap-3 max-w-[200px] mx-auto">
-              <PortraitFrame
-                imageUrl="/cases/case01/images/portraits/reginald.png"
-                name="Reginald"
-                role="The Victim"
-                onClick={handleVictimClick}
-                rotating={-1}
-                isRevealed={revealedContent.suspects.has('victim_reginald')}
-              />
-            </div>
-          </BoardSection>
+          {/* The Victim - Pinned Photo */}
+          <div className="flex flex-col items-center gap-6 mb-12">
+            <TypewrittenLabel text="THE VICTIM" rotating={-1} />
+            <PinnedPhoto
+              imageUrl="/cases/case01/images/portraits/reginald.png"
+              name="Reginald"
+              subtitle="The Victim"
+              onClick={handleVictimClick}
+              rotating={1.5}
+              isRevealed={revealedContent.suspects.has('victim_reginald')}
+              pushpinColor="black"
+            />
+          </div>
 
-          {/* People of Interest */}
-          <BoardSection 
-            title="People of Interest" 
-            icon="👥"
-            rotating={-0.8}
-            className="md:col-span-2"
-          >
+          {/* People of Interest - Pinned Photos */}
+          <div className="md:col-span-2 mb-12">
+            <div className="flex justify-center mb-6">
+              <TypewrittenLabel text="PEOPLE OF INTEREST" rotating={0.5} />
+            </div>
             {suspects.length === 0 ? (
               <p className="text-gray-600 text-center py-8 italic">Loading suspects...</p>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                {suspects.slice(0, 5).map((suspect, idx) => (
-                  <PortraitFrame
-                    key={suspect.id}
-                    imageUrl={suspect.portraitUrl}
-                    name={suspect.name.split(' ')[0]}
-                    role={suspect.role}
-                    rotating={[-1.5, 1, -0.5, 1.5, -1][idx % 5]}
-                    isRevealed={revealedContent.suspects.has(suspect.id)}
-                    onClick={() => handleSuspectClick(suspect)}
-                  />
-                ))}
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-16 py-8">
+                {suspects.slice(0, 5).map((suspect, idx) => {
+                  // Special handling for Dr. Vale to show "Dr. Vale" instead of just "Vale"
+                  let displayName = suspect.name.split(' ')[0]
+                  if (suspect.id === 'suspect_vale') {
+                    displayName = 'Dr. Vale'
+                  }
+                  
+                  return (
+                    <PinnedPhoto
+                      key={suspect.id}
+                      imageUrl={suspect.portraitUrl}
+                      name={displayName}
+                      subtitle={suspect.role}
+                      rotating={[-2, 1.5, -1, 2, -1.5][idx % 5]}
+                      isRevealed={revealedContent.suspects.has(suspect.id)}
+                      onClick={() => handleSuspectClick(suspect)}
+                      pushpinColor="red"
+                    />
+                  )
+                })}
               </div>
             )}
-          </BoardSection>
+          </div>
 
           {/* Documents */}
-          <BoardSection 
-            title="Documents" 
-            icon="📄"
-            rotating={0.3}
-          >
-            <div className="space-y-2">
-              <DocumentCard
-                title="Veronica's Letter"
-                preview="May 11th, 1986 - Ashcombe Manor"
-                onClick={() => setShowVeronicaLetter(true)}
-                rotating={-0.5}
-              />
-              {unlockedDocuments.map((doc, idx) => (
-                <DocumentCard
-                  key={doc.id}
-                  title={doc.name}
-                  preview={doc.description}
-                  onClick={() => {
+          <div className="flex flex-col items-center gap-4" style={{ marginTop: '-380px' }}>
+            <TypewrittenLabel text="DOCUMENTS" rotating={1} />
+            <DocumentStack
+              documents={[
+                {
+                  id: 'veronica_letter',
+                  name: "Veronica's Letter",
+                  description: "May 11th, 1986 - Ashcombe Manor",
+                  onClick: () => setShowVeronicaLetter(true)
+                },
+                ...unlockedDocuments.map(doc => ({
+                  id: doc.id,
+                  name: doc.name,
+                  description: doc.description,
+                  onClick: () => {
                     // Check if it's Veronica's thank you note
                     if (doc.id === 'record_veronica_thankyou') {
                       setShowThankYouNote(true)
@@ -444,32 +454,25 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     else if (doc.images && doc.images.length > 0) {
                       setSelectedDocument(doc)
                     }
-                  }}
-                  rotating={[-0.5, 1, -0.5, 0.5][idx % 4]}
-                />
-              ))}
-            </div>
-          </BoardSection>
+                  }
+                }))
+              ]}
+              rotating={1.5}
+            />
+          </div>
 
           {/* Scenes */}
-          <BoardSection 
-            title="Investigate Scenes" 
-            icon="🔍"
-            onClick={() => onAction('scenes')}
-            rotating={0.5}
-            className="md:col-span-2 md:row-span-2 relative group"
-          >
-            {/* DP Cost Badge */}
-            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
-              -3 DP
+          <div className="col-span-full mb-12">
+            <div className="flex justify-center mb-6">
+              <TypewrittenLabel text="INVESTIGATE SCENES" rotating={-0.5} />
             </div>
 
             {unlockedScenes.length === 0 ? (
-              <p className="text-gray-600 text-center py-8 italic">
-                No scenes investigated yet. Click this section to explore locations.
+              <p className="text-gray-700 text-center py-8 italic font-['Courier_Prime']">
+                No scenes investigated yet.
               </p>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4" onClick={(e) => e.stopPropagation()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-6xl mx-auto">
                 {unlockedScenes.map((scene, idx) => (
                   <PolaroidPhoto
                     key={scene.id}
@@ -481,7 +484,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 ))}
               </div>
             )}
-          </BoardSection>
+          </div>
 
           {/* Facts */}
           <BoardSection 
