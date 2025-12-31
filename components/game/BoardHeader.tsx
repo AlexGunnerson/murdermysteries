@@ -208,48 +208,31 @@ export function BoardHeader({
         }
 
         .btn-solve {
-          background: linear-gradient(to bottom, #d32f2f, #b71c1c);
-          color: #fce4ec;
+          background: linear-gradient(to bottom, #e0e0e0, #bdbdbd);
+          color: #333;
           font-family: 'Courier Prime', monospace;
           font-weight: 700;
           font-size: 0.95rem;
-          padding: 12px 24px;
-          border-radius: 50px;
+          padding: 10px 20px;
+          border-radius: 3px;
+          box-shadow: 
+            inset 1px 1px 0 #fff,
+            inset -1px -1px 0 #888,
+            0 4px 0 #555,
+            0 5px 5px rgba(0,0,0,0.5);
           text-transform: uppercase;
-          letter-spacing: 1px;
-          box-shadow: 
-            inset 0 2px 0 rgba(255,255,255,0.2),
-            inset 0 -2px 0 rgba(0,0,0,0.3),
-            0 6px 0 #7f0000,
-            0 8px 10px rgba(0,0,0,0.6);
-          transition: all 0.2s ease;
+          letter-spacing: 0.5px;
           position: relative;
-          overflow: hidden;
-        }
-
-        .btn-solve::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; height: 50%;
-          background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
-          border-radius: 50px 50px 0 0;
-        }
-
-        .btn-solve:hover {
-          text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-          box-shadow: 
-            inset 0 2px 0 rgba(255,255,255,0.2),
-            inset 0 -2px 0 rgba(0,0,0,0.3),
-            0 6px 0 #7f0000,
-            0 8px 15px rgba(211, 47, 47, 0.6);
         }
 
         .btn-solve:active {
-          transform: translateY(4px);
+          transform: translateY(2px);
           box-shadow: 
-            inset 0 2px 5px rgba(0,0,0,0.4),
-            0 2px 0 #7f0000,
-            0 3px 5px rgba(0,0,0,0.6);
+            inset 1px 1px 0 #888,
+            inset -1px -1px 0 #fff,
+            0 1px 0 #555,
+            0 2px 2px rgba(0,0,0,0.5);
+          background: linear-gradient(to bottom, #bdbdbd, #e0e0e0);
         }
 
         .icon-btn {
@@ -385,9 +368,9 @@ export function BoardHeader({
         <button 
           className="btn-solve" 
           onClick={onSolveMurder}
-          title="Solve Murder"
+          title="Validate Theory"
         >
-          Solve Murder
+          Validate Theory
         </button>
 
         {/* Message Notification Icon (combined with Help) */}

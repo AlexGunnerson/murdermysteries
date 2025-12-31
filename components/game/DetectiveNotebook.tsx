@@ -25,6 +25,7 @@ import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
 import { BlackmailViewer } from "./detective-board/BlackmailViewer"
 import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
+import { ValidateTheory } from "./ValidateTheory"
 
 interface Suspect {
   id: string
@@ -77,6 +78,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showValeNotes, setShowValeNotes] = useState(false)
   const [showCallLog, setShowCallLog] = useState(false)
   const [showSpeechNotes, setShowSpeechNotes] = useState(false)
+  const [showValidateTheory, setShowValidateTheory] = useState(false)
+  const [onPreviewClose, setOnPreviewClose] = useState<(() => void) | null>(null)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -141,6 +144,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const handleCloseLetter = () => {
     setShowVeronicaLetter(false)
     markLetterAsRead()
+    if (onPreviewClose) {
+      onPreviewClose()
+      setOnPreviewClose(null)
+    }
   }
 
   const handleSuspectClick = (suspect: Suspect) => {
@@ -206,28 +213,46 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   }
 
   if (showThankYouNote) {
-    return <VeronicaThankYouNote onClose={() => setShowThankYouNote(false)} />
+    return <VeronicaThankYouNote onClose={() => {
+      setShowThankYouNote(false)
+      if (onPreviewClose) {
+        onPreviewClose()
+        setOnPreviewClose(null)
+      }
+    }} />
   }
 
   if (showCallLog) {
-    return <CallLog onClose={() => setShowCallLog(false)} />
+    return <CallLog onClose={() => {
+      setShowCallLog(false)
+      if (onPreviewClose) {
+        onPreviewClose()
+        setOnPreviewClose(null)
+      }
+    }} />
   }
 
   if (showSpeechNotes) {
-    return <SpeechNotes onClose={() => setShowSpeechNotes(false)} />
+    return <SpeechNotes onClose={() => {
+      setShowSpeechNotes(false)
+      if (onPreviewClose) {
+        onPreviewClose()
+        setOnPreviewClose(null)
+      }
+    }} />
   }
 
   return (
     <>
       {/* Header Bar */}
-      <BoardHeader
+      <BoardHeader 
         detectivePoints={detectivePoints}
         hasUnreadMessage={!hasReadVeronicaLetter}
         onOpenMessage={() => setShowVeronicaLetter(true)}
         onOpenMenu={onOpenMenu}
         onOpenHelp={() => onAction('help')}
         onGetClue={() => onAction('clue')}
-        onSolveMurder={() => onAction('solve')}
+        onSolveMurder={() => setShowValidateTheory(true)}
       />
 
       {/* Board */}
@@ -557,7 +582,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <SceneViewer
           sceneName={selectedScene.name}
           images={selectedScene.images}
-          onClose={() => setSelectedScene(null)}
+          onClose={() => {
+            setSelectedScene(null)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
         />
       )}
 
@@ -566,21 +597,39 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <DocumentViewer
           documentName={selectedDocument.name}
           images={selectedDocument.images}
-          onClose={() => setSelectedDocument(null)}
+          onClose={() => {
+            setSelectedDocument(null)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
         />
       )}
 
       {/* Blackmail Document Viewer (Portrait - Complete) */}
       {showBlackmailViewer && (
         <BlackmailViewer
-          onClose={() => setShowBlackmailViewer(false)}
+          onClose={() => {
+            setShowBlackmailViewer(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
         />
       )}
 
       {/* Blackmail Document Viewer (Scene - Missing Vale) */}
       {showBlackmailSceneViewer && (
         <BlackmailSceneViewer
-          onClose={() => setShowBlackmailSceneViewer(false)}
+          onClose={() => {
+            setShowBlackmailSceneViewer(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
         />
       )}
 
@@ -598,7 +647,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               content: <ValeNotesPage2 />
             }
           ]}
-          onClose={() => setShowValeNotes(false)}
+          onClose={() => {
+            setShowValeNotes(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
         />
       )}
 
@@ -614,6 +669,46 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {showVictimCard && (
         <VictimCard
           onClose={handleCloseVictimCard}
+        />
+      )}
+
+      {/* Validate Theory Modal */}
+      {showValidateTheory && (
+        <ValidateTheory
+          isOpen={showValidateTheory}
+          onClose={() => setShowValidateTheory(false)}
+          onPreviewDocument={(docId, onCloseCallback) => {
+            setOnPreviewClose(() => onCloseCallback)
+            // Handle different document types
+            if (docId === 'veronica_letter') {
+              setShowVeronicaLetter(true)
+            } else if (docId === 'record_veronica_thankyou') {
+              setShowThankYouNote(true)
+            } else if (docId === 'record_vale_notes') {
+              setShowValeNotes(true)
+            } else if (docId === 'record_blackmail_portrait') {
+              setShowBlackmailViewer(true)
+            } else if (docId === 'record_blackmail_floor') {
+              setShowBlackmailSceneViewer(true)
+            } else if (docId === 'record_phone_logs') {
+              setShowCallLog(true)
+            } else if (docId === 'record_speech_notes') {
+              setShowSpeechNotes(true)
+            } else {
+              // Generic document viewer
+              const doc = documents.find(d => d.id === docId)
+              if (doc) {
+                setSelectedDocument(doc)
+              }
+            }
+          }}
+          onPreviewScene={(sceneId, onCloseCallback) => {
+            setOnPreviewClose(() => onCloseCallback)
+            const scene = scenes.find(s => s.id === sceneId)
+            if (scene) {
+              setSelectedScene(scene)
+            }
+          }}
         />
       )}
     </>
