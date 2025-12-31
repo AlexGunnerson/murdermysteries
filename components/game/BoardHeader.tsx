@@ -212,7 +212,7 @@ export function BoardHeader({
           color: #333;
           font-family: 'Courier Prime', monospace;
           font-weight: 700;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           padding: 10px 20px;
           border-radius: 3px;
           box-shadow: 
@@ -368,9 +368,9 @@ export function BoardHeader({
         <button 
           className="btn-solve" 
           onClick={onSolveMurder}
-          title="Validate Theory"
+          title="Solve Murder"
         >
-          Validate Theory
+          Solve Murder
         </button>
 
         {/* Message Notification Icon (combined with Help) */}

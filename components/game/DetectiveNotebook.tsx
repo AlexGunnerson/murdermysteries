@@ -370,10 +370,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           />
           
           <h2 
-            className="text-3xl text-gray-800 mb-4 flex items-center gap-3"
+            className="text-3xl text-gray-800 mb-4 font-bold"
             style={{ fontFamily: "'Caveat', cursive" }}
           >
-            <span className="text-4xl">🎯</span> Your Objective
+            Objective
           </h2>
           <p 
             className="text-2xl text-gray-900 leading-relaxed"
