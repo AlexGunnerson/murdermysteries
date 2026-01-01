@@ -368,9 +368,9 @@ export function BoardHeader({
         <button 
           className="btn-solve" 
           onClick={onSolveMurder}
-          title="Solve Murder"
+          title="Validate Theory"
         >
-          Solve Murder
+          Validate Theory
         </button>
 
         {/* Message Notification Icon (combined with Help) */}
