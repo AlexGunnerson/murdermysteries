@@ -113,61 +113,71 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
   // Selection screen
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#2a2520] p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto"
       onClick={onClose}
     >
       <div 
-        className="relative max-w-4xl w-full my-8"
+        className="relative max-w-5xl w-full my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute -top-12 right-0 p-2 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors z-10"
+          className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-colors z-10 shadow-lg"
           aria-label="Close"
         >
           <X className="w-6 h-6" />
         </button>
 
-        {/* Title */}
-        <div className="absolute -top-12 left-0 text-[#f4e8d8]">
-          <h3 className="text-2xl font-bold mb-1">Blackmail Papers (Found at Scene)</h3>
-          <p className="text-sm text-[#8b7355]">Select a suspect to view their documents</p>
-        </div>
-
-        {/* Selection cards */}
-        <div className="bg-[#f4e8d8] p-8 shadow-2xl border border-[#8b7355]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {suspects.map((suspect) => (
-              <button
-                key={suspect.id}
-                onClick={() => setSelectedSuspect(suspect.id)}
-                className="relative p-6 bg-white border-2 border-[#8b7355] hover:border-[#2a2520] hover:shadow-lg transition-all group text-left"
-              >
-                <div className={`absolute top-0 left-0 w-full h-2 ${suspect.color}`} />
-                
-                <h4 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-[#2a2520]">
-                  {suspect.name}
-                </h4>
-                
-                <p className="text-sm text-gray-600 mb-3">{suspect.role}</p>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-mono text-gray-500">
-                    {suspect.pageCount} {suspect.pageCount === 1 ? 'document' : 'documents'}
-                  </span>
-                  
-                  <span className="text-[#2a2520] opacity-0 group-hover:opacity-100 transition-opacity">
-                    View →
-                  </span>
-                </div>
-              </button>
-            ))}
+        {/* Main Container */}
+        <div className="bg-[#f4f1ea] rounded-xl shadow-2xl border border-[#d1ccc0] overflow-hidden">
+          {/* Header */}
+          <div className="bg-[#2c3e50] text-white p-6">
+            <h3 className="text-2xl font-bold mb-2">Blackmail Papers (Found at Scene)</h3>
+            <p className="text-sm text-gray-300">Select a suspect to view their documents</p>
           </div>
 
-          <div className="mt-6 p-4 bg-[#fff8e7] border-l-4 border-[#8b7355] text-sm text-gray-700">
-            <p className="font-semibold mb-1">Evidence Overview</p>
-            <p>These documents were found scattered near Reginald's body at the crime scene. Each contains incriminating evidence on the suspects. <span className="font-semibold text-red-800">Note: Dr. Vale's page appears to be missing.</span></p>
+          {/* Evidence Note */}
+          <div className="p-6 bg-[#fff8e7] border-b-2 border-[#d97706]">
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <p className="font-bold text-gray-800 mb-1">Evidence Overview</p>
+                <p className="text-sm text-gray-700">
+                  These documents were found scattered near Reginald&apos;s body at the crime scene. Each contains incriminating evidence on the suspects.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Selection cards - 3 column layout */}
+          <div className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {suspects.map((suspect) => (
+                <button
+                  key={suspect.id}
+                  onClick={() => setSelectedSuspect(suspect.id)}
+                  className="relative p-6 bg-white rounded-lg border-2 border-[#d1ccc0] hover:border-[#d97706] hover:shadow-xl transition-all group text-left"
+                >
+                  <div className={`absolute top-0 left-0 w-full h-2 rounded-t-lg ${suspect.color}`} />
+                  
+                  <h4 className="text-lg font-bold text-gray-800 mb-1 mt-2 group-hover:text-[#d97706]">
+                    {suspect.name}
+                  </h4>
+                  
+                  <p className="text-xs text-gray-600 mb-4">{suspect.role}</p>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                      📎 {suspect.pageCount} {suspect.pageCount === 1 ? 'document' : 'documents'}
+                    </span>
+                    
+                    <span className="text-[#d97706] opacity-0 group-hover:opacity-100 transition-opacity font-bold">
+                      View →
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
