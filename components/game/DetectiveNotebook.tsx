@@ -24,6 +24,7 @@ import { DocumentViewer } from "./detective-board/DocumentViewer"
 import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
 import { BlackmailViewer } from "./detective-board/BlackmailViewer"
 import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
+import { SecurityFootageViewer } from "./detective-board/SecurityFootageViewer"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 import { ValidateTheory } from "./ValidateTheory"
 
@@ -75,6 +76,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
+  const [showSecurityFootage, setShowSecurityFootage] = useState(false)
+  const [securityFootageImages, setSecurityFootageImages] = useState<string[]>([])
   const [showValeNotes, setShowValeNotes] = useState(false)
   const [showCallLog, setShowCallLog] = useState(false)
   const [showSpeechNotes, setShowSpeechNotes] = useState(false)
@@ -467,6 +470,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     else if (doc.id === 'record_speech_notes') {
                       setShowSpeechNotes(true)
                     }
+                    // Check if it's security footage
+                    else if (doc.id === 'record_security_footage') {
+                      setSecurityFootageImages(doc.images || [])
+                      setShowSecurityFootage(true)
+                    }
                     // Check if it's blackmail documents (scene version)
                     else if (doc.id === 'record_blackmail_floor') {
                       setShowBlackmailSceneViewer(true)
@@ -582,11 +590,26 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <SceneViewer
           sceneName={selectedScene.name}
           images={selectedScene.images}
+          sceneId={selectedScene.id}
           onClose={() => {
             setSelectedScene(null)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
+            }
+          }}
+          onOpenDocument={(documentId) => {
+            // Close scene viewer
+            setSelectedScene(null)
+            
+            // Open the requested document
+            if (documentId === 'record_security_footage') {
+              // Find and open the security footage with custom viewer
+              const doc = documents.find(d => d.id === documentId)
+              if (doc && doc.images) {
+                setSecurityFootageImages(doc.images)
+                setShowSecurityFootage(true)
+              }
             }
           }}
         />
@@ -625,6 +648,20 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <BlackmailSceneViewer
           onClose={() => {
             setShowBlackmailSceneViewer(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
+        />
+      )}
+
+      {/* Security Footage Viewer */}
+      {showSecurityFootage && (
+        <SecurityFootageViewer
+          images={securityFootageImages}
+          onClose={() => {
+            setShowSecurityFootage(false)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
@@ -686,6 +723,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               setShowThankYouNote(true)
             } else if (docId === 'record_vale_notes') {
               setShowValeNotes(true)
+            } else if (docId === 'record_security_footage') {
+              const doc = documents.find(d => d.id === docId)
+              if (doc && doc.images) {
+                setSecurityFootageImages(doc.images)
+                setShowSecurityFootage(true)
+              }
             } else if (docId === 'record_blackmail_portrait') {
               setShowBlackmailViewer(true)
             } else if (docId === 'record_blackmail_floor') {

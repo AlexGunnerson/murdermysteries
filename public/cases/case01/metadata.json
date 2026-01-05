@@ -146,10 +146,10 @@
       "imageUrl": "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
       "images": [
         "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
-        "/cases/case01/images/scenes/Scene 4 - Study/study_2.png",
-        "/cases/case01/images/scenes/Scene 4 - Study/study_3.jpg",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_2.jpg",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_3.png",
         "/cases/case01/images/scenes/Scene 4 - Study/study_4.png",
-        "/cases/case01/images/scenes/Scene 4 - Study/study_5.png"
+        "/cases/case01/images/scenes/Scene 4 - Study/study_5.jpg"
       ],
       "dpCost": 3,
       "initiallyAvailable": true,
@@ -278,6 +278,34 @@
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
       }
+    },
+    {
+      "id": "record_security_footage",
+      "name": "Security Camera Footage",
+      "description": "18 clips from the estate's security camera system showing various locations during the gala night. The footage was accessed from the monitor in Reginald's study.",
+      "imageUrl": "/cases/case01/images/evidence/securityfootage/cam1.1.jpg",
+      "images": [
+        "/cases/case01/images/evidence/securityfootage/cam1.1.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam1.2.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam1.3.png",
+        "/cases/case01/images/evidence/securityfootage/cam1.4.png",
+        "/cases/case01/images/evidence/securityfootage/cam1.5.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam2.1.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.2.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.3.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.4.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.5.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.6.png",
+        "/cases/case01/images/evidence/securityfootage/cam2.7.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam2.8.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam3.1.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam3.2.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam3.3.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam3.4.jpg",
+        "/cases/case01/images/evidence/securityfootage/cam3.5.jpg"
+      ],
+      "dpCost": 3,
+      "initiallyAvailable": true
     }
   ]
 }
