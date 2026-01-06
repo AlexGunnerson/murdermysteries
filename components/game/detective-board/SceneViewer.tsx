@@ -17,6 +17,9 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
   
   // Check if this is the study monitor photo (image 3 = index 2)
   const isMonitorPhoto = sceneId === 'scene_study' && currentIndex === 2
+  
+  // Check if this is the master bedroom painting photo (image 3 = index 2)
+  const isPaintingPhoto = sceneId === 'scene_master_bedroom' && currentIndex === 2
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -35,6 +38,13 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
   const handleSecurityFootageClick = () => {
     if (onOpenDocument) {
       onOpenDocument('record_security_footage')
+      onClose() // Close the scene viewer
+    }
+  }
+
+  const handlePaintingInvestigationClick = () => {
+    if (onOpenDocument) {
+      onOpenDocument('record_blackmail_portrait')
       onClose() // Close the scene viewer
     }
   }
@@ -80,7 +90,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       {/* Security Footage Indicator */}
       {isMonitorPhoto && (
         <div 
-          className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20"
+          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20"
           onClick={(e) => e.stopPropagation()}
         >
           <button
@@ -91,6 +101,25 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
             <div className="text-left">
               <div className="font-bold text-sm">Security Footage Available</div>
               <div className="text-xs opacity-90">View 18 camera clips in Documents →</div>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* Painting Investigation Indicator */}
+      {isPaintingPhoto && (
+        <div 
+          className="absolute bottom-28 left-1/2 -translate-x-1/2 z-20"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={handlePaintingInvestigationClick}
+            className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-4 rounded-lg shadow-2xl transition-all transform hover:scale-105 animate-pulse"
+          >
+            <Camera className="w-5 h-5" />
+            <div className="text-left">
+              <div className="font-bold text-sm">Investigate Painting</div>
+              <div className="text-xs opacity-90">Look behind the painting →</div>
             </div>
           </button>
         </div>
