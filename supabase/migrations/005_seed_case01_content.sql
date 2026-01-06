@@ -86,7 +86,7 @@ BEGIN
          NULL, '/cases/case01/images/documents/blackmail_floor.jpg', FALSE, 2),
         
         (v_case_id, 'record_blackmail_portrait', 'Blackmail Papers (Behind Portrait)',
-         'The complete original set of blackmail documents hidden behind a portrait in the master bedroom. Includes ALL pages, including Dr. Vale''s.',
+         'The complete original set of blackmail documents hidden behind a painting in the master bedroom. Includes ALL pages, including Dr. Vale''s.',
          NULL, '/cases/case01/images/documents/blackmail_portrait.jpg', FALSE, 2),
         
         (v_case_id, 'record_phone_logs', 'Phone Records',

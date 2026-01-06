@@ -44,7 +44,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
 
   const handlePaintingInvestigationClick = () => {
     if (onOpenDocument) {
-      onOpenDocument('record_blackmail_portrait')
+      onOpenDocument('painting_back')
       onClose() // Close the scene viewer
     }
   }

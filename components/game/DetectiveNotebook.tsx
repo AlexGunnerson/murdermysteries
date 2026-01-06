@@ -25,6 +25,7 @@ import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
 import { BlackmailViewer } from "./detective-board/BlackmailViewer"
 import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
 import { SecurityFootageViewer } from "./detective-board/SecurityFootageViewer"
+import { PaintingBackViewer } from "./detective-board/PaintingBackViewer"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 import { ValidateTheory } from "./ValidateTheory"
 
@@ -83,6 +84,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showSpeechNotes, setShowSpeechNotes] = useState(false)
   const [showValidateTheory, setShowValidateTheory] = useState(false)
   const [onPreviewClose, setOnPreviewClose] = useState<(() => void) | null>(null)
+  const [showPaintingBack, setShowPaintingBack] = useState(false)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -610,6 +612,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 setSecurityFootageImages(doc.images)
                 setShowSecurityFootage(true)
               }
+            } else if (documentId === 'painting_back') {
+              // Open the painting back viewer
+              setShowPaintingBack(true)
             }
           }}
         />
@@ -666,6 +671,24 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+          }}
+        />
+      )}
+
+      {/* Painting Back Viewer */}
+      {showPaintingBack && (
+        <PaintingBackViewer
+          imagePath="/cases/case01/images/scenes/Scene 5 - Master Bedroom/painting_back.png"
+          onClose={() => {
+            setShowPaintingBack(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
+          onOpenBlackmail={() => {
+            setShowPaintingBack(false)
+            setShowBlackmailViewer(true)
           }}
         />
       )}

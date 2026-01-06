@@ -1,7 +1,7 @@
 export const ValeBlackmailPage1 = () => (
   <div className="bg-white border-2 border-[#333] p-6 font-serif">
     <div className="border-b-2 border-[#333] pb-4 mb-5">
-      <h2 className="m-0 mb-1 text-xl">Dr. Jonathan Vale, M.D.</h2>
+      <h2 className="m-0 mb-1 text-xl">Dr. Leonard Vale, M.D.</h2>
       <p className="text-xs my-0 text-[#555]">General Practice & Internal Medicine</p>
       <p className="text-xs my-0 text-[#555]">Wickham Medical Chambers • 17 High Street, Wickham</p>
       <p className="text-xs my-0 text-[#555]">Telephone: Wickham 3847</p>
@@ -20,9 +20,9 @@ export const ValeBlackmailPage1 = () => (
     </div>
 
     <div className="text-2xl mt-8" style={{ fontFamily: "'Brush Script MT', cursive" }}>
-      Jonathan Vale
+      Leonard Vale
     </div>
-    <p className="mb-5">Dr. Jonathan Vale, M.D.</p>
+    <p className="mb-5">Dr. Leonard Vale, M.D.</p>
 
     <div className="bg-[#fffacd] border-2 border-dashed border-[#d4a017] p-2 mt-5 text-center font-bold">
       Medical Authorization Code: VMP-1963-A
@@ -33,7 +33,7 @@ export const ValeBlackmailPage1 = () => (
 export const ValeBlackmailPage2 = () => (
   <div className="bg-white border-2 border-[#333] p-6 font-serif">
     <div className="border-b-2 border-[#333] pb-4 mb-5">
-      <h2 className="m-0 mb-1 text-xl">Dr. Jonathan Vale, M.D.</h2>
+      <h2 className="m-0 mb-1 text-xl">Dr. Leonard Vale, M.D.</h2>
       <p className="text-xs my-0 text-[#555]">General Practice & Internal Medicine</p>
       <p className="text-xs my-0 text-[#555]">Wickham Medical Chambers • 17 High Street, Wickham</p>
       <p className="text-xs my-0 text-[#555]">Telephone: Wickham 3847</p>
@@ -52,9 +52,9 @@ export const ValeBlackmailPage2 = () => (
     </div>
 
     <div className="text-2xl mt-8" style={{ fontFamily: "'Brush Script MT', cursive" }}>
-      Jonathan Vale
+      Leonard Vale
     </div>
-    <p className="mb-5">Dr. Jonathan Vale, M.D.</p>
+    <p className="mb-5">Dr. Leonard Vale, M.D.</p>
 
     <div className="bg-[#fffacd] border-2 border-dashed border-[#d4a017] p-2 mt-5 text-center font-bold">
       Medical Authorization Code: VMP-1963-A
@@ -66,7 +66,7 @@ export const ValeBlackmailPage3 = () => (
   <div>
     <div className="bg-white border-2 border-[#333] p-6 font-serif">
       <div className="border-b-2 border-[#333] pb-4 mb-5">
-        <h2 className="m-0 mb-1 text-xl">Dr. Jonathan Vale, M.D.</h2>
+        <h2 className="m-0 mb-1 text-xl">Dr. Leonard Vale, M.D.</h2>
         <p className="text-xs my-0 text-[#555]">General Practice & Internal Medicine</p>
         <p className="text-xs my-0 text-[#555]">Wickham Medical Chambers • 17 High Street, Wickham</p>
         <p className="text-xs my-0 text-[#555]">Telephone: Wickham 3847</p>
@@ -85,9 +85,9 @@ export const ValeBlackmailPage3 = () => (
       </div>
 
       <div className="text-2xl mt-8" style={{ fontFamily: "'Brush Script MT', cursive" }}>
-        Jonathan Vale
+        Leonard Vale
       </div>
-      <p className="mb-5">Dr. Jonathan Vale, M.D.</p>
+      <p className="mb-5">Dr. Leonard Vale, M.D.</p>
 
       <div className="bg-[#fffacd] border-2 border-dashed border-[#d4a017] p-2 mt-5 text-center font-bold">
         Medical Authorization Code: VMP-1963-A
