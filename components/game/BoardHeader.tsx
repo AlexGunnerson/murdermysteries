@@ -8,6 +8,7 @@ interface BoardHeaderProps {
   onOpenHelp: () => void
   // Actions
   onGetClue: () => void
+  onQuestionSuspects: () => void
   onSolveMurder: () => void
 }
 
@@ -18,6 +19,7 @@ export function BoardHeader({
   onOpenMenu,
   onOpenHelp,
   onGetClue,
+  onQuestionSuspects,
   onSolveMurder
 }: BoardHeaderProps) {
   return (
@@ -366,7 +368,15 @@ export function BoardHeader({
         </button>
 
         <button 
-          className="btn-solve" 
+          className="btn-clue" 
+          onClick={onQuestionSuspects}
+          title="Question Suspects"
+        >
+          Question Suspects
+        </button>
+
+        <button 
+          className="btn-clue" 
           onClick={onSolveMurder}
           title="Validate Theory"
         >

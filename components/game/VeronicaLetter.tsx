@@ -245,7 +245,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
               {/* Date/Location */}
               <div className="text-right text-gray-600 text-base mb-5 pr-4 opacity-80">
                 Ashcombe Manor<br />
-                May 11th, 1986
+                May 12th, 1986
               </div>
 
               <div className="ink-text">

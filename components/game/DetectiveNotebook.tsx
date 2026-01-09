@@ -448,7 +448,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 {
                   id: 'veronica_letter',
                   name: "Veronica's Letter",
-                  description: "May 11th, 1986 - Ashcombe Manor",
+                  description: "May 12th, 1986 - Ashcombe Manor",
                   onClick: () => setShowVeronicaLetter(true)
                 },
                 ...unlockedDocuments.map(doc => ({

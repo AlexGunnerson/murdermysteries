@@ -63,7 +63,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             id: 'veronica_letter',
             title: "Veronica's Letter",
             type: 'doc' as const,
-            desc: "May 11th, 1986 - Ashcombe Manor",
+            desc: "12th, 1986 - Ashcombe Manor",
             images: []
           },
           ...allDocs
