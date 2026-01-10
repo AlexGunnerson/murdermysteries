@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, Patrick_Hand, Courier_Prime, Caveat, Herr_Von_Muellerhoff } from "next/font/google"
+import { Inter, Patrick_Hand, Courier_Prime, Caveat, Herr_Von_Muellerhoff, Playfair_Display } from "next/font/google"
 import { SessionProvider } from "@/lib/auth/session-provider"
 import { PostHogProvider } from "@/lib/analytics/posthog-provider"
 import "./globals.css"
@@ -25,6 +25,11 @@ const herrVonMuellerhoff = Herr_Von_Muellerhoff({
   subsets: ["latin"],
   variable: '--font-herr-von-muellerhoff'
 })
+const playfairDisplay = Playfair_Display({ 
+  weight: ['400', '500', '600', '700'],
+  subsets: ["latin"],
+  variable: '--font-playfair-display'
+})
 
 export const metadata: Metadata = {
   title: "MurderMysteries.AI - Solve the Case",
@@ -38,7 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${patrickHand.variable} ${courierPrime.variable} ${caveat.variable} ${herrVonMuellerhoff.variable}`}>
+      <body className={`${inter.className} ${patrickHand.variable} ${courierPrime.variable} ${caveat.variable} ${herrVonMuellerhoff.variable} ${playfairDisplay.variable}`}>
         <PostHogProvider>
           <SessionProvider>
             {children}

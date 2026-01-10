@@ -17,7 +17,7 @@ import { TypewrittenLabel } from "./detective-board/TypewrittenLabel"
 import { DocumentCard } from "./detective-board/DocumentCard"
 import { DocumentStack } from "./detective-board/DocumentStack"
 import { StickyNote } from "./detective-board/StickyNote"
-import { SuspectCard } from "./detective-board/SuspectCard"
+import { SuspectDossierView } from "./detective-board/SuspectDossierView"
 import { VictimCard } from "./detective-board/VictimCard"
 import { SceneViewer } from "./detective-board/SceneViewer"
 import { DocumentViewer } from "./detective-board/DocumentViewer"
@@ -34,8 +34,21 @@ interface Suspect {
   name: string
   age: number
   role: string
+  bio: string
   portraitUrl: string
   veronicaNote: string
+}
+
+interface StoryConfig {
+  systemPrompt: string
+  suspects: {
+    [key: string]: {
+      personality: string
+      alibi: string
+      secrets: string[]
+      facts: { [key: string]: string }
+    }
+  }
 }
 
 interface Scene {
@@ -85,13 +98,22 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showValidateTheory, setShowValidateTheory] = useState(false)
   const [onPreviewClose, setOnPreviewClose] = useState<(() => void) | null>(null)
   const [showPaintingBack, setShowPaintingBack] = useState(false)
+  const [storyConfig, setStoryConfig] = useState<StoryConfig | null>(null)
 
   // Load suspect and scene data from metadata
   useEffect(() => {
     async function loadMetadata() {
       try {
-        const response = await fetch('/cases/case01/metadata.json')
-        const data = await response.json()
+        // Load both metadata and story config
+        const [metadataResponse, storyConfigResponse] = await Promise.all([
+          fetch('/cases/case01/metadata.json'),
+          fetch('/cases/case01/story-config.json')
+        ])
+        
+        const data = await metadataResponse.json()
+        const storyData = await storyConfigResponse.json()
+        
+        setStoryConfig(storyData)
         
         // Get all suspects including Veronica
         const allSuspects = data.suspects.map((s: any) => {
@@ -108,6 +130,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             name: s.name,
             age: ageMatch ? parseInt(ageMatch[1]) : 0,
             role: role,
+            bio: s.bio,
             portraitUrl: s.portraitUrl,
             veronicaNote: s.veronicaNote
           }
@@ -257,6 +280,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onOpenMenu={onOpenMenu}
         onOpenHelp={() => onAction('help')}
         onGetClue={() => onAction('clue')}
+        onQuestionSuspects={() => onAction('question')}
         onSolveMurder={() => setShowValidateTheory(true)}
       />
 
@@ -717,10 +741,21 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         />
       )}
 
-      {/* Suspect Reveal Card Modal */}
-      {selectedSuspectForReveal && (
-        <SuspectCard
+      {/* Suspect Dossier Split-Screen Modal */}
+      {selectedSuspectForReveal && storyConfig && (
+        <SuspectDossierView
           suspect={selectedSuspectForReveal}
+          suspectPersonality={storyConfig.suspects[selectedSuspectForReveal.id]?.personality || ''}
+          suspectAlibi={storyConfig.suspects[selectedSuspectForReveal.id]?.alibi || ''}
+          systemPrompt={storyConfig.systemPrompt
+            .replace('{suspect_name}', selectedSuspectForReveal.name)
+            .replace('{suspect_role}', selectedSuspectForReveal.role)
+            .replace('{suspect_bio}', selectedSuspectForReveal.bio)
+            .replace('{suspect_personality}', storyConfig.suspects[selectedSuspectForReveal.id]?.personality || '')
+            .replace('{suspect_alibi}', storyConfig.suspects[selectedSuspectForReveal.id]?.alibi || '')
+            .replace('{suspect_secrets}', storyConfig.suspects[selectedSuspectForReveal.id]?.secrets?.join('\n') || '')
+            .replace('{dynamic_knowledge}', discoveredFacts.map(f => f.content).join('\n'))
+          }
           onClose={handleCloseSuspectCard}
         />
       )}
