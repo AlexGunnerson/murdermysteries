@@ -230,17 +230,18 @@ export function ChatInterface({
             {/* Avatar for suspect messages */}
             {msg.role === 'assistant' && suspectAvatarUrl && (
               <div 
-                className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-[#d4af37]/60 mt-1"
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-[#d4af37] mt-1"
                 style={{
-                  boxShadow: '0 0 8px rgba(212, 175, 55, 0.3), inset 0 0 4px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
                 }}
               >
                 <Image
                   src={suspectAvatarUrl}
                   alt={suspectName}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="w-full h-full object-cover scale-150"
                 />
               </div>
             )}
@@ -271,17 +272,18 @@ export function ChatInterface({
             {/* Avatar for streaming suspect message */}
             {suspectAvatarUrl && (
               <div 
-                className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-[#d4af37]/60 mt-1"
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-[#d4af37] mt-1"
                 style={{
-                  boxShadow: '0 0 8px rgba(212, 175, 55, 0.3), inset 0 0 4px rgba(0, 0, 0, 0.3)',
+                  boxShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
                 }}
               >
                 <Image
                   src={suspectAvatarUrl}
                   alt={suspectName}
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-cover"
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="w-full h-full object-cover scale-150"
                 />
               </div>
             )}

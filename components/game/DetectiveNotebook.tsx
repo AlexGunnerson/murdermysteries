@@ -133,6 +133,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             role: role,
             bio: s.bio,
             portraitUrl: s.portraitUrl,
+            avatarUrl: s.avatarUrl,
             veronicaNote: s.veronicaNote
           }
         })
