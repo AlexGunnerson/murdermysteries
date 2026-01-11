@@ -12,6 +12,7 @@ interface SuspectDossierViewProps {
     role: string
     bio: string
     portraitUrl: string
+    avatarUrl?: string
     veronicaNote: string
   }
   suspectPersonality: string
@@ -409,6 +410,7 @@ export function SuspectDossierView({
               suspectRole={suspect.role}
               suspectPersonality={suspectPersonality}
               systemPrompt={systemPrompt}
+              suspectAvatarUrl={suspect.avatarUrl}
             />
           </div>
         </div>

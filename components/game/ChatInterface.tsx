@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { useGameState, useSuspectChatHistory } from '@/lib/hooks/useGameState'
 import { extractFactsFromResponse } from '@/lib/services/aiService'
 import { calculateFactReward } from '@/lib/utils/dpCalculator'
@@ -14,6 +15,7 @@ interface ChatInterfaceProps {
   suspectRole: string
   suspectPersonality: string
   systemPrompt: string
+  suspectAvatarUrl?: string
   onFactDiscovered?: (fact: string) => void
 }
 
@@ -23,6 +25,7 @@ export function ChatInterface({
   suspectRole,
   suspectPersonality,
   systemPrompt,
+  suspectAvatarUrl,
   onFactDiscovered,
 }: ChatInterfaceProps) {
   const [inputMessage, setInputMessage] = useState('')
@@ -222,8 +225,26 @@ export function ChatInterface({
         {chatHistory.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
+            {/* Avatar for suspect messages */}
+            {msg.role === 'assistant' && suspectAvatarUrl && (
+              <div 
+                className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-[#d4af37]/60 mt-1"
+                style={{
+                  boxShadow: '0 0 8px rgba(212, 175, 55, 0.3), inset 0 0 4px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <Image
+                  src={suspectAvatarUrl}
+                  alt={suspectName}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
             <div
               className={`max-w-[80%] rounded-sm p-3 ${
                 msg.role === 'user'
@@ -246,7 +267,25 @@ export function ChatInterface({
 
         {/* Streaming response */}
         {currentResponse && (
-          <div className="flex justify-start">
+          <div className="flex gap-3 justify-start">
+            {/* Avatar for streaming suspect message */}
+            {suspectAvatarUrl && (
+              <div 
+                className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-[#d4af37]/60 mt-1"
+                style={{
+                  boxShadow: '0 0 8px rgba(212, 175, 55, 0.3), inset 0 0 4px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <Image
+                  src={suspectAvatarUrl}
+                  alt={suspectName}
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
             <div 
               className="max-w-[80%] rounded-sm p-3 bg-[#0f0f0f] text-gray-300 border border-gray-800"
               style={{ boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}

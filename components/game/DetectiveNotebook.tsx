@@ -36,6 +36,7 @@ interface Suspect {
   role: string
   bio: string
   portraitUrl: string
+  avatarUrl?: string
   veronicaNote: string
 }
 
