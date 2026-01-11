@@ -46,7 +46,15 @@ export async function* streamAIResponse(
 ): AsyncGenerator<StreamResponse> {
   try {
     const client = getGeminiClient()
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = client.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      },
+    })
 
     // Build conversation context with system prompt
     const fullPrompt = buildPrompt(userMessage, context)
@@ -90,7 +98,15 @@ export async function generateAIResponse(
 ): Promise<string> {
   try {
     const client = getGeminiClient()
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = client.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.9,
+        topK: 1,
+        topP: 1,
+        maxOutputTokens: 2048,
+      },
+    })
 
     const fullPrompt = buildPrompt(userMessage, context)
     const result = await model.generateContent(fullPrompt)
@@ -224,7 +240,7 @@ export async function generateClue(
 ): Promise<string> {
   try {
     const client = getGeminiClient()
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     // Build clue generation prompt
     const prompt = `You are a mystery game hint system. Generate a subtle clue that helps the detective without giving away the solution.
@@ -274,7 +290,7 @@ export async function evaluateTheory(
 }> {
   try {
     const client = getGeminiClient()
-    const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = client.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     // Build evaluation prompt
     const artifactContents = theory.artifactIds
