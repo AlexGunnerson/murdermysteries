@@ -183,18 +183,29 @@ export function ChatInterface({
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#141414] text-gray-100">
+    <div className="flex flex-col h-full bg-[#1a1a1a] text-gray-100">
       {/* Header - Subtle Dark */}
-      <div className="bg-[#0a0a0a] p-4 border-b border-[#c5a065]/10">
+      <div 
+        className="bg-[#121212] p-4 border-b" 
+        style={{
+          borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.2), rgba(197, 160, 101, 0.4), rgba(197, 160, 101, 0.2)) 1',
+        }}
+      >
         <h2 
-          className="text-xl font-semibold text-[#c5a065]"
-          style={{ fontFamily: "'Playfair Display', serif" }}
+          className="text-2xl font-semibold text-[#d4af37]"
+          style={{ 
+            fontFamily: "'Playfair Display', serif",
+            textShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
+          }}
         >
           {suspectName}
         </h2>
         <p 
-          className="text-sm text-[#c5a065]/70 mt-0.5"
-          style={{ fontFamily: 'Courier, monospace' }}
+          className="text-base text-[#c5a065] mt-0.5"
+          style={{ 
+            fontFamily: 'Courier, monospace',
+            textShadow: '0 0 4px rgba(197, 160, 101, 0.2)',
+          }}
         >
           {suspectRole}
         </p>
@@ -205,7 +216,7 @@ export function ChatInterface({
         className="flex-1 overflow-y-auto p-4 space-y-4 chat-scrollbar"
         style={{
           scrollbarWidth: 'thin',
-          scrollbarColor: '#2a2a2a #141414',
+          scrollbarColor: '#2a2a2a #1a1a1a',
         }}
       >
         {chatHistory.map((msg) => (
@@ -216,8 +227,8 @@ export function ChatInterface({
             <div
               className={`max-w-[80%] rounded-sm p-3 ${
                 msg.role === 'user'
-                  ? 'bg-[#2a2520] text-[#dcd0b8] border border-[#c5a065]/20'
-                  : 'bg-[#1a1a1a] text-gray-300 border border-gray-800'
+                  ? 'bg-[#2a2520] text-[#dcd0b8] border border-[#d4af37]/30'
+                  : 'bg-[#0f0f0f] text-gray-300 border border-gray-800'
               }`}
               style={{
                 boxShadow: msg.role === 'user' 
@@ -225,7 +236,7 @@ export function ChatInterface({
                   : '0 1px 4px rgba(0, 0, 0, 0.3)',
               }}
             >
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+              <p className="whitespace-pre-wrap text-base leading-relaxed">{msg.content}</p>
               <span className="text-xs opacity-40 mt-2 block" style={{ fontFamily: 'Courier, monospace' }}>
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </span>
@@ -237,11 +248,11 @@ export function ChatInterface({
         {currentResponse && (
           <div className="flex justify-start">
             <div 
-              className="max-w-[80%] rounded-sm p-3 bg-[#1a1a1a] text-gray-300 border border-gray-800"
+              className="max-w-[80%] rounded-sm p-3 bg-[#0f0f0f] text-gray-300 border border-gray-800"
               style={{ boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}
             >
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{currentResponse}</p>
-              <span className="inline-block w-2 h-4 bg-[#c5a065] animate-pulse ml-1" />
+              <p className="whitespace-pre-wrap text-base leading-relaxed">{currentResponse}</p>
+              <span className="inline-block w-2 h-4 bg-[#d4af37] animate-pulse ml-1" />
             </div>
           </div>
         )}
@@ -250,7 +261,12 @@ export function ChatInterface({
       </div>
 
       {/* Input - Dark Inset */}
-      <div className="bg-[#0a0a0a] p-4 border-t border-[#c5a065]/10">
+      <div 
+        className="bg-[#121212] p-4 border-t" 
+        style={{
+          borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.2), rgba(197, 160, 101, 0.4), rgba(197, 160, 101, 0.2)) 1',
+        }}
+      >
         <div className="flex gap-2">
           <Textarea
             ref={textareaRef}
@@ -259,7 +275,7 @@ export function ChatInterface({
             onKeyDown={handleKeyDown}
             placeholder="Ask a question..."
             disabled={isStreaming}
-            className="flex-1 resize-none bg-transparent border border-[#c5a065]/30 text-gray-300 placeholder-gray-600 focus:border-[#c5a065]/50 focus:ring-1 focus:ring-[#c5a065]/30 rounded-sm"
+            className="flex-1 resize-none bg-transparent border border-[#d4af37]/30 text-gray-300 placeholder-gray-600 focus:border-[#d4af37]/60 focus:ring-1 focus:ring-[#d4af37]/40 rounded-sm text-base"
             style={{
               boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
             }}
@@ -268,9 +284,9 @@ export function ChatInterface({
           <Button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isStreaming}
-            className="bg-[#c5a065]/20 hover:bg-[#c5a065]/30 text-[#c5a065] border border-[#c5a065]/30 rounded-sm transition-colors"
+            className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border border-[#d4af37]/40 rounded-sm transition-colors"
             style={{
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3)',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(212, 175, 55, 0.2)',
             }}
           >
             {isStreaming ? (
@@ -294,7 +310,7 @@ export function ChatInterface({
           width: 6px;
         }
         .chat-scrollbar::-webkit-scrollbar-track {
-          background: #141414;
+          background: #1a1a1a;
         }
         .chat-scrollbar::-webkit-scrollbar-thumb {
           background: #2a2a2a;

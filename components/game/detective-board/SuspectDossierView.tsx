@@ -29,79 +29,143 @@ export function SuspectDossierView({
 }: SuspectDossierViewProps) {
   return (
     <div 
-      className="fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
       onClick={onClose}
       style={{
         backgroundImage: `
-          radial-gradient(circle at 50% 50%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%),
-          url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E")
+          radial-gradient(circle at 50% 50%, rgba(10,10,10,0.85) 0%, rgba(0,0,0,0.98) 100%),
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
         `,
       }}
     >
-      {/* Split-screen container - 'The Folder' */}
+      {/* Split-screen container - 'The Noir Dossier' */}
       <div 
         className="relative w-full h-full max-w-[1400px] max-h-[85vh] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-sm overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         style={{
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.05)',
+          boxShadow: `
+            0 20px 60px rgba(0, 0, 0, 0.9),
+            0 0 40px rgba(212, 175, 55, 0.15),
+            inset 0 0 1px rgba(212, 175, 55, 0.3),
+            inset 0 1px 2px rgba(255, 255, 255, 0.03)
+          `,
+          border: '1px solid rgba(212, 175, 55, 0.2)',
         }}
       >
-        {/* Grain overlay for entire modal */}
+        {/* Enhanced grain overlay for entire modal */}
         <div 
-          className="absolute inset-0 pointer-events-none z-50 mix-blend-overlay opacity-30"
+          className="absolute inset-0 pointer-events-none z-50 mix-blend-overlay opacity-35"
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            backgroundSize: '100px 100px',
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundSize: '120px 120px',
           }}
         />
 
         {/* Close button - top right corner */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-[60] p-2 bg-[#2a211b]/90 hover:bg-[#1a1410] text-[#c5a065] rounded-sm transition-colors border border-[#c5a065]/20"
+          className="absolute top-4 right-4 z-[60] p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
           aria-label="Close"
           style={{
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+            boxShadow: `
+              0 2px 10px rgba(0, 0, 0, 0.8),
+              0 0 12px rgba(212, 175, 55, 0.3),
+              inset 0 0 8px rgba(212, 175, 55, 0.1)
+            `,
           }}
         >
-          <X className="w-5 h-5" />
+          <X 
+            className="w-5 h-5" 
+            style={{
+              filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
+            }}
+          />
         </button>
 
-        {/* LEFT PANEL - Case File Dossier - 'Heavy Leather Folder' */}
+        {/* LEFT PANEL - Case File Dossier - 'Deep Charcoal Leather' */}
         <div 
-          className="bg-[#2a211b] overflow-y-auto relative"
+          className="bg-[#1a1a1a] overflow-y-auto relative"
           style={{
             backgroundImage: `
-              linear-gradient(135deg, rgba(42, 33, 27, 0.9) 0%, rgba(26, 20, 16, 1) 100%),
+              linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 1) 100%),
               repeating-linear-gradient(
                 45deg,
                 transparent,
-                transparent 10px,
-                rgba(0, 0, 0, 0.08) 10px,
-                rgba(0, 0, 0, 0.08) 11px
+                transparent 12px,
+                rgba(0, 0, 0, 0.15) 12px,
+                rgba(0, 0, 0, 0.15) 13px
               ),
               repeating-linear-gradient(
                 -45deg,
                 transparent,
-                transparent 10px,
-                rgba(0, 0, 0, 0.05) 10px,
-                rgba(0, 0, 0, 0.05) 11px
+                transparent 12px,
+                rgba(0, 0, 0, 0.12) 12px,
+                rgba(0, 0, 0, 0.12) 13px
               )
             `,
-            boxShadow: 'inset -2px 0 8px rgba(0, 0, 0, 0.6)',
+            boxShadow: 'inset -3px 0 12px rgba(0, 0, 0, 0.7), inset 0 0 80px rgba(0, 0, 0, 0.5)',
           }}
         >
+          {/* Gold-etched vertical divider line */}
+          <div 
+            className="absolute top-0 right-0 bottom-0 w-[2px] z-10"
+            style={{
+              background: `
+                linear-gradient(
+                  to bottom,
+                  transparent 0%,
+                  rgba(197, 160, 101, 0.3) 5%,
+                  rgba(197, 160, 101, 0.8) 20%,
+                  rgba(197, 160, 101, 1) 50%,
+                  rgba(197, 160, 101, 0.8) 80%,
+                  rgba(197, 160, 101, 0.3) 95%,
+                  transparent 100%
+                )
+              `,
+              boxShadow: `
+                0 0 8px rgba(197, 160, 101, 0.6),
+                0 0 16px rgba(197, 160, 101, 0.4),
+                inset 0 0 4px rgba(255, 215, 0, 0.3)
+              `,
+            }}
+          />
+          {/* Metallic accent strips */}
+          <div 
+            className="absolute top-0 right-[1px] bottom-0 w-[1px]"
+            style={{
+              background: `
+                linear-gradient(
+                  to bottom,
+                  transparent 0%,
+                  rgba(255, 215, 0, 0.4) 5%,
+                  rgba(255, 215, 0, 0.6) 50%,
+                  rgba(255, 215, 0, 0.4) 95%,
+                  transparent 100%
+                )
+              `,
+            }}
+          />
           <div className="p-6 lg:p-8 h-full flex flex-col relative">
             {/* Header with typewriter aesthetic */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[#c5a065] text-xs uppercase tracking-[0.3em]" style={{ fontFamily: 'Courier, monospace', fontWeight: 700 }}>
+                <span 
+                  className="text-[#d4af37] text-sm uppercase tracking-[0.3em]" 
+                  style={{ 
+                    fontFamily: 'Courier, monospace', 
+                    fontWeight: 700,
+                    textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                  }}
+                >
                   CASE FILE:
                 </span>
               </div>
               <p 
-                className="text-[#8b7355] text-sm"
-                style={{ fontFamily: 'Courier, monospace' }}
+                className="text-[#c5a065] text-base"
+                style={{ 
+                  fontFamily: 'Courier, monospace',
+                  textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                }}
               >
                 70s: Final Gala at the Estate
               </p>
@@ -136,7 +200,7 @@ export function SuspectDossierView({
                 <div className="flex-1">
                   {/* Name */}
                   <h2 
-                    className="text-4xl text-[#2c2a29] mb-4 leading-tight"
+                    className="text-5xl text-[#2c2a29] mb-4 leading-tight"
                     style={{ fontFamily: "'Caveat', cursive" }}
                   >
                     {suspect.name}
@@ -145,7 +209,7 @@ export function SuspectDossierView({
                   {/* Bio - Veronica's handwriting */}
                   <div className="mb-6">
                     <p 
-                      className="text-[#2c2a29] text-lg leading-relaxed"
+                      className="text-[#2c2a29] text-2xl leading-relaxed"
                       style={{ fontFamily: "'Caveat', cursive" }}
                     >
                       {suspect.veronicaNote || suspect.bio}
@@ -154,7 +218,7 @@ export function SuspectDossierView({
 
                   {/* Signature - handwritten */}
                   <p 
-                    className="text-[#2c2a29] text-2xl"
+                    className="text-[#2c2a29] text-3xl"
                     style={{ fontFamily: "'Caveat', cursive" }}
                   >
                     — V. Ashcombe
@@ -184,48 +248,91 @@ export function SuspectDossierView({
               </div>
             </div>
 
-            {/* Facts below the card - Typewriter labels */}
+            {/* Facts below the card - Noir Typewriter labels */}
             <div className="space-y-3">
               {/* Relationship */}
-              <div className="flex items-start gap-3 text-[#c5a065]">
-                <div className="w-6 h-6 rounded-full border-2 border-[#c5a065]/50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-2 h-2 rounded-full bg-[#c5a065]"></div>
+              <div className="flex items-start gap-3 text-[#d4af37]">
+                <div 
+                  className="w-6 h-6 rounded-full border-2 border-[#d4af37]/60 flex items-center justify-center flex-shrink-0 mt-0.5"
+                  style={{
+                    boxShadow: '0 0 8px rgba(212, 175, 55, 0.3), inset 0 0 4px rgba(212, 175, 55, 0.2)',
+                  }}
+                >
+                  <div 
+                    className="w-2 h-2 rounded-full bg-[#d4af37]"
+                    style={{
+                      boxShadow: '0 0 4px rgba(212, 175, 55, 0.6)',
+                    }}
+                  ></div>
                 </div>
                 <div>
-                  <span className="text-[#c5a065] font-bold text-xs uppercase tracking-wider" style={{ fontFamily: 'Courier, monospace' }}>
+                  <span 
+                    className="text-[#d4af37] font-bold text-sm uppercase tracking-wider" 
+                    style={{ 
+                      fontFamily: 'Courier, monospace',
+                      textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
+                    }}
+                  >
                     Relationship:{" "}
                   </span>
-                  <span className="text-[#c5a065]/90">
+                  <span 
+                    className="text-[#c5a065] text-base"
+                    style={{
+                      textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                    }}
+                  >
                     {suspect.role}
                   </span>
                 </div>
               </div>
 
               {/* Age */}
-              <div className="flex items-start gap-3 text-[#c5a065]">
+              <div className="flex items-start gap-3 text-[#d4af37]">
                 <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xl">🎂</span>
                 </div>
                 <div>
-                  <span className="text-[#c5a065] font-bold text-xs uppercase tracking-wider" style={{ fontFamily: 'Courier, monospace' }}>
+                  <span 
+                    className="text-[#d4af37] font-bold text-sm uppercase tracking-wider" 
+                    style={{ 
+                      fontFamily: 'Courier, monospace',
+                      textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
+                    }}
+                  >
                     Age:{" "}
                   </span>
-                  <span className="text-[#c5a065]/90">
+                  <span 
+                    className="text-[#c5a065] text-base"
+                    style={{
+                      textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                    }}
+                  >
                     {suspect.age}
                   </span>
                 </div>
               </div>
 
               {/* Vices */}
-              <div className="flex items-start gap-3 text-[#c5a065]">
+              <div className="flex items-start gap-3 text-[#d4af37]">
                 <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xl">📋</span>
                 </div>
                 <div>
-                  <span className="text-[#c5a065] font-bold text-xs uppercase tracking-wider" style={{ fontFamily: 'Courier, monospace' }}>
+                  <span 
+                    className="text-[#d4af37] font-bold text-sm uppercase tracking-wider" 
+                    style={{ 
+                      fontFamily: 'Courier, monospace',
+                      textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
+                    }}
+                  >
                     Vices:{" "}
                   </span>
-                  <span className="text-[#c5a065]/90">
+                  <span 
+                    className="text-[#c5a065] text-base"
+                    style={{
+                      textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                    }}
+                  >
                     {suspect.id === 'suspect_martin' && 'Gambling, drinking.'}
                     {suspect.id === 'suspect_veronica' && 'Suspicious, protective.'}
                     {suspect.id === 'suspect_colin' && 'Secretive, desperate.'}
@@ -239,34 +346,54 @@ export function SuspectDossierView({
           </div>
         </div>
 
-        {/* RIGHT PANEL - 'Warm Black' Chat Interface */}
-        <div className="bg-[#141414] flex flex-col overflow-hidden relative">
-          {/* Subtle texture overlay */}
+        {/* RIGHT PANEL - 'Deep Charcoal Leather' Chat Interface */}
+        <div className="bg-[#1a1a1a] flex flex-col overflow-hidden relative">
+          {/* Deep leather texture overlay */}
           <div 
-            className="absolute inset-0 pointer-events-none opacity-20"
+            className="absolute inset-0 pointer-events-none opacity-25"
             style={{
               backgroundImage: `
                 repeating-linear-gradient(
-                  0deg,
+                  45deg,
                   transparent,
-                  transparent 2px,
-                  rgba(255, 255, 255, 0.01) 2px,
-                  rgba(255, 255, 255, 0.01) 4px
+                  transparent 12px,
+                  rgba(0, 0, 0, 0.15) 12px,
+                  rgba(0, 0, 0, 0.15) 13px
+                ),
+                repeating-linear-gradient(
+                  -45deg,
+                  transparent,
+                  transparent 12px,
+                  rgba(0, 0, 0, 0.12) 12px,
+                  rgba(0, 0, 0, 0.12) 13px
                 )
               `,
             }}
           />
           
-          {/* Header - Serif Typography */}
-          <div className="bg-[#0a0a0a] border-b border-[#c5a065]/10 p-6 flex items-center justify-between relative z-10">
+          {/* Header - Noir Gold Typography */}
+          <div 
+            className="bg-[#121212] border-b p-6 flex items-center justify-between relative z-10"
+            style={{
+              borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.3), rgba(197, 160, 101, 0.6), rgba(197, 160, 101, 0.3)) 1',
+              boxShadow: '0 2px 12px rgba(197, 160, 101, 0.15)',
+            }}
+          >
             <div className="flex items-center gap-3">
-              <Search className="w-6 h-6 text-[#c5a065]" strokeWidth={1.5} />
+              <Search 
+                className="w-6 h-6 text-[#d4af37]" 
+                strokeWidth={1.5}
+                style={{
+                  filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
+                }}
+              />
               <h2 
-                className="text-2xl text-[#c5a065] tracking-wider uppercase"
+                className="text-3xl text-[#d4af37] tracking-wider uppercase"
                 style={{ 
                   fontFamily: "'Playfair Display', serif",
                   letterSpacing: '0.15em',
                   fontWeight: 500,
+                  textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
                 }}
               >
                 Analyze Suspects
