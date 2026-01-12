@@ -230,7 +230,7 @@ export function ChatInterface({
             {/* Avatar for suspect messages */}
             {msg.role === 'assistant' && suspectAvatarUrl && (
               <div 
-                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-[#d4af37] mt-1"
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border border-[#d4af37] mt-1"
                 style={{
                   boxShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
                 }}
@@ -241,7 +241,7 @@ export function ChatInterface({
                   width={64}
                   height={64}
                   unoptimized
-                  className="w-full h-full object-cover scale-150"
+                  className="w-full h-full object-cover scale-[2]"
                 />
               </div>
             )}
@@ -272,7 +272,7 @@ export function ChatInterface({
             {/* Avatar for streaming suspect message */}
             {suspectAvatarUrl && (
               <div 
-                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-[#d4af37] mt-1"
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border border-[#d4af37] mt-1"
                 style={{
                   boxShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
                 }}
@@ -283,7 +283,7 @@ export function ChatInterface({
                   width={64}
                   height={64}
                   unoptimized
-                  className="w-full h-full object-cover scale-150"
+                  className="w-full h-full object-cover scale-[2]"
                 />
               </div>
             )}
