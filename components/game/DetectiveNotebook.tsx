@@ -423,7 +423,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           <div className="flex flex-col items-center gap-6 mb-12">
             <TypewrittenLabel text="THE VICTIM" rotating={-1} />
             <PinnedPhoto
-              imageUrl="/cases/case01/images/portraits/reginald.png"
+              imageUrl="/cases/case01/images/portraits/reginald.jpg"
               name="Reginald"
               subtitle="The Victim"
               onClick={handleVictimClick}

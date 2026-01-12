@@ -60,7 +60,7 @@ export function VictimCard({ onClose }: VictimCardProps) {
               }}
             >
               <Image
-                src="/cases/case01/images/portraits/reginald.png"
+                src="/cases/case01/images/portraits/reginald.jpg"
                 alt="Reginald Ashcombe"
                 fill
                 className="object-cover"
