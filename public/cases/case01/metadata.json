@@ -13,7 +13,7 @@
       "role": "The Widow",
       "bio": "62 years old, graceful and intelligent. Once a concert pianist, now manages the social and charitable side of Ashcombe Estate. Found Reginald's body at the bottom of the grand staircase.",
       "portraitUrl": "/cases/case01/images/portraits/veronica.jpg",
-      "avatarUrl": "/cases/case01/images/portraits/veronica_avi.png",
+      "avatarUrl": "/cases/case01/images/portraits/veronica_avi_2.png",
       "initiallyAvailable": true
     },
     {
@@ -35,7 +35,7 @@
       "role": "The Estate Manager",
       "bio": "53 years old, Reginald's right hand and estate manager. Competent and loyal on the surface. Responded to Veronica's scream after the body was discovered.",
       "portraitUrl": "/cases/case01/images/portraits/colin.jpg",
-      "avatarUrl": "/cases/case01/images/portraits/colin_avi.png",
+      "avatarUrl": "/cases/case01/images/portraits/colin_avi_2.png",
       "veronicaNote": "The Estate Manager. He was once Reginald's right hand, but that hand has withered. Competent, yes, but there is a desperation in him now. He and my husband quarreled years ago—trust once broken is never truly mended.",
       "initiallyAvailable": true,
       "unlockConditions": {
@@ -48,7 +48,7 @@
       "role": "The Charity Director",
       "bio": "51 years old, polished and ambitious. Oversees the Ashcombe Foundation's fundraising campaigns. Was helping Veronica rehearse her speech when the murder occurred.",
       "portraitUrl": "/cases/case01/images/portraits/lydia.jpg",
-      "avatarUrl": "/cases/case01/images/portraits/lydia_avi.png",
+      "avatarUrl": "/cases/case01/images/portraits/lydia_avi_2.png",
       "veronicaNote": "Director of the Foundation. She is polished, ambitious, and curates her public image as carefully as she does our charity galas. She claims to serve the family, but I suspect she serves only her own ascent.",
       "initiallyAvailable": true,
       "unlockConditions": {
@@ -61,7 +61,7 @@
       "role": "The Physician",
       "bio": "58 years old, elegant and calculating. Longtime friend of the Ashcombe family and attending physician. Left the ballroom early for an 'urgent phone call' before Reginald's death.",
       "portraitUrl": "/cases/case01/images/portraits/vale.png",
-      "avatarUrl": "/cases/case01/images/portraits/vale_avi.png",
+      "avatarUrl": "/cases/case01/images/portraits/vale_avi_2.png",
       "veronicaNote": "The Physician. A \"friend\" of the family for decades. He is elegant and calculating, with a bedside manner that is almost too calm. He pronounced Reginald dead without a flicker of emotion. I have always found his stillness... unsettling.",
       "initiallyAvailable": true,
       "unlockConditions": {
