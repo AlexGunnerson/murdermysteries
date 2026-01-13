@@ -574,41 +574,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               </div>
             )}
           </BoardSection>
-
-          {/* Theory Submission */}
-          <BoardSection 
-            title="Validate Theory" 
-            icon="💭"
-            onClick={() => onAction('validate')}
-            rotating={0.7}
-            className="relative group"
-          >
-            {/* DP Cost Badge */}
-            <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded-full text-xs font-bold shadow-md">
-              -3 DP
-            </div>
-
-            {/* Hover hint */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all rounded-lg pointer-events-none flex items-center justify-center">
-              <span className="text-gray-800 font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 px-4 py-2 rounded-lg shadow-lg">
-                Click to Submit Theory
-              </span>
-            </div>
-
-            <div className="text-center py-8">
-              <div className="text-6xl mb-4">📁</div>
-              <p className="text-sm text-gray-700 mb-4">
-                Submit your theory when ready
-              </p>
-              {theoryHistory.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-gray-300">
-                  <p className="text-xs text-gray-600">
-                    Theories submitted: {theoryHistory.length}
-                  </p>
-                </div>
-              )}
-            </div>
-          </BoardSection>
         </div>
       </div>
       </div>

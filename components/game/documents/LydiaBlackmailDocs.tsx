@@ -6,10 +6,10 @@ export const LydiaBlackmailPage1 = () => (
       <p className="text-xs my-1 text-[#5a4a3a]">Ashcombe Estate, Wickham, England</p>
     </div>
 
-    <div className="text-right text-xs text-[#666] mb-4">Receipt No. AF-1962-0847</div>
+    <div className="text-right text-xs text-[#666] mb-4">Receipt No. AF-1979-0847</div>
 
     <p className="mb-2"><strong>DONATION RECEIPT</strong></p>
-    <p className="mb-6">Date: 15 November 1962</p>
+    <p className="mb-6">Date: 15 November 1979</p>
 
     <p className="mt-6 mb-2">
       <strong>Received From:</strong><br />
@@ -26,7 +26,7 @@ export const LydiaBlackmailPage1 = () => (
 
     <p className="mb-2"><strong>Payment Method:</strong> Bank Cheque (Barclays Bank, London)</p>
     <p className="mb-2"><strong>Designation:</strong> General Operating Fund</p>
-    <p className="mb-6"><strong>Tax Receipt Issued:</strong> Yes (Form 1962-GH-847)</p>
+    <p className="mb-6"><strong>Tax Receipt Issued:</strong> Yes (Form 1979-GH-847)</p>
 
     <p className="mt-8 mb-8">
       This donation will support the Foundation's ongoing work in educational scholarships and cultural preservation.
@@ -53,7 +53,7 @@ export const LydiaBlackmailPage2 = () => (
     <div className="bg-white border border-[#333] p-0 font-mono text-xs">
       <div className="bg-[#e8e8e8] p-4 border-b-2 border-[#333] font-bold">
         THE ASHCOMBE FOUNDATION<br />
-        QUARTERLY DONATION LEDGER — Q4 1962<br />
+        QUARTERLY DONATION LEDGER — Q4 1979<br />
         Prepared by: Lydia Portwell, Director of Development
       </div>
 
@@ -69,42 +69,42 @@ export const LydiaBlackmailPage2 = () => (
         </thead>
         <tbody>
           <tr>
-            <td className="p-2 border-b border-[#ccc]">03 Oct 1962</td>
+            <td className="p-2 border-b border-[#ccc]">03 Oct 1979</td>
             <td className="p-2 border-b border-[#ccc]">Mrs. Elizabeth Thornbury</td>
             <td className="p-2 border-b border-[#ccc]">2,500</td>
             <td className="p-2 border-b border-[#ccc]">Cheque</td>
             <td className="p-2 border-b border-[#ccc]">Scholarship</td>
           </tr>
           <tr className="bg-[#f9f9f9]">
-            <td className="p-2 border-b border-[#ccc]">18 Oct 1962</td>
+            <td className="p-2 border-b border-[#ccc]">18 Oct 1979</td>
             <td className="p-2 border-b border-[#ccc]">Lord Pemberton Estate</td>
             <td className="p-2 border-b border-[#ccc]">8,000</td>
             <td className="p-2 border-b border-[#ccc]">Bank Transfer</td>
             <td className="p-2 border-b border-[#ccc]">General</td>
           </tr>
           <tr>
-            <td className="p-2 border-b border-[#ccc]">27 Oct 1962</td>
+            <td className="p-2 border-b border-[#ccc]">27 Oct 1979</td>
             <td className="p-2 border-b border-[#ccc]">Dr. Harold Wexley</td>
             <td className="p-2 border-b border-[#ccc]">750</td>
             <td className="p-2 border-b border-[#ccc]">Cash</td>
             <td className="p-2 border-b border-[#ccc]">Arts</td>
           </tr>
           <tr className="bg-[#fff3cd] border-l-4 border-[#856404]">
-            <td className="p-2 border-b border-[#ccc]">15 Nov 1962</td>
+            <td className="p-2 border-b border-[#ccc]">15 Nov 1979</td>
             <td className="p-2 border-b border-[#ccc]">Geoffrey Hales</td>
             <td className="p-2 border-b border-[#ccc]">10,000</td>
             <td className="p-2 border-b border-[#ccc]">Bank Cheque</td>
             <td className="p-2 border-b border-[#ccc]">General</td>
           </tr>
           <tr className="bg-[#f9f9f9]">
-            <td className="p-2 border-b border-[#ccc]">29 Nov 1962</td>
+            <td className="p-2 border-b border-[#ccc]">29 Nov 1979</td>
             <td className="p-2 border-b border-[#ccc]">Wickham Women's League</td>
             <td className="p-2 border-b border-[#ccc]">1,200</td>
             <td className="p-2 border-b border-[#ccc]">Cheque</td>
             <td className="p-2 border-b border-[#ccc]">Scholarship</td>
           </tr>
           <tr>
-            <td className="p-2 border-b border-[#ccc]">12 Dec 1962</td>
+            <td className="p-2 border-b border-[#ccc]">12 Dec 1979</td>
             <td className="p-2 border-b border-[#ccc]">Anonymous</td>
             <td className="p-2 border-b border-[#ccc]">5,000</td>
             <td className="p-2 border-b border-[#ccc]">Cash</td>
@@ -114,7 +114,7 @@ export const LydiaBlackmailPage2 = () => (
       </table>
 
       <div className="p-5 bg-[#f0f0f0] border-t-2 border-[#333]">
-        <strong>Q4 1962 TOTAL DONATIONS: £27,450</strong>
+        <strong>Q4 1979 TOTAL DONATIONS: £27,450</strong>
       </div>
     </div>
 
@@ -152,7 +152,7 @@ export const LydiaBlackmailPage3 = () => (
         I must confront her, but carefully. If word gets out, the scandal could destroy everything we've built.
       </p>
 
-      <p className="mt-4">— R.A., January 1963</p>
+      <p className="mt-4">— R.A., January 1980</p>
     </div>
   </div>
 )

@@ -76,7 +76,7 @@ BEGIN
          '/cases/case01/images/portraits/colin.jpg', FALSE),
         
         (v_case_id, 'suspect_lydia', 'Lydia Portwell', 'The Charity Director',
-         '51 years old, polished and ambitious. Oversees the Ashcombe Foundation''s fundraising campaigns. Was helping Veronica rehearse her speech when the murder occurred.',
+         '44 years old, polished and ambitious. Oversees the Ashcombe Foundation''s fundraising campaigns. Was helping Veronica rehearse her speech when the murder occurred.',
          '/cases/case01/images/portraits/lydia.jpg', FALSE),
         
         (v_case_id, 'suspect_vale', 'Dr. Leonard Vale', 'The Physician',

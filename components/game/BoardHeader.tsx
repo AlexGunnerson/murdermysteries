@@ -369,14 +369,6 @@ export function BoardHeader({
 
         <button 
           className="btn-clue" 
-          onClick={onQuestionSuspects}
-          title="Question Suspects"
-        >
-          Question Suspects
-        </button>
-
-        <button 
-          className="btn-clue" 
           onClick={onSolveMurder}
           title="Validate Theory"
         >
