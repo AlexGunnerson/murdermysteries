@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 
@@ -11,6 +11,12 @@ interface SecurityFootageViewerProps {
 
 export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Auto-focus the container for keyboard navigation
+  useEffect(() => {
+    containerRef.current?.focus()
+  }, [])
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -43,11 +49,11 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
 
   return (
     <div 
+      ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      autoFocus
     >
       {/* Close button - top right */}
       <button

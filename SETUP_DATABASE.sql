@@ -89,7 +89,7 @@ BEGIN
     VALUES
         (v_case_id, 'record_coroner', 'Coroner''s Report',
          'Official autopsy and scene analysis. Rules the death as accidental.',
-         E'CAUSE OF DEATH: Fatal skull fracture\n\nFINDINGS: Injury pattern consistent with fall from TOP of staircase. Single point of impact. No secondary bruising or defensive wounds.\n\nTOXICOLOGY: Alcohol present, within social drinking range.\n\nRULING: Accidental fall. No evidence of foul play.',
+         E'CAUSE OF DEATH: Fatal skull fracture\n\nFINDINGS: Injury pattern consistent with fall from elevated heigh like a staircase. Single point of impact. No secondary bruising or defensive wounds.\n\nTOXICOLOGY: Alcohol present, within social drinking range.\n\nRULING: Accidental fall. No evidence of foul play.',
          NULL, TRUE, 2),
         
         (v_case_id, 'record_crime_scene_photos', 'Crime Scene Photographs',

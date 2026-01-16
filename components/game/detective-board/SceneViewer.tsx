@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 
@@ -14,6 +14,22 @@ interface SceneViewerProps {
 
 export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId }: SceneViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isZoomed, setIsZoomed] = useState(false)
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Auto-focus the container for keyboard navigation
+  useEffect(() => {
+    containerRef.current?.focus()
+  }, [])
+  
+  // Reset zoom when changing images
+  useEffect(() => {
+    setIsZoomed(false)
+    setPanOffset({ x: 0, y: 0 })
+  }, [currentIndex])
   
   // Check if this is the study monitor photo (image 3 = index 2)
   const isMonitorPhoto = sceneId === 'scene_study' && currentIndex === 2
@@ -29,10 +45,46 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
   }
 
+  const toggleZoom = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isDragging) {
+      setIsZoomed(!isZoomed)
+      if (isZoomed) {
+        setPanOffset({ x: 0, y: 0 })
+      }
+    }
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') goToNext()
-    if (e.key === 'ArrowLeft') goToPrevious()
+    if (e.key === 'ArrowRight' && !isZoomed) goToNext()
+    if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
+    if (e.key === 'z' || e.key === 'Z') {
+      e.preventDefault()
+      setIsZoomed(!isZoomed)
+      if (isZoomed) setPanOffset({ x: 0, y: 0 })
+    }
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (isZoomed) {
+      e.stopPropagation()
+      setIsDragging(true)
+      setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y })
+    }
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && isZoomed) {
+      setPanOffset({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
   }
 
   const handleSecurityFootageClick = () => {
@@ -65,6 +117,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
 
   return (
     <div 
+      ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
@@ -185,15 +238,39 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
               >
                 {/* Polaroid frame */}
                 <div className="bg-white p-4 pb-12 shadow-2xl" style={{ width: '950px' }}>
-                  <div className="relative w-full aspect-video bg-gray-100">
-                    <Image
-                      src={images[index]}
-                      alt={`${sceneName} - Image ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="950px"
-                      priority={isCenter}
-                    />
+                  <div 
+                    className="relative w-full aspect-[3/2] bg-gray-100 overflow-hidden"
+                    style={{ 
+                      cursor: isCenter 
+                        ? isDragging 
+                          ? 'grabbing' 
+                          : isZoomed 
+                            ? 'zoom-out' 
+                            : 'zoom-in'
+                        : 'default'
+                    }}
+                    onClick={isCenter ? toggleZoom : undefined}
+                    onMouseDown={isCenter ? handleMouseDown : undefined}
+                    onMouseMove={isCenter ? handleMouseMove : undefined}
+                    onMouseUp={isCenter ? handleMouseUp : undefined}
+                    onMouseLeave={isCenter ? handleMouseUp : undefined}
+                  >
+                    <div
+                      className="relative w-full h-full transition-transform duration-300 ease-out"
+                      style={{
+                        transform: isCenter && isZoomed ? `scale(2.5) translate(${panOffset.x / 2.5}px, ${panOffset.y / 2.5}px)` : 'none',
+                        transformOrigin: 'center center'
+                      }}
+                    >
+                      <Image
+                        src={images[index]}
+                        alt={`${sceneName} - Image ${index + 1}`}
+                        fill
+                        className="object-cover object-bottom"
+                        sizes="950px"
+                        priority={isCenter}
+                      />
+                    </div>
                   </div>
                   
                   {/* Polaroid caption */}

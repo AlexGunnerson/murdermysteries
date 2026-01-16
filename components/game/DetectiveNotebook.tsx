@@ -27,6 +27,7 @@ import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
 import { SecurityFootageViewer } from "./detective-board/SecurityFootageViewer"
 import { PaintingBackViewer } from "./detective-board/PaintingBackViewer"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
+import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from "./documents/CoronerReportDocs"
 import { ValidateTheory } from "./ValidateTheory"
 
 interface Suspect {
@@ -94,6 +95,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showSecurityFootage, setShowSecurityFootage] = useState(false)
   const [securityFootageImages, setSecurityFootageImages] = useState<string[]>([])
   const [showValeNotes, setShowValeNotes] = useState(false)
+  const [showCoronerReport, setShowCoronerReport] = useState(false)
   const [showCallLog, setShowCallLog] = useState(false)
   const [showSpeechNotes, setShowSpeechNotes] = useState(false)
   const [showValidateTheory, setShowValidateTheory] = useState(false)
@@ -490,6 +492,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     else if (doc.id === 'record_vale_notes') {
                       setShowValeNotes(true)
                     }
+                    // Check if it's the coroner's report
+                    else if (doc.id === 'record_coroner') {
+                      setShowCoronerReport(true)
+                    }
                     // Check if it's the call log
                     else if (doc.id === 'record_phone_logs') {
                       setShowCallLog(true)
@@ -708,6 +714,34 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         />
       )}
 
+      {/* Coroner's Report Viewer */}
+      {showCoronerReport && (
+        <DocumentHTMLViewer
+          documentName="Coroner's Report"
+          pages={[
+            {
+              label: "PAGE 1 OF 3",
+              content: <CoronerReportPage1 />
+            },
+            {
+              label: "PAGE 2 OF 3",
+              content: <CoronerReportPage2 />
+            },
+            {
+              label: "PAGE 3 OF 3",
+              content: <CoronerReportPage3 />
+            }
+          ]}
+          onClose={() => {
+            setShowCoronerReport(false)
+            if (onPreviewClose) {
+              onPreviewClose()
+              setOnPreviewClose(null)
+            }
+          }}
+        />
+      )}
+
       {/* Suspect Dossier Split-Screen Modal */}
       {selectedSuspectForReveal && storyConfig && (
         <SuspectDossierView
@@ -748,6 +782,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               setShowThankYouNote(true)
             } else if (docId === 'record_vale_notes') {
               setShowValeNotes(true)
+            } else if (docId === 'record_coroner') {
+              setShowCoronerReport(true)
             } else if (docId === 'record_security_footage') {
               const doc = documents.find(d => d.id === docId)
               if (doc && doc.images) {

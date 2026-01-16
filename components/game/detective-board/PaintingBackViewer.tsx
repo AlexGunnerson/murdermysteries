@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, FileText } from "lucide-react"
 
@@ -10,6 +11,13 @@ interface PaintingBackViewerProps {
 }
 
 export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: PaintingBackViewerProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Auto-focus the container for keyboard navigation
+  useEffect(() => {
+    containerRef.current?.focus()
+  }, [])
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') onClose()
   }
@@ -21,11 +29,11 @@ export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: Pain
 
   return (
     <div 
+      ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      autoFocus
     >
       {/* Retrieve Blackmail Button */}
       <div 

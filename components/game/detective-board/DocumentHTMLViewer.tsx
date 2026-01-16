@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface DocumentPage {
@@ -16,6 +16,12 @@ interface DocumentHTMLViewerProps {
 
 export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTMLViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Auto-focus the container for keyboard navigation
+  useEffect(() => {
+    containerRef.current?.focus()
+  }, [])
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % pages.length)
@@ -33,6 +39,7 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
 
   return (
     <div 
+      ref={containerRef}
       className="fixed inset-0 z-50 flex items-center justify-center bg-[#2a2520] p-4 overflow-y-auto"
       onClick={onClose}
       onKeyDown={handleKeyDown}
