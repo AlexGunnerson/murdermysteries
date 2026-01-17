@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { FileText, Image as ImageIcon, CheckCircle, ChevronRight, X } from 'lucide-react'
 import { useGameState } from '@/lib/hooks/useGameState'
 
@@ -18,6 +19,9 @@ interface EvidenceItem {
   desc: string
   imageUrl?: string
   images?: string[]
+  sceneId?: string
+  docId?: string
+  category?: 'scene' | 'document'
 }
 
 export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewScene }: ValidateTheoryProps) {
@@ -69,17 +73,40 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           ...allDocs
         ]
         
-        // Load scenes (locations) as photos - show if initially available OR unlocked
-        const photos = data.locations
+        // Load ALL photos - scenes and documents with images
+        const scenePhotos = data.locations
           .filter((scene: any) => scene.initiallyAvailable || unlockedContent.scenes.has(scene.id))
-          .map((scene: any) => ({
-            id: scene.id,
-            title: scene.name,
-            type: 'photo' as const,
-            desc: scene.description,
-            imageUrl: scene.imageUrl,
-            images: scene.images || [scene.imageUrl]
-          }))
+          .flatMap((scene: any) => {
+            const sceneImages = scene.images || [scene.imageUrl]
+            return sceneImages.map((imageUrl: string, idx: number) => ({
+              id: `${scene.id}_img_${idx}`,
+              title: `${scene.name}${sceneImages.length > 1 ? ` - Image ${idx + 1}` : ''}`,
+              type: 'photo' as const,
+              desc: scene.description,
+              imageUrl: imageUrl,
+              images: sceneImages,
+              sceneId: scene.id,
+              category: 'scene'
+            }))
+          })
+        
+        // Load image-based documents (like gala photos)
+        const documentPhotos = data.records
+          .filter((doc: any) => (doc.initiallyAvailable || unlockedContent.records.has(doc.id)) && doc.images && doc.images.length > 0)
+          .flatMap((doc: any) => {
+            return doc.images.map((imageUrl: string, idx: number) => ({
+              id: `${doc.id}_img_${idx}`,
+              title: `${doc.name}${doc.images.length > 1 ? ` - Image ${idx + 1}` : ''}`,
+              type: 'photo' as const,
+              desc: doc.description,
+              imageUrl: imageUrl,
+              images: doc.images,
+              docId: doc.id,
+              category: 'document'
+            }))
+          })
+        
+        const photos = [...scenePhotos, ...documentPhotos]
         
         setEvidenceData({ documents: docs, photos })
       } catch (error) {
@@ -207,52 +234,115 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           </div>
 
           {/* Evidence List */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
             {evidenceData[activeTab].length === 0 ? (
               <p className="text-center text-[#5a6b7c] py-8 italic">No {activeTab} available yet</p>
-            ) : (
-              evidenceData[activeTab].map((item) => (
-                <div 
-                  key={item.id}
-                  onClick={() => {
-                    setIsPreviewOpen(true)
-                    const onClosePreview = () => setIsPreviewOpen(false)
-                    if (item.type === 'doc' && onPreviewDocument) {
-                      onPreviewDocument(item.id, onClosePreview)
-                    } else if (item.type === 'photo' && onPreviewScene) {
-                      onPreviewScene(item.id, onClosePreview)
-                    }
-                  }}
-                  className={`group relative p-4 rounded border-2 transition-all duration-200 cursor-pointer
-                    ${selectedEvidence.includes(item.id) 
-                      ? 'bg-[#fffdf5] border-[#d97706] shadow-md' 
-                      : 'bg-[#f4f1ea] border-[#d1ccc0] hover:border-[#a0aec0]'}`}
-                >
-                  <div className="flex items-start gap-3">
+            ) : activeTab === 'photos' ? (
+              // Single column layout for photos with larger thumbnails
+              <div className="space-y-3">
+                {evidenceData.photos.map((item) => (
+                  <div 
+                    key={item.id}
+                    onClick={() => {
+                      setIsPreviewOpen(true)
+                      const onClosePreview = () => setIsPreviewOpen(false)
+                      const itemData = item as any
+                      
+                      // Open scene viewer or document viewer based on category
+                      if (itemData.category === 'scene' && onPreviewScene) {
+                        onPreviewScene(itemData.sceneId, onClosePreview)
+                      } else if (itemData.category === 'document' && onPreviewDocument) {
+                        onPreviewDocument(itemData.docId, onClosePreview)
+                      }
+                    }}
+                    className={`group relative rounded border-2 transition-all duration-200 cursor-pointer overflow-hidden
+                      ${selectedEvidence.includes(item.id) 
+                        ? 'border-[#d97706] shadow-md ring-2 ring-[#d97706]/30' 
+                        : 'border-[#d1ccc0] hover:border-[#a0aec0]'}`}
+                  >
+                    {/* Checkbox overlay */}
                     <div 
                       onClick={(e) => {
                         e.stopPropagation()
                         toggleEvidence(item.id)
                       }}
-                      className={`mt-1 w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer
-                      ${selectedEvidence.includes(item.id) ? 'bg-[#d97706] border-[#d97706]' : 'border-[#a0aec0] bg-white'}`}>
-                      {selectedEvidence.includes(item.id) && <CheckCircle className="w-3 h-3 text-white" />}
+                      className="absolute top-3 left-3 z-10"
+                    >
+                      <div className={`w-7 h-7 rounded border-2 flex items-center justify-center transition-colors cursor-pointer shadow-md
+                        ${selectedEvidence.includes(item.id) ? 'bg-[#d97706] border-[#d97706]' : 'border-white bg-black/40 backdrop-blur-sm'}`}>
+                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-5 h-5 text-white" />}
+                      </div>
+                    </div>
+
+                    {/* Photo thumbnail */}
+                    <div className="relative w-full aspect-[3/2] bg-gray-200">
+                      <Image
+                        src={item.imageUrl || '/placeholder.jpg'}
+                        alt={item.title}
+                        fill
+                        className="object-cover object-bottom"
+                        sizes="400px"
+                      />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
+                    </div>
+
+                    {/* Title below */}
+                    <div className={`p-3 transition-colors ${selectedEvidence.includes(item.id) ? 'bg-[#fffdf5]' : 'bg-[#f4f1ea]'}`}>
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-[#5a6b7c] flex-shrink-0" />
+                        <span className="font-bold text-[#2c3e50] font-mono text-sm">{item.title}</span>
+                      </div>
                     </div>
                     
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {item.type === 'doc' && <FileText className="w-4 h-4 text-[#5a6b7c]" />}
-                        {item.type === 'photo' && <ImageIcon className="w-4 h-4 text-[#5a6b7c]" />}
-                        <span className="font-bold text-[#2c3e50] font-mono text-sm flex-1">{item.title}</span>
-                      </div>
-                      <p className="text-xs text-[#5a6b7c] leading-relaxed">{item.desc}</p>
-                    </div>
+                    {/* Vintage texture overlay effect */}
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
                   </div>
-                  
-                  {/* Vintage texture overlay effect */}
-                  <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
-                </div>
-              ))
+                ))}
+              </div>
+            ) : (
+              // List layout for documents (keep original)
+              <div className="space-y-3">
+                {evidenceData.documents.map((item) => (
+                  <div 
+                    key={item.id}
+                    onClick={() => {
+                      setIsPreviewOpen(true)
+                      const onClosePreview = () => setIsPreviewOpen(false)
+                      if (onPreviewDocument) {
+                        onPreviewDocument(item.id, onClosePreview)
+                      }
+                    }}
+                    className={`group relative p-4 rounded border-2 transition-all duration-200 cursor-pointer
+                      ${selectedEvidence.includes(item.id) 
+                        ? 'bg-[#fffdf5] border-[#d97706] shadow-md' 
+                        : 'bg-[#f4f1ea] border-[#d1ccc0] hover:border-[#a0aec0]'}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div 
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleEvidence(item.id)
+                        }}
+                        className={`mt-1 w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer
+                        ${selectedEvidence.includes(item.id) ? 'bg-[#d97706] border-[#d97706]' : 'border-[#a0aec0] bg-white'}`}>
+                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-3 h-3 text-white" />}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <FileText className="w-4 h-4 text-[#5a6b7c]" />
+                          <span className="font-bold text-[#2c3e50] font-mono text-sm flex-1">{item.title}</span>
+                        </div>
+                        <p className="text-xs text-[#5a6b7c] leading-relaxed">{item.desc}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Vintage texture overlay effect */}
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
           
