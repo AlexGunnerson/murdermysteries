@@ -30,6 +30,8 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [theoryText, setTheoryText] = useState('')
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [expandedTheoryId, setExpandedTheoryId] = useState<string | null>(null)
+  const [photoFilter, setPhotoFilter] = useState<string>('all')
+  const [showAllFilters, setShowAllFilters] = useState(false)
   const { theoryHistory, addTheorySubmission, unlockedContent } = useGameState()
   
   // Evidence data - this will be populated from the game state
@@ -40,6 +42,20 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
     documents: [],
     photos: []
   })
+  
+  // Get unique locations for filtering
+  const photoLocations = Array.from(new Set(evidenceData.photos.map(p => {
+    // Extract base location name (remove " - Image X" suffix)
+    return p.title.replace(/ - Image \d+$/, '')
+  }))).sort()
+  
+  // Filter photos based on selected filter
+  const filteredPhotos = photoFilter === 'all' 
+    ? evidenceData.photos 
+    : evidenceData.photos.filter(p => {
+        const baseTitle = p.title.replace(/ - Image \d+$/, '')
+        return baseTitle === photoFilter
+      })
 
   // Load evidence from game state
   useEffect(() => {
@@ -195,12 +211,12 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
       {/* Main Container */}
       <div 
-        className="max-w-6xl w-full bg-[#f4f1ea] rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[95vh] border border-[#d1ccc0]"
+        className="max-w-6xl w-full bg-[#f4f1ea] rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[95vh] border border-[#d1ccc0]"
         onClick={(e) => e.stopPropagation()}
       >
         
         {/* LEFT SIDE: Evidence Selector (40%) */}
-        <div className="w-full md:w-[40%] bg-[#e8e4da] border-r border-[#d1ccc0] flex flex-col">
+        <div className="w-full md:w-[40%] bg-[#e8e4da] border-r border-[#d1ccc0] flex flex-col h-full">
           
           {/* Header */}
           <div className="p-6 bg-[#2c3e50] text-[#f4f1ea] flex justify-between items-center shadow-md z-10">
@@ -222,7 +238,13 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             {(['documents', 'photos'] as const).map(tab => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab)
+                  if (tab === 'photos') {
+                    setPhotoFilter('all')
+                    setShowAllFilters(false)
+                  }
+                }}
                 className={`flex-1 py-4 text-sm font-bold uppercase tracking-wider transition-colors duration-200
                   ${activeTab === tab 
                     ? 'bg-[#e8e4da] text-[#d97706] border-b-2 border-[#d97706]' 
@@ -233,14 +255,66 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             ))}
           </div>
 
+          {/* Photo Filters (only show on photos tab) */}
+          {activeTab === 'photos' && photoLocations.length > 0 && (
+            <div className="p-3 bg-[#e8e4da] border-b border-[#d1ccc0]">
+              <div className="flex flex-wrap gap-2">
+                {/* All button - always visible */}
+                <button
+                  onClick={() => setPhotoFilter('all')}
+                  className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors
+                    ${photoFilter === 'all'
+                      ? 'bg-[#d97706] text-white'
+                      : 'bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]'}`}
+                >
+                  All ({evidenceData.photos.length})
+                </button>
+                
+                {/* Show first 3 locations or all if expanded */}
+                {(showAllFilters ? photoLocations : photoLocations.slice(0, 3)).map(location => {
+                  const count = evidenceData.photos.filter(p => {
+                    const baseTitle = p.title.replace(/ - Image \d+$/, '')
+                    return baseTitle === location
+                  }).length
+                  
+                  return (
+                    <button
+                      key={location}
+                      onClick={() => setPhotoFilter(location)}
+                      className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors
+                        ${photoFilter === location
+                          ? 'bg-[#d97706] text-white'
+                          : 'bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]'}`}
+                    >
+                      {location} ({count})
+                    </button>
+                  )
+                })}
+                
+                {/* More/Less button if there are more than 3 locations */}
+                {photoLocations.length > 3 && (
+                  <button
+                    onClick={() => setShowAllFilters(!showAllFilters)}
+                    className="px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]"
+                  >
+                    {showAllFilters ? '▲ Less Filters' : `▼ More Filters (${photoLocations.length - 3})`}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Evidence List */}
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar min-h-0">
             {evidenceData[activeTab].length === 0 ? (
               <p className="text-center text-[#5a6b7c] py-8 italic">No {activeTab} available yet</p>
             ) : activeTab === 'photos' ? (
               // Single column layout for photos with larger thumbnails
-              <div className="space-y-3">
-                {evidenceData.photos.map((item) => (
+              filteredPhotos.length === 0 ? (
+                <p className="text-center text-[#5a6b7c] py-8 italic">No photos match this filter</p>
+              ) : (
+                <div className="space-y-3">
+                  {filteredPhotos.map((item) => (
                   <div 
                     key={item.id}
                     onClick={() => {
@@ -298,8 +372,9 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                     {/* Vintage texture overlay effect */}
                     <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
                   </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )
             ) : (
               // List layout for documents (keep original)
               <div className="space-y-3">
@@ -353,7 +428,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         </div>
 
         {/* RIGHT SIDE: Theory & Submissions (60%) */}
-        <div className="w-full md:w-[60%] flex flex-col bg-[#f4f1ea] relative">
+        <div className="w-full md:w-[60%] flex flex-col bg-[#f4f1ea] relative h-full">
           
           {/* Background Texture */}
           <div className="absolute inset-0 opacity-20 pointer-events-none" 
