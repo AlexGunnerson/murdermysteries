@@ -35,6 +35,11 @@ export interface ChatContext {
     role: string
     personality: string
   }
+  attachedItems?: Array<{
+    id: string
+    title: string
+    type: 'document' | 'photo' | 'scene'
+  }>
 }
 
 /**
@@ -122,7 +127,7 @@ export async function generateAIResponse(
  * Build complete prompt with context and history
  */
 function buildPrompt(userMessage: string, context: ChatContext): string {
-  const { systemPrompt, conversationHistory, discoveredFacts, suspectProfile } = context
+  const { systemPrompt, conversationHistory, discoveredFacts, suspectProfile, attachedItems } = context
 
   // Build the full context
   let prompt = `${systemPrompt}\n\n`
@@ -148,6 +153,15 @@ function buildPrompt(userMessage: string, context: ChatContext): string {
       prompt += `${speaker}: ${msg.parts}\n`
     })
     prompt += `\n`
+  }
+
+  // Add attached evidence if any
+  if (attachedItems && attachedItems.length > 0) {
+    prompt += `The detective is showing you the following evidence:\n`
+    attachedItems.forEach((item, index) => {
+      prompt += `${index + 1}. ${item.title} (${item.type})\n`
+    })
+    prompt += `\nReact to this evidence naturally based on your character. If it's incriminating or relates to your secrets, show appropriate emotion (nervousness, defensiveness, surprise, etc.). If it's relevant to what you know, acknowledge it and respond accordingly.\n\n`
   }
 
   // Add current user message

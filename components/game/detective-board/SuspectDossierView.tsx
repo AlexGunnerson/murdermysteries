@@ -3,6 +3,7 @@
 import { X, Search } from "lucide-react"
 import Image from "next/image"
 import { ChatInterface } from "../ChatInterface"
+import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 
 interface SuspectDossierViewProps {
   suspect: {
@@ -404,14 +405,26 @@ export function SuspectDossierView({
 
           {/* Chat Interface */}
           <div className="flex-1 overflow-hidden relative z-10">
-            <ChatInterface
-              suspectId={suspect.id}
-              suspectName={suspect.name}
-              suspectRole={suspect.role}
-              suspectPersonality={suspectPersonality}
-              systemPrompt={systemPrompt}
-              suspectAvatarUrl={suspect.avatarUrl}
-            />
+            {/* Test attachment feature with Veronica only */}
+            {suspect.id === 'suspect_veronica' ? (
+              <ChatInterfaceWithAttachments
+                suspectId={suspect.id}
+                suspectName={suspect.name}
+                suspectRole={suspect.role}
+                suspectPersonality={suspectPersonality}
+                systemPrompt={systemPrompt}
+                suspectAvatarUrl={suspect.avatarUrl}
+              />
+            ) : (
+              <ChatInterface
+                suspectId={suspect.id}
+                suspectName={suspect.name}
+                suspectRole={suspect.role}
+                suspectPersonality={suspectPersonality}
+                systemPrompt={systemPrompt}
+                suspectAvatarUrl={suspect.avatarUrl}
+              />
+            )}
           </div>
         </div>
       </div>
