@@ -1,33 +1,23 @@
 "use client"
 
-import { X, Search } from "lucide-react"
+import { X, FileText } from "lucide-react"
 import Image from "next/image"
-import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 
-interface SuspectDossierViewProps {
-  suspect: {
-    id: string
-    name: string
-    age: number
-    role: string
-    bio: string
-    portraitUrl: string
-    avatarUrl?: string
-    veronicaNote: string
-  }
-  suspectPersonality: string
-  suspectAlibi: string
-  systemPrompt: string
+interface VictimDossierViewProps {
   onClose: () => void
 }
 
-export function SuspectDossierView({ 
-  suspect, 
-  suspectPersonality,
-  suspectAlibi,
-  systemPrompt,
-  onClose 
-}: SuspectDossierViewProps) {
+export function VictimDossierView({ onClose }: VictimDossierViewProps) {
+  const victim = {
+    id: 'victim_reginald',
+    name: 'Reginald Ashcombe',
+    age: 68,
+    role: 'Patriarch & Philanthropist',
+    bio: 'Built the Ashcombe fortune through shrewd investments in global commodities. Known for his annual charity gala and philanthropic work. Married to Veronica Ashcombe.',
+    portraitUrl: '/cases/case01/images/portraits/reginald.jpg',
+    veronicaNote: 'My Husband. The Patriarch. He built this entire fortune through relentless foresight in global commodities. He was master of the estate, known for his shrewdness and the annual charity gala. What the world didn\'t see was the profound, quiet love we shared. I thought we had more time...'
+  }
+
   return (
     <div 
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
@@ -39,9 +29,9 @@ export function SuspectDossierView({
         `,
       }}
     >
-      {/* Split-screen container - 'The Noir Dossier' */}
+      {/* Centered single panel container */}
       <div 
-        className="relative w-full h-full max-w-[1400px] max-h-[85vh] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-sm overflow-hidden"
+        className="relative w-full max-w-[700px] max-h-[85vh] mx-auto rounded-sm overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: `
@@ -83,9 +73,9 @@ export function SuspectDossierView({
           />
         </button>
 
-        {/* LEFT PANEL - Case File Dossier - 'Deep Charcoal Leather' */}
+        {/* Case File Dossier - 'Deep Charcoal Leather' */}
         <div 
-          className="bg-[#1a1a1a] overflow-y-auto relative"
+          className="bg-[#1a1a1a] overflow-y-auto relative h-full"
           style={{
             backgroundImage: `
               linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 1) 100%),
@@ -104,48 +94,9 @@ export function SuspectDossierView({
                 rgba(0, 0, 0, 0.12) 13px
               )
             `,
-            boxShadow: 'inset -3px 0 12px rgba(0, 0, 0, 0.7), inset 0 0 80px rgba(0, 0, 0, 0.5)',
+            boxShadow: 'inset 0 0 80px rgba(0, 0, 0, 0.5)',
           }}
         >
-          {/* Gold-etched vertical divider line */}
-          <div 
-            className="absolute top-0 right-0 bottom-0 w-[2px] z-10"
-            style={{
-              background: `
-                linear-gradient(
-                  to bottom,
-                  transparent 0%,
-                  rgba(197, 160, 101, 0.3) 5%,
-                  rgba(197, 160, 101, 0.8) 20%,
-                  rgba(197, 160, 101, 1) 50%,
-                  rgba(197, 160, 101, 0.8) 80%,
-                  rgba(197, 160, 101, 0.3) 95%,
-                  transparent 100%
-                )
-              `,
-              boxShadow: `
-                0 0 8px rgba(197, 160, 101, 0.6),
-                0 0 16px rgba(197, 160, 101, 0.4),
-                inset 0 0 4px rgba(255, 215, 0, 0.3)
-              `,
-            }}
-          />
-          {/* Metallic accent strips */}
-          <div 
-            className="absolute top-0 right-[1px] bottom-0 w-[1px]"
-            style={{
-              background: `
-                linear-gradient(
-                  to bottom,
-                  transparent 0%,
-                  rgba(255, 215, 0, 0.4) 5%,
-                  rgba(255, 215, 0, 0.6) 50%,
-                  rgba(255, 215, 0, 0.4) 95%,
-                  transparent 100%
-                )
-              `,
-            }}
-          />
           <div className="p-6 lg:p-8 h-full flex flex-col relative">
             {/* Header with typewriter aesthetic */}
             <div className="mb-6">
@@ -168,7 +119,7 @@ export function SuspectDossierView({
                   textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                 }}
               >
-                70s: Final Gala at the Estate
+                VICTIM - May 10, 1986
               </p>
             </div>
 
@@ -204,7 +155,7 @@ export function SuspectDossierView({
                     className="text-5xl text-[#2c2a29] mb-4 leading-tight"
                     style={{ fontFamily: "'Caveat', cursive" }}
                   >
-                    {suspect.name}
+                    {victim.name}
                   </h2>
 
                   {/* Bio - Veronica's handwriting */}
@@ -213,7 +164,7 @@ export function SuspectDossierView({
                       className="text-[#2c2a29] text-2xl leading-relaxed"
                       style={{ fontFamily: "'Caveat', cursive" }}
                     >
-                      {suspect.veronicaNote || suspect.bio}
+                      {victim.veronicaNote}
                     </p>
                   </div>
 
@@ -237,8 +188,8 @@ export function SuspectDossierView({
                   >
                     <div className="relative w-40 h-52">
                       <Image
-                        src={suspect.portraitUrl}
-                        alt={suspect.name}
+                        src={victim.portraitUrl}
+                        alt={victim.name}
                         fill
                         className="object-cover"
                         sizes="160px"
@@ -251,7 +202,7 @@ export function SuspectDossierView({
 
             {/* Facts below the card - Noir Typewriter labels */}
             <div className="space-y-3">
-              {/* Relationship */}
+              {/* Status */}
               <div className="flex items-start gap-3 text-[#d4af37]">
                 <div 
                   className="w-6 h-6 rounded-full border-2 border-[#d4af37]/60 flex items-center justify-center flex-shrink-0 mt-0.5"
@@ -274,15 +225,15 @@ export function SuspectDossierView({
                       textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
                     }}
                   >
-                    Relationship:{" "}
+                    Status:{" "}
                   </span>
                   <span 
-                    className="text-[#c5a065] text-base"
+                    className="text-red-400 text-base"
                     style={{
-                      textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                      textShadow: '0 0 4px rgba(248, 113, 113, 0.3)',
                     }}
                   >
-                    {suspect.role}
+                    Deceased
                   </span>
                 </div>
               </div>
@@ -308,12 +259,12 @@ export function SuspectDossierView({
                       textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                     }}
                   >
-                    {suspect.age}
+                    {victim.age}
                   </span>
                 </div>
               </div>
 
-              {/* Vices */}
+              {/* Role */}
               <div className="flex items-start gap-3 text-[#d4af37]">
                 <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xl">📋</span>
@@ -326,7 +277,7 @@ export function SuspectDossierView({
                       textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
                     }}
                   >
-                    Vices:{" "}
+                    Role:{" "}
                   </span>
                   <span 
                     className="text-[#c5a065] text-base"
@@ -334,87 +285,15 @@ export function SuspectDossierView({
                       textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                     }}
                   >
-                    {suspect.id === 'suspect_martin' && 'Gambling, drinking.'}
-                    {suspect.id === 'suspect_veronica' && 'Suspicious, protective.'}
-                    {suspect.id === 'suspect_colin' && 'Secretive, desperate.'}
-                    {suspect.id === 'suspect_lydia' && 'Ambitious, vain.'}
-                    {suspect.id === 'suspect_vale' && 'Calculating, cold.'}
-                    {!['suspect_martin', 'suspect_veronica', 'suspect_colin', 'suspect_lydia', 'suspect_vale'].includes(suspect.id) && 'Unknown'}
+                    {victim.role}
                   </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* RIGHT PANEL - 'Deep Charcoal Leather' Chat Interface */}
-        <div className="bg-[#1a1a1a] flex flex-col overflow-hidden relative">
-          {/* Deep leather texture overlay */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-25"
-            style={{
-              backgroundImage: `
-                repeating-linear-gradient(
-                  45deg,
-                  transparent,
-                  transparent 12px,
-                  rgba(0, 0, 0, 0.15) 12px,
-                  rgba(0, 0, 0, 0.15) 13px
-                ),
-                repeating-linear-gradient(
-                  -45deg,
-                  transparent,
-                  transparent 12px,
-                  rgba(0, 0, 0, 0.12) 12px,
-                  rgba(0, 0, 0, 0.12) 13px
-                )
-              `,
-            }}
-          />
-          
-          {/* Header - Noir Gold Typography */}
-          <div 
-            className="bg-[#121212] border-b p-6 flex items-center justify-between relative z-10"
-            style={{
-              borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.3), rgba(197, 160, 101, 0.6), rgba(197, 160, 101, 0.3)) 1',
-              boxShadow: '0 2px 12px rgba(197, 160, 101, 0.15)',
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <Search 
-                className="w-6 h-6 text-[#d4af37]" 
-                strokeWidth={1.5}
-                style={{
-                  filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
-                }}
-              />
-              <h2 
-                className="text-3xl text-[#d4af37] tracking-wider uppercase"
-                style={{ 
-                  fontFamily: "'Playfair Display', serif",
-                  letterSpacing: '0.15em',
-                  fontWeight: 500,
-                  textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
-                }}
-              >
-                Analyze Suspects
-              </h2>
-            </div>
-          </div>
-
-          {/* Chat Interface */}
-          <div className="flex-1 overflow-hidden relative z-10">
-            <ChatInterfaceWithAttachments
-              suspectId={suspect.id}
-              suspectName={suspect.name}
-              suspectRole={suspect.role}
-              suspectPersonality={suspectPersonality}
-              systemPrompt={systemPrompt}
-              suspectAvatarUrl={suspect.avatarUrl}
-            />
-          </div>
-        </div>
       </div>
     </div>
   )
 }
+

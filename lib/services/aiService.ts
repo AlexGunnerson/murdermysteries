@@ -157,11 +157,19 @@ function buildPrompt(userMessage: string, context: ChatContext): string {
 
   // Add attached evidence if any
   if (attachedItems && attachedItems.length > 0) {
-    prompt += `The detective is showing you the following evidence:\n`
+    prompt += `\n=== EVIDENCE BEING SHOWN TO YOU ===\n`
+    prompt += `The detective is physically showing you the following evidence. React based on EXACTLY what they're showing:\n\n`
     attachedItems.forEach((item, index) => {
-      prompt += `${index + 1}. ${item.title} (${item.type})\n`
+      prompt += `${index + 1}. "${item.title}" (${item.type}) [ID: ${item.id}]\n`
     })
-    prompt += `\nReact to this evidence naturally based on your character. If it's incriminating or relates to your secrets, show appropriate emotion (nervousness, defensiveness, surprise, etc.). If it's relevant to what you know, acknowledge it and respond accordingly.\n\n`
+    prompt += `\nIMPORTANT INSTRUCTIONS:\n`
+    prompt += `- React to ONLY the evidence shown above. Do not reference evidence not listed.\n`
+    prompt += `- Follow your character's EVIDENCE INTERACTION RULES based on which specific documents are shown.\n`
+    prompt += `- Check the evidence IDs carefully to determine which scenario you're in (e.g., "record_phone_logs", "record_blackmail_floor", "record_blackmail_portrait").\n`
+    prompt += `- Show appropriate emotions (nervousness, defensiveness, surprise) if the evidence is incriminating.\n`
+    prompt += `- If multiple pieces of evidence are shown together, this may trigger different responses than if shown individually.\n`
+    prompt += `- Stay in character and make the detective work for each admission.\n`
+    prompt += `=== END EVIDENCE ===\n\n`
   }
 
   // Add current user message

@@ -23,11 +23,11 @@ export const CoronerReportPage1 = () => (
       <div className="grid grid-cols-2 gap-4">
         <div>
           <p className="font-bold text-xs text-gray-700">DATE OF DEATH:</p>
-          <p>10 May 1986 (approx. 21:00 hrs)</p>
+          <p>10 May 1986 (approx. 9:00 PM GMT)</p>
         </div>
         <div>
           <p className="font-bold text-xs text-gray-700">DATE OF EXAMINATION:</p>
-          <p>11 May 1986, 08:30 hrs</p>
+          <p>11 May 1986, 08:30 AM GMT</p>
         </div>
       </div>
 
@@ -162,7 +162,7 @@ export const CoronerReportPage3 = () => (
       <p className="mb-3">Information provided by attending physician (Dr. Vale) and witness statements:</p>
       
       <div className="ml-4 space-y-2 text-xs">
-        <p>• Body discovered at base of grand staircase at approximately 21:05 hrs by spouse (Mrs. Veronica Ashcombe)</p>
+        <p>• Body discovered at base of grand staircase at approximately 9:05 PM GMT by spouse (Mrs. Veronica Ashcombe)</p>
         <p>• Wine glass found near body with red wine spillage on marble floor</p>
         <p>• Deceased was hosting charity gala event with approximately 40 guests in attendance</p>
         <p>• No witnesses to the fall observed</p>
@@ -173,7 +173,7 @@ export const CoronerReportPage3 = () => (
 
       <div className="mt-4 bg-[#e8f4f8] border border-[#0c5460] p-3 text-xs">
         <p className="font-bold mb-1">ATTENDING PHYSICIAN'S STATEMENT (Dr. Leonard Vale):</p>
-        <p className="italic">"I examined the deceased at approximately 21:10 hrs. He had no pulse and showed fixed, dilated pupils. Based on the nature of the injury and circumstances, death appeared to be the result of an accidental fall."</p>
+        <p className="italic">"I examined the deceased at approximately 9:10 PM GMT. He had no pulse and showed fixed, dilated pupils. Based on the nature of the injury and circumstances, death appeared to be the result of an accidental fall."</p>
       </div>
     </div>
 
