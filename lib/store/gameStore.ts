@@ -46,6 +46,7 @@ export interface GameState {
   // Game session info
   caseId: string | null
   sessionId: string | null
+  currentStage: 'start' | 'act_i' | 'act_ii'
   
   // Detective Points
   detectivePoints: number
@@ -73,9 +74,11 @@ export interface GameState {
   // Actions
   initializeGame: (caseId: string, forceReinitialize?: boolean) => Promise<void>
   setSessionId: (sessionId: string) => void
+  setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => void
   setDetectivePoints: (points: number) => void
   addDetectivePoints: (points: number) => void
   subtractDetectivePoints: (points: number) => void
+  fetchGameState: () => Promise<void>
   
   addDiscoveredFact: (fact: Omit<DiscoveredFact, 'id' | 'discoveredAt'>) => void
   addChatMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => void
@@ -98,6 +101,7 @@ export interface GameState {
 const initialState = {
   caseId: null,
   sessionId: null,
+  currentStage: 'start' as const,
   detectivePoints: 25,
   discoveredFacts: [],
   chatHistory: [],
@@ -171,6 +175,7 @@ export const useGameStore = create<GameState>()(
             set({
               caseId,
               sessionId: data.session.id,
+              currentStage: data.session.current_stage || 'start',
               detectivePoints: data.session.detective_points,
               discoveredFacts: [],
               chatHistory: [],
@@ -196,6 +201,7 @@ export const useGameStore = create<GameState>()(
               if (stateData.session) {
                 // Restore unlocked content
                 set({
+                  currentStage: stateData.session.current_stage || 'start',
                   unlockedContent: {
                     suspects: new Set(stateData.unlockedContent.suspects || []),
                     scenes: new Set(stateData.unlockedContent.scenes || []),
@@ -237,8 +243,38 @@ export const useGameStore = create<GameState>()(
           set({ sessionId })
         },
 
+        setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => {
+          set({ currentStage: stage })
+        },
+
         setDetectivePoints: (points: number) => {
           set({ detectivePoints: Math.max(0, points) })
+        },
+
+        fetchGameState: async () => {
+          const state = get()
+          if (!state.caseId) return
+
+          try {
+            const response = await fetch(`/api/game/state?caseId=${state.caseId}`)
+            if (response.ok) {
+              const data = await response.json()
+              
+              if (data.session) {
+                set({
+                  currentStage: data.session.current_stage || 'start',
+                  unlockedContent: {
+                    suspects: new Set(data.unlockedContent.suspects || []),
+                    scenes: new Set(data.unlockedContent.scenes || []),
+                    records: new Set(data.unlockedContent.records || []),
+                  },
+                  detectivePoints: data.session.detective_points,
+                })
+              }
+            }
+          } catch (error) {
+            console.error('Error fetching game state:', error)
+          }
         },
 
         addDetectivePoints: (points: number) => {

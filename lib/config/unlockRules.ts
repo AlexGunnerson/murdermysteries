@@ -1,0 +1,236 @@
+/**
+ * Unlock Rules Configuration
+ * Defines all unlock triggers and what content they unlock based on the CSV mapping
+ */
+
+export type GameStage = 'start' | 'act_i' | 'act_ii'
+export type TriggerType = 'chat_attachment' | 'theory_validation' | 'button_click'
+export type LogicOperator = 'AND' | 'OR'
+
+export interface UnlockRule {
+  id: string
+  stage: GameStage
+  trigger: TriggerType
+  requiredSuspectId?: string  // For chat attachments - must be shown to specific suspect
+  requiredArtifacts: string[]
+  logicOperator: LogicOperator
+  unlocks: {
+    stage?: GameStage
+    suspects?: string[]
+    scenes?: string[]
+    records?: string[]
+    statusUpdate?: string
+  }
+  notificationMessage?: string
+  description?: string  // For debugging/documentation
+}
+
+export const UNLOCK_RULES: UnlockRule[] = [
+  // Stage: Start -> Act I
+  {
+    id: 'contradiction',
+    stage: 'start',
+    trigger: 'theory_validation',
+    requiredArtifacts: ['record_vale_notes', 'record_crime_scene_photos'],
+    logicOperator: 'AND',
+    unlocks: {
+      stage: 'act_i',
+      statusUpdate: 'Murder Confirmed'
+    },
+    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident.',
+    description: 'Player notices red wine in crime scene photo and cross-references with Dr. Vale\'s Medical Notes showing Reginald is allergic to red wine'
+  },
+
+  // Act I Start Unlocks
+  {
+    id: 'act_i_start',
+    stage: 'act_i',
+    trigger: 'theory_validation',
+    requiredArtifacts: [], // Automatically triggered when Act I begins
+    logicOperator: 'AND',
+    unlocks: {
+      suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes']
+    },
+    notificationMessage: 'Veronica now trusts you with the truth. Reginald\'s inner circle is now available for questioning.',
+    description: 'Once murder is confirmed, Veronica opens up about the blackmail and makes the inner circle available'
+  },
+
+  // Master Bedroom Unlock - Show blackmail to Veronica
+  {
+    id: 'master_bedroom_chat',
+    stage: 'act_i',
+    trigger: 'chat_attachment',
+    requiredSuspectId: 'suspect_veronica',
+    requiredArtifacts: ['record_blackmail_floor'],
+    logicOperator: 'AND',
+    unlocks: {
+      scenes: ['scene_master_bedroom']
+    },
+    notificationMessage: 'Veronica realizes Dr. Vale\'s page is missing from the blackmail papers. She suggests checking behind the painting in the master bedroom.',
+    description: 'Show the floor blackmail papers to Veronica to prove a page is missing'
+  },
+
+  // Master Bedroom Unlock - Theory validation alternative
+  {
+    id: 'master_bedroom_theory',
+    stage: 'act_i',
+    trigger: 'theory_validation',
+    requiredArtifacts: ['record_blackmail_floor', 'record_veronica_thankyou'],
+    logicOperator: 'AND',
+    unlocks: {
+      scenes: ['scene_master_bedroom']
+    },
+    notificationMessage: 'Your theory about the missing blackmail page is correct! The master bedroom may hold the complete set.',
+    description: 'Submit theory with both blackmail papers and Veronica\'s note mentioning everyone had blackmail'
+  },
+
+  // Blackmail Set #2 - Retrieved from painting (handled by button, but tracked here)
+  {
+    id: 'blackmail_set_2',
+    stage: 'act_i',
+    trigger: 'button_click',
+    requiredArtifacts: [], // No validation needed - button click unlocks it
+    logicOperator: 'AND',
+    unlocks: {
+      records: ['record_blackmail_portrait']
+    },
+    notificationMessage: 'You\'ve retrieved the complete blackmail files from behind the painting!',
+    description: 'Player clicks "Retrieve Blackmail!" button on painting in Master Bedroom'
+  },
+
+  // The Confrontation - Vale admits to greenhouse theft
+  {
+    id: 'vale_confrontation',
+    stage: 'act_i',
+    trigger: 'chat_attachment',
+    requiredSuspectId: 'suspect_vale',
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
+    logicOperator: 'AND',
+    unlocks: {
+      scenes: ['scene_study']
+    },
+    notificationMessage: 'Dr. Vale has confessed to stealing plants from the greenhouse! He mentions CCTV footage in the Study can prove his alibi.',
+    description: 'Show phone records and both blackmail sets to Vale to prove he was lying and removed his page'
+  },
+
+  // The Confrontation - Theory validation alternative
+  {
+    id: 'vale_confrontation_theory',
+    stage: 'act_i',
+    trigger: 'theory_validation',
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
+    logicOperator: 'AND',
+    unlocks: {
+      scenes: ['scene_study']
+    },
+    notificationMessage: 'Your theory about Dr. Vale\'s deception is correct! The Study may contain evidence of his whereabouts.',
+    description: 'Submit theory with phone records and both blackmail sets proving Vale lied'
+  },
+
+  // CCTV Proof - Retrieved from study (handled by button, but tracked here)
+  {
+    id: 'cctv_proof',
+    stage: 'act_i',
+    trigger: 'button_click',
+    requiredArtifacts: [], // Button click unlocks it
+    logicOperator: 'AND',
+    unlocks: {
+      records: ['record_greenhouse_footage']
+    },
+    notificationMessage: 'The greenhouse security footage proves Dr. Vale was stealing plants during the murder!',
+    description: 'Player clicks "Security Footage Available" button in Study scene'
+  },
+
+  // The Accusation - Colin confession (Chat with Colin)
+  {
+    id: 'colin_accusation_chat',
+    stage: 'act_i',
+    trigger: 'chat_attachment',
+    requiredSuspectId: 'suspect_colin',
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'], // Photos include pocket square and gloves
+    logicOperator: 'AND',
+    unlocks: {
+      stage: 'act_ii',
+      statusUpdate: 'Case Solved'
+    },
+    notificationMessage: 'Colin has confessed! He accidentally killed Reginald during a confrontation in the study. Case closed!',
+    description: 'Show Colin the incriminating evidence: pocket square pic, white gloves, and both blackmail sets'
+  },
+
+  // The Accusation - Colin confession (Theory Validation)
+  {
+    id: 'colin_accusation_theory',
+    stage: 'act_i',
+    trigger: 'theory_validation',
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'],
+    logicOperator: 'AND',
+    unlocks: {
+      stage: 'act_ii',
+      statusUpdate: 'Case Solved'
+    },
+    notificationMessage: 'Your accusation is correct! Colin Dorsey is the killer. He confesses to the accidental killing during a confrontation in the study.',
+    description: 'Submit theory accusing Colin with all the evidence'
+  }
+]
+
+/**
+ * Get rules that are applicable for the current stage
+ */
+export function getRulesForStage(stage: GameStage): UnlockRule[] {
+  return UNLOCK_RULES.filter(rule => rule.stage === stage)
+}
+
+/**
+ * Get rules that match a specific trigger type
+ */
+export function getRulesByTrigger(stage: GameStage, trigger: TriggerType): UnlockRule[] {
+  return UNLOCK_RULES.filter(rule => rule.stage === stage && rule.trigger === trigger)
+}
+
+/**
+ * Find a matching unlock rule based on evidence and context
+ */
+export function findMatchingRule(params: {
+  stage: GameStage
+  trigger: TriggerType
+  suspectId?: string
+  evidenceIds: string[]
+}): UnlockRule | null {
+  const { stage, trigger, suspectId, evidenceIds } = params
+
+  // Get applicable rules
+  const applicableRules = UNLOCK_RULES.filter(
+    rule => rule.stage === stage && rule.trigger === trigger
+  )
+
+  // Check each rule for a match
+  for (const rule of applicableRules) {
+    // If rule requires specific suspect, check it matches
+    if (rule.requiredSuspectId && rule.requiredSuspectId !== suspectId) {
+      continue
+    }
+
+    // Check if evidence matches requirements
+    if (rule.logicOperator === 'AND') {
+      // ALL required artifacts must be present
+      const allPresent = rule.requiredArtifacts.every(artifact =>
+        evidenceIds.includes(artifact)
+      )
+      if (allPresent) {
+        return rule
+      }
+    } else {
+      // ANY required artifact must be present (OR logic)
+      const anyPresent = rule.requiredArtifacts.some(artifact =>
+        evidenceIds.includes(artifact)
+      )
+      if (anyPresent) {
+        return rule
+      }
+    }
+  }
+
+  return null
+}
+

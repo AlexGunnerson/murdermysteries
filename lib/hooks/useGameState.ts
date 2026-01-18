@@ -11,6 +11,7 @@ export function useGameState() {
     // State
     caseId: store.caseId,
     sessionId: store.sessionId,
+    currentStage: store.currentStage,
     detectivePoints: store.detectivePoints,
     discoveredFacts: store.discoveredFacts,
     chatHistory: store.chatHistory,
@@ -26,6 +27,7 @@ export function useGameState() {
     // Actions
     initializeGame: store.initializeGame,
     setSessionId: store.setSessionId,
+    setCurrentStage: store.setCurrentStage,
     setDetectivePoints: store.setDetectivePoints,
     addDetectivePoints: store.addDetectivePoints,
     subtractDetectivePoints: store.subtractDetectivePoints,
@@ -41,6 +43,7 @@ export function useGameState() {
     markLetterAsRead: store.markLetterAsRead,
     setLoading: store.setLoading,
     setSyncing: store.setSyncing,
+    fetchGameState: store.fetchGameState,
   }
 }
 

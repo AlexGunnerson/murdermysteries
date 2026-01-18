@@ -3,6 +3,8 @@ import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
 import { evaluateTheory } from '@/lib/services/aiService'
+import { evaluateUnlocks, applyUnlocks, checkAndApplyActIUnlocks } from '@/lib/services/unlockService'
+import { GameStage } from '@/lib/config/unlockRules'
 
 /**
  * POST /api/game/actions/validate-theory
@@ -109,57 +111,30 @@ export async function POST(request: NextRequest) {
       .select()
       .single()
 
-    // If correct, unlock content based on case progression
+    // Evaluate unlocks based on submitted artifacts
     let unlockedContent: {
       suspects?: string[]
       scenes?: string[]
       records?: string[]
+      stage?: string
+      statusUpdate?: string
     } | undefined
 
-    if (evaluation.result === 'correct' && theoryRecord) {
-      // Determine what to unlock based on case configuration
-      // This would be defined in the case data
-      const toUnlock = caseData.theory_unlocks?.[theoryRecord.id] || {}
+    // Always evaluate unlocks, regardless of AI evaluation result
+    // The unlock rules determine if the artifacts trigger unlocks
+    const unlockResult = await evaluateUnlocks({
+      sessionId,
+      evidenceIds: artifactIds,
+      currentStage: (session.current_stage || 'start') as GameStage,
+      trigger: 'theory'
+    })
 
-      if (toUnlock.suspects || toUnlock.scenes || toUnlock.records) {
-        unlockedContent = toUnlock
-
-        // Insert unlocked content
-        const contentToInsert = []
-
-        if (toUnlock.suspects) {
-          contentToInsert.push(...toUnlock.suspects.map((id: string) => ({
-            game_session_id: sessionId,
-            content_type: 'suspect',
-            content_id: id,
-          })))
-        }
-
-        if (toUnlock.scenes) {
-          contentToInsert.push(...toUnlock.scenes.map((id: string) => ({
-            game_session_id: sessionId,
-            content_type: 'scene',
-            content_id: id,
-          })))
-        }
-
-        if (toUnlock.records) {
-          contentToInsert.push(...toUnlock.records.map((id: string) => ({
-            game_session_id: sessionId,
-            content_type: 'record',
-            content_id: id,
-          })))
-        }
-
-        if (contentToInsert.length > 0) {
-          await supabase
-            .from('unlocked_content')
-            .upsert(contentToInsert, {
-              onConflict: 'game_session_id,content_type,content_id',
-              ignoreDuplicates: true,
-            })
-        }
-      }
+    if (unlockResult.hasUnlocks) {
+      await applyUnlocks(sessionId, unlockResult)
+      unlockedContent = unlockResult.unlocks
+      
+      // Check and apply Act I unlocks if needed
+      await checkAndApplyActIUnlocks(sessionId)
     }
 
     return NextResponse.json({

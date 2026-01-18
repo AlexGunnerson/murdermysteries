@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { streamAIResponse, ChatContext, sanitizeResponseForClient } from '@/lib/services/aiService'
+import { createServiceRoleClient } from '@/lib/supabase/server'
+import { evaluateUnlocks, applyUnlocks, saveEvidencePresentation, checkAndApplyActIUnlocks } from '@/lib/services/unlockService'
+import { GameStage } from '@/lib/config/unlockRules'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -16,9 +19,10 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json()
-    const { message, context } = body as {
+    const { message, context, sessionId } = body as {
       message: string
       context: ChatContext
+      sessionId?: string
     }
 
     if (!message || !context) {
@@ -36,11 +40,69 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check for unlocks if evidence is attached
+    let unlockResult = null
+    if (sessionId && context.attachedItems && context.attachedItems.length > 0) {
+      try {
+        const supabase = createServiceRoleClient()
+        
+        // Get session data
+        const { data: session } = await supabase
+          .from('game_sessions')
+          .select('current_stage')
+          .eq('id', sessionId)
+          .single()
+
+        if (session) {
+          // Save evidence presentation
+          await saveEvidencePresentation({
+            sessionId,
+            suspectId: context.suspectProfile.id,
+            evidenceIds: context.attachedItems.map(i => i.id)
+          })
+
+          // Evaluate unlocks
+          unlockResult = await evaluateUnlocks({
+            sessionId,
+            suspectId: context.suspectProfile.id,
+            evidenceIds: context.attachedItems.map(i => i.id),
+            currentStage: (session.current_stage || 'start') as GameStage,
+            trigger: 'chat'
+          })
+
+          // Apply unlocks if any
+          if (unlockResult.hasUnlocks) {
+            await applyUnlocks(sessionId, unlockResult)
+            
+            // Check and apply Act I unlocks if needed
+            await checkAndApplyActIUnlocks(sessionId)
+          }
+        }
+      } catch (error) {
+        console.error('Error evaluating unlocks:', error)
+        // Don't fail the chat if unlock evaluation fails
+      }
+    }
+
     // Create a ReadableStream for SSE
     const encoder = new TextEncoder()
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Send unlock event first if applicable
+          if (unlockResult && unlockResult.hasUnlocks) {
+            const unlockData = `data: ${JSON.stringify({ 
+              unlock: {
+                suspects: unlockResult.unlocks.suspects || [],
+                scenes: unlockResult.unlocks.scenes || [],
+                records: unlockResult.unlocks.records || [],
+                stage: unlockResult.unlocks.stage,
+                message: unlockResult.notificationMessage
+              }
+            })}\n\n`
+            controller.enqueue(encoder.encode(unlockData))
+          }
+
           // Stream AI response
           for await (const chunk of streamAIResponse(message, context)) {
             if (chunk.error) {
