@@ -24,7 +24,7 @@
       "portraitUrl": "/cases/case01/images/portraits/martin.jpg",
       "avatarUrl": "/cases/case01/images/portraits/martin_avi_2.png",
       "veronicaNote": "Reginald's younger brother. Sixty-one, yet he possesses the impulse control of a schoolboy. He has spent a lifetime in my husband's shadow, and I fear he has grown to resent the lack of light. A gambler in both finance and life.",
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -37,7 +37,7 @@
       "portraitUrl": "/cases/case01/images/portraits/colin.jpg",
       "avatarUrl": "/cases/case01/images/portraits/colin_avi_2.png",
       "veronicaNote": "The Estate Manager. He was once Reginald's right hand, but that hand has withered. Competent, yes, but there is a desperation in him now. He and my husband quarreled years ago—trust once broken is never truly mended.",
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -50,7 +50,7 @@
       "portraitUrl": "/cases/case01/images/portraits/lydia.jpg",
       "avatarUrl": "/cases/case01/images/portraits/lydia_avi_2.png",
       "veronicaNote": "Director of the Foundation. She is polished, ambitious, and curates her public image as carefully as she does our charity galas. She claims to serve the family, but I suspect she serves only her own ascent.",
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -63,7 +63,7 @@
       "portraitUrl": "/cases/case01/images/portraits/vale.png",
       "avatarUrl": "/cases/case01/images/portraits/vale_avi_2.png",
       "veronicaNote": "The Physician. A \"friend\" of the family for decades. He is elegant and calculating, with a bedside manner that is almost too calm. He pronounced Reginald dead without a flicker of emotion. I have always found his stillness... unsettling.",
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -139,7 +139,7 @@
         "/cases/case01/images/scenes/Scene 5 - Master Bedroom/master_bedroom4.png"
       ],
       "dpCost": 3,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
       }
@@ -157,7 +157,7 @@
         "/cases/case01/images/scenes/Scene 4 - Study/study_5.jpg"
       ],
       "dpCost": 3,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
       }
@@ -193,17 +193,18 @@
         "/cases/case01/images/gala_photos/itinerary.png",
         "/cases/case01/images/gala_photos/colin_white_gloves.png",
         "/cases/case01/images/gala_photos/colin_champagne.png",
-        "/cases/case01/images/gala_photos/lydia_networking.jpg",
-        "/cases/case01/images/gala_photos/lydia_shaking_hands.jpg",
+        "/cases/case01/images/gala_photos/lydia_networking.png",
+        "/cases/case01/images/gala_photos/lydia_shaking_hands.png",
         "/cases/case01/images/gala_photos/martin_mingling.jpg",
         "/cases/case01/images/gala_photos/martin_shaking_hands.png",
         "/cases/case01/images/gala_photos/martin_lounging.png",
+        "/cases/case01/images/gala_photos/reginald_lydia_conversation.jpg",
+        "/cases/case01/images/gala_photos/reginald_veronica_dancing.jpg",
         "/cases/case01/images/gala_photos/vale_greenhouse.png",
         "/cases/case01/images/gala_photos/vale_gala.png",
         "/cases/case01/images/gala_photos/vale_gala_2.png",
         "/cases/case01/images/gala_photos/veronica_champagne.jpg",
-        "/cases/case01/images/gala_photos/veronica_outside.png",
-        "/cases/case01/images/gala_photos/veronica_blurry_moving.png"
+        "/cases/case01/images/gala_photos/veronica_outside.png"
       ],
       "dpCost": 2,
       "initiallyAvailable": true
@@ -214,7 +215,7 @@
       "description": "A private message from Veronica, grateful for confirming her suspicions. She explains why she hid the blackmail papers and supplies them for investigation.",
       "isLetter": true,
       "dpCost": 0,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -236,7 +237,7 @@
       "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",
       "isHTML": true,
       "dpCost": 2,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
       }
@@ -247,7 +248,7 @@
       "description": "The complete set of blackmail documents hidden behind a painting in the master bedroom. Contains incriminating evidence on Martin, Colin, Lydia, and Dr. Vale that Reginald had collected.",
       "isHTML": true,
       "dpCost": 2,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
       }
@@ -257,7 +258,7 @@
       "name": "Phone Records",
       "description": "Estate phone logs from the evening of the gala, showing all incoming and outgoing calls.",
       "dpCost": 2,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_alibi_suspicious"]
       }
@@ -268,7 +269,7 @@
       "description": "Handwritten notes for Reginald's opening remarks at the gala. Contains his planned speech with personal annotations.",
       "isHTML": true,
       "dpCost": 2,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": []
       }
@@ -279,7 +280,7 @@
       "description": "Automatically uploaded security camera footage from the greenhouse, timestamped during the gala.",
       "documentUrl": "/cases/case01/images/documents/greenhouse_footage.jpg",
       "dpCost": 2,
-      "initiallyAvailable": true,
+      "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
       }
@@ -310,7 +311,7 @@
         "/cases/case01/images/evidence/securityfootage/cam3.5.jpg"
       ],
       "dpCost": 3,
-      "initiallyAvailable": true
+      "initiallyAvailable": false
     }
   ]
 }

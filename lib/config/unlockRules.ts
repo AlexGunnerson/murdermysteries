@@ -26,40 +26,27 @@ export interface UnlockRule {
 }
 
 export const UNLOCK_RULES: UnlockRule[] = [
-  // Stage: Start -> Act I
+  // Stage: Start -> Act II (Contradiction proven)
   {
     id: 'contradiction',
     stage: 'start',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_vale_notes', 'record_crime_scene_photos'],
+    requiredArtifacts: ['record_vale_notes', 'record_crime_scene_photos_img_0'],
     logicOperator: 'AND',
     unlocks: {
-      stage: 'act_i',
+      stage: 'act_ii',
+      suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes'],
       statusUpdate: 'Murder Confirmed'
     },
-    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident.',
+    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident. Veronica now trusts you with the truth. Reginald\'s inner circle is now available for questioning.',
     description: 'Player notices red wine in crime scene photo and cross-references with Dr. Vale\'s Medical Notes showing Reginald is allergic to red wine'
-  },
-
-  // Act I Start Unlocks
-  {
-    id: 'act_i_start',
-    stage: 'act_i',
-    trigger: 'theory_validation',
-    requiredArtifacts: [], // Automatically triggered when Act I begins
-    logicOperator: 'AND',
-    unlocks: {
-      suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
-      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes']
-    },
-    notificationMessage: 'Veronica now trusts you with the truth. Reginald\'s inner circle is now available for questioning.',
-    description: 'Once murder is confirmed, Veronica opens up about the blackmail and makes the inner circle available'
   },
 
   // Master Bedroom Unlock - Show blackmail to Veronica
   {
     id: 'master_bedroom_chat',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_veronica',
     requiredArtifacts: ['record_blackmail_floor'],
@@ -74,7 +61,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // Master Bedroom Unlock - Theory validation alternative
   {
     id: 'master_bedroom_theory',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'theory_validation',
     requiredArtifacts: ['record_blackmail_floor', 'record_veronica_thankyou'],
     logicOperator: 'AND',
@@ -88,7 +75,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // Blackmail Set #2 - Retrieved from painting (handled by button, but tracked here)
   {
     id: 'blackmail_set_2',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'button_click',
     requiredArtifacts: [], // No validation needed - button click unlocks it
     logicOperator: 'AND',
@@ -102,7 +89,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // The Confrontation - Vale admits to greenhouse theft
   {
     id: 'vale_confrontation',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_vale',
     requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
@@ -117,7 +104,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // The Confrontation - Theory validation alternative
   {
     id: 'vale_confrontation_theory',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'theory_validation',
     requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
     logicOperator: 'AND',
@@ -131,7 +118,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // CCTV Proof - Retrieved from study (handled by button, but tracked here)
   {
     id: 'cctv_proof',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'button_click',
     requiredArtifacts: [], // Button click unlocks it
     logicOperator: 'AND',
@@ -145,13 +132,12 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // The Accusation - Colin confession (Chat with Colin)
   {
     id: 'colin_accusation_chat',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_colin',
     requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'], // Photos include pocket square and gloves
     logicOperator: 'AND',
     unlocks: {
-      stage: 'act_ii',
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Colin has confessed! He accidentally killed Reginald during a confrontation in the study. Case closed!',
@@ -161,12 +147,11 @@ export const UNLOCK_RULES: UnlockRule[] = [
   // The Accusation - Colin confession (Theory Validation)
   {
     id: 'colin_accusation_theory',
-    stage: 'act_i',
+    stage: 'act_ii',
     trigger: 'theory_validation',
     requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'],
     logicOperator: 'AND',
     unlocks: {
-      stage: 'act_ii',
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Your accusation is correct! Colin Dorsey is the killer. He confesses to the accidental killing during a confrontation in the study.',
@@ -199,15 +184,22 @@ export function findMatchingRule(params: {
 }): UnlockRule | null {
   const { stage, trigger, suspectId, evidenceIds } = params
 
+  console.log('[UNLOCK-RULES] Finding match for:', { stage, trigger, suspectId, evidenceIds })
+
   // Get applicable rules
   const applicableRules = UNLOCK_RULES.filter(
     rule => rule.stage === stage && rule.trigger === trigger
   )
 
+  console.log('[UNLOCK-RULES] Found', applicableRules.length, 'applicable rules for stage:', stage, 'trigger:', trigger)
+
   // Check each rule for a match
   for (const rule of applicableRules) {
+    console.log('[UNLOCK-RULES] Checking rule:', rule.id, 'requires:', rule.requiredArtifacts)
+    
     // If rule requires specific suspect, check it matches
     if (rule.requiredSuspectId && rule.requiredSuspectId !== suspectId) {
+      console.log('[UNLOCK-RULES] Rule requires suspect:', rule.requiredSuspectId, 'but got:', suspectId)
       continue
     }
 
@@ -217,7 +209,9 @@ export function findMatchingRule(params: {
       const allPresent = rule.requiredArtifacts.every(artifact =>
         evidenceIds.includes(artifact)
       )
+      console.log('[UNLOCK-RULES] AND check - all present?', allPresent)
       if (allPresent) {
+        console.log('[UNLOCK-RULES] ✓ Rule matched:', rule.id)
         return rule
       }
     } else {
@@ -225,12 +219,15 @@ export function findMatchingRule(params: {
       const anyPresent = rule.requiredArtifacts.some(artifact =>
         evidenceIds.includes(artifact)
       )
+      console.log('[UNLOCK-RULES] OR check - any present?', anyPresent)
       if (anyPresent) {
+        console.log('[UNLOCK-RULES] ✓ Rule matched:', rule.id)
         return rule
       }
     }
   }
 
+  console.log('[UNLOCK-RULES] ✗ No matching rule found')
   return null
 }
 

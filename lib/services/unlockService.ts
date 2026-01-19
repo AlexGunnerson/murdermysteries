@@ -31,6 +31,8 @@ export async function evaluateUnlocks(params: {
 }): Promise<UnlockResult> {
   const { sessionId, suspectId, evidenceIds, currentStage, trigger } = params
 
+  console.log('[UNLOCK-SERVICE] Evaluating:', { currentStage, trigger, evidenceIds, suspectId })
+
   // Map trigger types
   const triggerType: TriggerType = trigger === 'chat' ? 'chat_attachment' : 'theory_validation'
 
@@ -41,6 +43,8 @@ export async function evaluateUnlocks(params: {
     suspectId,
     evidenceIds
   })
+
+  console.log('[UNLOCK-SERVICE] Matched rule:', matchedRule?.id || 'none')
 
   if (!matchedRule) {
     return {
@@ -73,6 +77,13 @@ export async function applyUnlocks(
   const supabase = createServiceRoleClient()
   const { unlocks } = unlockResult
 
+  console.log('[UNLOCK-SERVICE] Applying unlocks:', {
+    stage: unlocks.stage,
+    suspects: unlocks.suspects,
+    scenes: unlocks.scenes,
+    records: unlocks.records
+  })
+
   // Update stage if it changed
   if (unlocks.stage) {
     await supabase
@@ -82,6 +93,7 @@ export async function applyUnlocks(
         updated_at: new Date().toISOString()
       })
       .eq('id', sessionId)
+    console.log('[UNLOCK-SERVICE] Updated stage to:', unlocks.stage)
   }
 
   // Prepare content to unlock
@@ -115,14 +127,23 @@ export async function applyUnlocks(
     })))
   }
 
+  console.log('[UNLOCK-SERVICE] Content to insert:', contentToInsert.length, 'items')
+
   // Insert unlocked content
   if (contentToInsert.length > 0) {
-    await supabase
+    const { data, error } = await supabase
       .from('unlocked_content')
       .upsert(contentToInsert, {
         onConflict: 'game_session_id,content_type,content_id',
         ignoreDuplicates: true,
       })
+      .select()
+
+    if (error) {
+      console.error('[UNLOCK-SERVICE] Error inserting unlocked content:', error)
+    } else {
+      console.log('[UNLOCK-SERVICE] Successfully inserted unlocked content')
+    }
   }
 }
 
@@ -150,45 +171,9 @@ export async function saveEvidencePresentation(params: {
  * Check if Act I has been unlocked (for auto-unlocking Act I content)
  */
 export async function checkAndApplyActIUnlocks(sessionId: string): Promise<void> {
-  const supabase = createServiceRoleClient()
-
-  // Get session data
-  const { data: session } = await supabase
-    .from('game_sessions')
-    .select('current_stage')
-    .eq('id', sessionId)
-    .single()
-
-  // If we just moved to Act I, unlock the inner circle
-  if (session && session.current_stage === 'act_i') {
-    // Check if suspects are already unlocked
-    const { data: existingUnlocks } = await supabase
-      .from('unlocked_content')
-      .select('content_id')
-      .eq('game_session_id', sessionId)
-      .eq('content_type', 'suspect')
-
-    const unlockedSuspects = new Set(existingUnlocks?.map(u => u.content_id) || [])
-
-    // If inner circle not yet unlocked, unlock them
-    if (!unlockedSuspects.has('suspect_martin')) {
-      const contentToInsert = [
-        { game_session_id: sessionId, content_type: 'suspect', content_id: 'suspect_martin' },
-        { game_session_id: sessionId, content_type: 'suspect', content_id: 'suspect_colin' },
-        { game_session_id: sessionId, content_type: 'suspect', content_id: 'suspect_lydia' },
-        { game_session_id: sessionId, content_type: 'suspect', content_id: 'suspect_vale' },
-        { game_session_id: sessionId, content_type: 'record', content_id: 'record_veronica_thankyou' },
-        { game_session_id: sessionId, content_type: 'record', content_id: 'record_blackmail_floor' },
-        { game_session_id: sessionId, content_type: 'record', content_id: 'record_phone_logs' },
-      ]
-
-      await supabase
-        .from('unlocked_content')
-        .upsert(contentToInsert, {
-          onConflict: 'game_session_id,content_type,content_id',
-          ignoreDuplicates: true,
-        })
-    }
-  }
+  // This function is now deprecated - Act I no longer exists
+  // All unlocks are handled directly in the unlock rules
+  // Keeping this function for backwards compatibility but it does nothing
+  return
 }
 

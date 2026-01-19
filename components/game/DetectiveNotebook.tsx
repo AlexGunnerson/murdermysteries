@@ -149,16 +149,18 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           initiallyAvailable: s.initiallyAvailable
         }))
 
-        const allDocuments = data.records.map((r: any) => ({
-          id: r.id,
-          name: r.name,
-          description: r.description,
-          documentUrl: r.documentUrl,
-          images: r.images || (r.documentUrl ? [r.documentUrl] : []),
-          content: r.content,
-          isLetter: r.isLetter,
-          initiallyAvailable: r.initiallyAvailable
-        }))
+        const allDocuments = data.records
+          .filter((r: any) => r.initiallyAvailable || unlockedContent.records.has(r.id))
+          .map((r: any) => ({
+            id: r.id,
+            name: r.name,
+            description: r.description,
+            documentUrl: r.documentUrl,
+            images: r.images || (r.documentUrl ? [r.documentUrl] : []),
+            content: r.content,
+            isLetter: r.isLetter,
+            initiallyAvailable: r.initiallyAvailable
+          }))
         
         setSuspects(allSuspects)
         setScenes(allScenes)
@@ -171,7 +173,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     }
     
     loadMetadata()
-  }, [])
+  }, [unlockedContent.records])
 
   const handleCloseLetter = () => {
     setShowVeronicaLetter(false)

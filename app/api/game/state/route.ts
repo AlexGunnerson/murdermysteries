@@ -315,3 +315,106 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+// DELETE - Reset game state to initial state
+export async function DELETE(request: NextRequest) {
+  try {
+    const user = await requireAuth()
+    const searchParams = request.nextUrl.searchParams
+    const caseSlug = searchParams.get('caseId') // This is actually a slug like "case01"
+
+    if (!caseSlug) {
+      return NextResponse.json(
+        { error: 'caseId is required' },
+        { status: 400 }
+      )
+    }
+
+    const supabase = createServiceRoleClient()
+
+    // First, look up the case UUID by slug
+    const { data: caseData, error: caseError } = await supabase
+      .from('cases')
+      .select('id')
+      .eq('slug', caseSlug)
+      .single()
+
+    if (caseError || !caseData) {
+      return NextResponse.json(
+        { error: 'Case not found' },
+        { status: 404 }
+      )
+    }
+
+    const caseId = caseData.id
+
+    // Fetch game session
+    const { data: session, error: sessionError } = await supabase
+      .from('game_sessions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('case_id', caseId)
+      .single()
+
+    if (sessionError && sessionError.code !== 'PGRST116') {
+      throw sessionError
+    }
+
+    // If no session exists, nothing to reset
+    if (!session) {
+      return NextResponse.json({ success: true, message: 'No session to reset' })
+    }
+
+    const sessionId = session.id
+
+    // Delete all unlocked content
+    await supabase
+      .from('unlocked_content')
+      .delete()
+      .eq('game_session_id', sessionId)
+
+    // Delete all discovered facts
+    await supabase
+      .from('discovered_facts')
+      .delete()
+      .eq('game_session_id', sessionId)
+
+    // Delete all chat messages
+    await supabase
+      .from('chat_messages')
+      .delete()
+      .eq('game_session_id', sessionId)
+
+    // Delete all theory submissions
+    await supabase
+      .from('theory_submissions')
+      .delete()
+      .eq('game_session_id', sessionId)
+
+    // Delete all evidence presentations
+    await supabase
+      .from('evidence_presentations')
+      .delete()
+      .eq('game_session_id', sessionId)
+
+    // Reset session to initial state
+    await supabase
+      .from('game_sessions')
+      .update({
+        current_stage: 'start',
+        detective_points: 25,
+        is_completed: false,
+        is_solved_correctly: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', sessionId)
+
+    return NextResponse.json({ success: true, message: 'Game state reset to initial state' })
+  } catch (error) {
+    console.error('Error resetting game state:', error)
+    return NextResponse.json(
+      { error: 'Failed to reset game state' },
+      { status: 500 }
+    )
+  }
+}
+

@@ -1,8 +1,9 @@
 "use client"
 
-import { X, Search } from "lucide-react"
+import { X, Search, Lock } from "lucide-react"
 import Image from "next/image"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface SuspectDossierViewProps {
   suspect: {
@@ -28,6 +29,11 @@ export function SuspectDossierView({
   systemPrompt,
   onClose 
 }: SuspectDossierViewProps) {
+  const { unlockedContent } = useGameState()
+  
+  // Check if this suspect is unlocked for questioning
+  // Veronica (suspect_veronica) is always available
+  const isUnlockedForQuestioning = suspect.id === 'suspect_veronica' || unlockedContent.suspects.has(suspect.id)
   return (
     <div 
       className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
@@ -397,21 +403,59 @@ export function SuspectDossierView({
                   textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
                 }}
               >
-                Analyze Suspects
+                Question Suspects
               </h2>
             </div>
           </div>
 
-          {/* Chat Interface */}
+          {/* Chat Interface or Locked Message */}
           <div className="flex-1 overflow-hidden relative z-10">
-            <ChatInterfaceWithAttachments
-              suspectId={suspect.id}
-              suspectName={suspect.name}
-              suspectRole={suspect.role}
-              suspectPersonality={suspectPersonality}
-              systemPrompt={systemPrompt}
-              suspectAvatarUrl={suspect.avatarUrl}
-            />
+            {isUnlockedForQuestioning ? (
+              <ChatInterfaceWithAttachments
+                suspectId={suspect.id}
+                suspectName={suspect.name}
+                suspectRole={suspect.role}
+                suspectPersonality={suspectPersonality}
+                systemPrompt={systemPrompt}
+                suspectAvatarUrl={suspect.avatarUrl}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center bg-[#1a1a1a] relative">
+                <div 
+                  className="absolute inset-0 opacity-5"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`
+                  }}
+                />
+                <div className="text-center px-8 relative z-10">
+                  <Lock 
+                    className="w-20 h-20 mx-auto mb-6 text-gray-600"
+                    style={{
+                      filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.3))'
+                    }}
+                  />
+                  <h3 
+                    className="text-2xl font-bold mb-4"
+                    style={{
+                      color: '#d4af37',
+                      fontFamily: "'Playfair Display', serif",
+                      textShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
+                    }}
+                  >
+                    Not Available for Questioning
+                  </h3>
+                  <p 
+                    className="text-gray-400 max-w-md mx-auto leading-relaxed"
+                    style={{
+                      fontFamily: 'Courier, monospace',
+                    }}
+                  >
+                    {suspect.name} is not yet available for questioning. 
+                    You'll need to prove this was murder before Veronica allows you access to the inner circle.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

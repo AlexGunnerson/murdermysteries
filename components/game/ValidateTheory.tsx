@@ -32,7 +32,9 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [expandedTheoryId, setExpandedTheoryId] = useState<string | null>(null)
   const [photoFilter, setPhotoFilter] = useState<string>('all')
   const [showAllFilters, setShowAllFilters] = useState(false)
-  const { theoryHistory, addTheorySubmission, unlockedContent } = useGameState()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
+  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, detectivePoints, subtractDetectivePoints } = useGameState()
   
   // Evidence data - this will be populated from the game state
   const [evidenceData, setEvidenceData] = useState<{
@@ -161,19 +163,99 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       alert('Please select at least one document or photo as evidence for your theory.')
       return
     }
-    
-    // For now, all theories are marked as "incorrect" until we implement validation logic
-    // TODO: Implement actual theory validation against the correct solution
-    addTheorySubmission({
-      description: theoryText,
-      artifactIds: selectedEvidence,
-      result: 'incorrect',
-      feedback: 'Theory recorded. Keep investigating to find more evidence.'
-    })
-    
-    // Clear the form
-    setTheoryText('')
-    setSelectedEvidence([])
+
+    if (!sessionId) {
+      alert('Game session not initialized. Please refresh the page.')
+      return
+    }
+
+    const cost = -5 // Theory validation costs 5 DP
+    if (detectivePoints < Math.abs(cost)) {
+      alert(`Not enough Detective Points. This action costs ${Math.abs(cost)} DP.`)
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+
+      const response = await fetch('/api/game/actions/validate-theory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          description: theoryText.trim(),
+          artifactIds: selectedEvidence,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to submit theory')
+      }
+
+      const data = await response.json()
+
+      console.log('[VALIDATE-THEORY-UI] Response received:', data)
+
+      // Update DP
+      subtractDetectivePoints(Math.abs(cost))
+
+      // Add theory to history
+      addTheorySubmission({
+        description: theoryText.trim(),
+        artifactIds: selectedEvidence,
+        result: data.result,
+        feedback: data.feedback,
+        unlockedContent: data.unlockedContent,
+      })
+
+      console.log('[VALIDATE-THEORY-UI] Checking unlocked content:', data.unlockedContent)
+
+      // Check if content was unlocked
+      if (data.unlockedContent) {
+        const unlocks = data.unlockedContent
+        const unlockedItems: string[] = []
+        
+        if (unlocks.suspects && unlocks.suspects.length > 0) {
+          unlockedItems.push(`${unlocks.suspects.length} suspect(s)`)
+        }
+        if (unlocks.scenes && unlocks.scenes.length > 0) {
+          unlockedItems.push(`${unlocks.scenes.length} scene(s)`)
+        }
+        if (unlocks.records && unlocks.records.length > 0) {
+          unlockedItems.push(`${unlocks.records.length} record(s)`)
+        }
+        if (unlocks.stage) {
+          unlockedItems.push(`Advanced to ${unlocks.stage.replace('_', ' ').toUpperCase()}`)
+        }
+
+        if (unlockedItems.length > 0) {
+          const message = `🔓 Unlocked: ${unlockedItems.join(', ')}`
+          setUnlockNotification(message)
+          
+          // Hide notification after 5 seconds
+          setTimeout(() => {
+            setUnlockNotification(null)
+          }, 5000)
+          
+          // Refresh game state to get new unlocked content
+          if (fetchGameState) {
+            await fetchGameState()
+          }
+        }
+      }
+
+      // Clear the form
+      setTheoryText('')
+      setSelectedEvidence([])
+    } catch (error) {
+      console.error('Error submitting theory:', error)
+      alert(error instanceof Error ? error.message : 'Failed to submit theory')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!isOpen) return null
@@ -183,6 +265,19 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ${isPreviewOpen ? 'invisible' : ''}`}
       onClick={onClose}
     >
+      {/* Unlock Notification */}
+      {unlockNotification && (
+        <div 
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[60] max-w-md px-6 py-4 bg-[#d4af37] text-black rounded-sm shadow-2xl animate-fade-in"
+          style={{
+            boxShadow: '0 0 20px rgba(212, 175, 55, 0.6)',
+            fontFamily: "'Playfair Display', serif"
+          }}
+        >
+          <p className="font-semibold text-center">{unlockNotification}</p>
+        </div>
+      )}
+    
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Courier+Prime:wght@400;700&display=swap');
         
@@ -561,9 +656,10 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             </button>
             <button 
               onClick={handleSubmit}
-              className="bg-[#d97706] hover:bg-[#b45309] text-white px-8 py-3 rounded shadow-lg flex items-center gap-2 font-bold tracking-wider transition-all transform hover:-translate-y-1 active:translate-y-0"
+              disabled={isSubmitting}
+              className="bg-[#d97706] hover:bg-[#b45309] text-white px-8 py-3 rounded shadow-lg flex items-center gap-2 font-bold tracking-wider transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span>SUBMIT THEORY</span>
+              <span>{isSubmitting ? 'SUBMITTING...' : 'SUBMIT THEORY'}</span>
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

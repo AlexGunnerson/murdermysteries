@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
 import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
-import { evaluateTheory } from '@/lib/services/aiService'
 import { evaluateUnlocks, applyUnlocks, checkAndApplyActIUnlocks } from '@/lib/services/unlockService'
 import { GameStage } from '@/lib/config/unlockRules'
 
@@ -70,24 +69,6 @@ export async function POST(request: NextRequest) {
       .select('*')
       .eq('game_session_id', sessionId)
 
-    const artifacts: Record<string, string> = {}
-    facts?.forEach(fact => {
-      artifacts[fact.fact_key] = fact.fact_content
-    })
-
-    // Evaluate theory using AI
-    const evaluation = await evaluateTheory(
-      {
-        description,
-        artifactIds,
-      },
-      {
-        correctSolution: caseData.solution_description || '',
-        requiredFacts: caseData.required_facts || [],
-        artifacts,
-      }
-    )
-
     // Deduct DP
     const newDP = session.detective_points + cost
     await supabase
@@ -98,20 +79,31 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', sessionId)
 
-    // Save theory submission
-    const { data: theoryRecord } = await supabase
-      .from('theory_submissions')
-      .insert({
-        game_session_id: sessionId,
-        theory_description: description,
-        artifact_ids: artifactIds,
-        result: evaluation.result,
-        feedback: evaluation.feedback,
-      })
-      .select()
-      .single()
+    // Evaluate unlocks FIRST (before saving theory)
+    // This is the authoritative source for determining correctness
 
-    // Evaluate unlocks based on submitted artifacts
+    console.log('[VALIDATE-THEORY] Evaluating unlocks:', {
+      sessionId,
+      evidenceIds: artifactIds,
+      currentStage: session.current_stage || 'start',
+    })
+    
+    const unlockResult = await evaluateUnlocks({
+      sessionId,
+      evidenceIds: artifactIds,
+      currentStage: (session.current_stage || 'start') as GameStage,
+      trigger: 'theory'
+    })
+
+    console.log('[VALIDATE-THEORY] Unlock result:', {
+      hasUnlocks: unlockResult.hasUnlocks,
+      matchedRule: unlockResult.matchedRule?.id,
+      unlocks: unlockResult.unlocks
+    })
+
+    // Determine result based on unlock triggers (artifact-based system)
+    let finalResult: 'correct' | 'incorrect' = 'incorrect'
+    let finalFeedback = 'The evidence submitted does not support a valid theory. Try different combinations of evidence.'
     let unlockedContent: {
       suspects?: string[]
       scenes?: string[]
@@ -120,28 +112,37 @@ export async function POST(request: NextRequest) {
       statusUpdate?: string
     } | undefined
 
-    // Always evaluate unlocks, regardless of AI evaluation result
-    // The unlock rules determine if the artifacts trigger unlocks
-    const unlockResult = await evaluateUnlocks({
-      sessionId,
-      evidenceIds: artifactIds,
-      currentStage: (session.current_stage || 'start') as GameStage,
-      trigger: 'theory'
-    })
-
     if (unlockResult.hasUnlocks) {
       await applyUnlocks(sessionId, unlockResult)
       unlockedContent = unlockResult.unlocks
       
-      // Check and apply Act I unlocks if needed
+      console.log('[VALIDATE-THEORY] Applied unlocks')
+      // Note: checkAndApplyActIUnlocks is deprecated (Act I no longer exists)
+      // All unlocks are handled directly in unlock rules
       await checkAndApplyActIUnlocks(sessionId)
+
+      finalResult = 'correct'
+      finalFeedback = unlockResult.matchedRule?.notificationMessage || 'Your theory is correct! New content has been unlocked.'
+    } else {
+      console.log('[VALIDATE-THEORY] No unlocks matched')
     }
+
+    // Save theory submission with the result
+    await supabase
+      .from('theory_submissions')
+      .insert({
+        game_session_id: sessionId,
+        theory_description: description,
+        artifact_ids: artifactIds,
+        result: finalResult,
+        feedback: finalFeedback,
+      })
 
     return NextResponse.json({
       success: true,
-      result: evaluation.result,
-      feedback: evaluation.feedback,
-      matchedFacts: evaluation.matchedFacts,
+      result: finalResult,
+      feedback: finalFeedback,
+      matchedFacts: [],
       unlockedContent,
       cost,
       newDP,

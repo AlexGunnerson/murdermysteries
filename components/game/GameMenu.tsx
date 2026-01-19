@@ -14,7 +14,7 @@ interface GameMenuProps {
 export function GameMenu({ isOpen, onClose }: GameMenuProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
-  const { resetGame } = useGameState()
+  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, caseId } = useGameState()
 
   if (!isOpen) return null
 
@@ -29,6 +29,56 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" })
+  }
+
+  const handleResetToGameStart = async () => {
+    if (!caseId) {
+      alert('No active case to reset')
+      return
+    }
+
+    try {
+      // Reset database state
+      const response = await fetch(`/api/game/state?caseId=${caseId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to reset game state')
+      }
+
+      // Reset local state
+      resetGame()
+      
+      // Reload page to fetch fresh state
+      window.location.reload()
+    } catch (error) {
+      console.error('Error resetting game:', error)
+      alert('Failed to reset game state. Please try again.')
+    }
+  }
+
+  const handleJumpToActII = () => {
+    // Reset game first
+    resetGame()
+    
+    // Set stage to Act II (after contradiction is proven)
+    setCurrentStage('act_ii')
+    
+    // Unlock inner circle suspects (what contradiction unlocks)
+    unlockSuspect('suspect_martin')
+    unlockSuspect('suspect_colin')
+    unlockSuspect('suspect_lydia')
+    unlockSuspect('suspect_vale')
+    
+    // Unlock Act II records (what contradiction unlocks)
+    unlockRecord('record_veronica_thankyou')
+    unlockRecord('record_blackmail_floor')
+    unlockRecord('record_phone_logs')
+    unlockRecord('record_speech_notes')
+    
+    window.location.reload()
   }
 
   return (
@@ -128,32 +178,56 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
                 className="text-xs mb-2 px-4 tracking-wider uppercase"
                 style={{ color: 'rgba(212, 175, 55, 0.5)' }}
               >
-                Development Tools
+                Development Tools - Jump to Checkpoint
               </div>
-              <button
-                onClick={() => {
-                  if (confirm('Reset all game progress? This will clear all facts, unlocked content, and the letter will appear again.')) {
-                    resetGame()
-                    window.location.reload()
-                  }
-                }}
-                className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
-                style={{
-                  color: '#d4af37',
-                  border: '1px solid rgba(212, 175, 55, 0.2)',
-                  backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                }}
-              >
-                Reset Game State
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => {
+                    if (confirm('Jump to Game Start? This will reset the game to the beginning.')) {
+                      handleResetToGameStart()
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                  style={{
+                    color: '#d4af37',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                  }}
+                >
+                  ↻ Game Start
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('Jump to Act II? Contradiction will be proven, inner circle unlocked.')) {
+                      handleJumpToActII()
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                  style={{
+                    color: '#d4af37',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                  }}
+                >
+                  → Act II
+                </button>
+              </div>
             </div>
 
             <div 

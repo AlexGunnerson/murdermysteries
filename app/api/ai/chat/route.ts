@@ -74,7 +74,8 @@ export async function POST(request: NextRequest) {
           if (unlockResult.hasUnlocks) {
             await applyUnlocks(sessionId, unlockResult)
             
-            // Check and apply Act I unlocks if needed
+            // Note: checkAndApplyActIUnlocks is deprecated (Act I no longer exists)
+            // All unlocks are handled directly in unlock rules
             await checkAndApplyActIUnlocks(sessionId)
           }
         }
