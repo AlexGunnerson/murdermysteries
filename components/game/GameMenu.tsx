@@ -59,26 +59,82 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
     }
   }
 
-  const handleJumpToActII = () => {
-    // Reset game first
-    resetGame()
-    
-    // Set stage to Act II (after contradiction is proven)
-    setCurrentStage('act_ii')
-    
-    // Unlock inner circle suspects (what contradiction unlocks)
-    unlockSuspect('suspect_martin')
-    unlockSuspect('suspect_colin')
-    unlockSuspect('suspect_lydia')
-    unlockSuspect('suspect_vale')
-    
-    // Unlock Act II records (what contradiction unlocks)
-    unlockRecord('record_veronica_thankyou')
-    unlockRecord('record_blackmail_floor')
-    unlockRecord('record_phone_logs')
-    unlockRecord('record_speech_notes')
-    
-    window.location.reload()
+  const handleJumpToActII = async () => {
+    if (!caseId) {
+      alert('No active case to jump to Act II')
+      return
+    }
+
+    try {
+      // Reset game first (clears database state)
+      const resetResponse = await fetch(`/api/game/state?caseId=${caseId}`, {
+        method: 'DELETE',
+      })
+
+      if (!resetResponse.ok) {
+        throw new Error('Failed to reset game state')
+      }
+
+      // Get the session ID after reset (will be recreated on next fetch)
+      // We need to create/update the session with Act II stage and unlocks
+      const sessionResponse = await fetch('/api/game/state', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caseId,
+          detectivePoints: 25,
+          isCompleted: false,
+        }),
+      })
+
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to create/update session')
+      }
+
+      const sessionData = await sessionResponse.json()
+      const sessionId = sessionData.session.id
+
+      // Update stage to Act II and unlock all Act II content via API
+      const unlockResponse = await fetch('/api/game/state', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          currentStage: 'act_ii',
+          unlockedContent: {
+            suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+            records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes'],
+            scenes: [], // No scenes unlocked at Act II start
+          },
+        }),
+      })
+
+      if (!unlockResponse.ok) {
+        throw new Error('Failed to unlock Act II content')
+      }
+
+      // Update local state
+      resetGame()
+      setCurrentStage('act_ii')
+      unlockSuspect('suspect_martin')
+      unlockSuspect('suspect_colin')
+      unlockSuspect('suspect_lydia')
+      unlockSuspect('suspect_vale')
+      unlockRecord('record_veronica_thankyou')
+      unlockRecord('record_blackmail_floor')
+      unlockRecord('record_phone_logs')
+      unlockRecord('record_speech_notes')
+
+      // Reload page to fetch fresh state
+      window.location.reload()
+    } catch (error) {
+      console.error('Error jumping to Act II:', error)
+      alert('Failed to jump to Act II. Please try again.')
+    }
   }
 
   return (

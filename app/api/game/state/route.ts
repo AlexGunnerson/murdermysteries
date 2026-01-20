@@ -205,6 +205,7 @@ export async function PUT(request: NextRequest) {
       newMessages,
       newTheories,
       unlockedContent,
+      currentStage,
     } = body
 
     if (!sessionId) {
@@ -229,6 +230,17 @@ export async function PUT(request: NextRequest) {
         { error: 'Session not found or unauthorized' },
         { status: 404 }
       )
+    }
+
+    // Update stage if provided
+    if (currentStage) {
+      await supabase
+        .from('game_sessions')
+        .update({
+          current_stage: currentStage,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', sessionId)
     }
 
     // Insert new facts

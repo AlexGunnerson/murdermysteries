@@ -448,6 +448,42 @@ export function ChatInterfaceWithAttachments({
           </div>
         ))}
 
+        {/* Loading indicator - shows when streaming but no response yet */}
+        {isStreaming && !currentResponse && (
+          <div className="flex gap-3 justify-start">
+            {/* Avatar for loading suspect message */}
+            {suspectAvatarUrl && (
+              <div 
+                className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border border-[#d4af37] mt-1"
+                style={{
+                  boxShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
+                }}
+              >
+                <Image
+                  src={suspectAvatarUrl}
+                  alt={suspectName}
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="w-full h-full object-cover scale-[2]"
+                />
+              </div>
+            )}
+            
+            <div 
+              className="max-w-[80%] rounded-sm p-3 bg-[#0f0f0f] text-gray-300 border border-gray-800"
+              style={{ boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3)' }}
+            >
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin text-[#d4af37]" />
+                <span className="text-sm text-gray-400 italic" style={{ fontFamily: 'Courier, monospace' }}>
+                  {suspectName} is thinking...
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Streaming response */}
         {currentResponse && (
           <div className="flex gap-3 justify-start">
