@@ -233,7 +233,7 @@
     },
     {
       "id": "record_blackmail_floor",
-      "name": "Blackmail Papers (Found at Scene)",
+      "name": "Blackmail Papers - Found Near Body",
       "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",
       "isHTML": true,
       "dpCost": 2,

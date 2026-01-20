@@ -212,14 +212,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
           border-left: 3px solid #d4af37;
         }
         
-        .document-item.unviewed .document-name::before {
-          content: '●';
-          color: #d4af37;
-          margin-right: 8px;
-          font-size: 1rem;
-          line-height: 1;
-        }
-        
         @media (max-width: 768px) {
           .text-container {
             width: 240px;

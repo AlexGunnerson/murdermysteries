@@ -79,7 +79,7 @@ interface DetectiveNotebookProps {
 }
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -430,9 +430,19 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             className="text-2xl text-gray-900 leading-relaxed"
             style={{ fontFamily: "'Caveat', cursive" }}
           >
-            Veronica Ashcombe believes her husband&apos;s death was <span className="font-bold text-red-700">not an accident</span>. 
-            Your task is to investigate and provide <span className="font-bold text-blue-800">evidence or develop a theory</span> that 
-            supports her suspicion of foul play.
+            {currentStage === 'act_ii' ? (
+              <>
+                You&apos;ve proven that Reginald&apos;s death was <span className="font-bold text-red-700">not an accident</span>. 
+                Now you must identify <span className="font-bold text-blue-800">who committed the murder</span> and determine 
+                their <span className="font-bold text-blue-800">motive</span>.
+              </>
+            ) : (
+              <>
+                Veronica Ashcombe believes her husband&apos;s death was <span className="font-bold text-red-700">not an accident</span>. 
+                Your task is to investigate and provide <span className="font-bold text-blue-800">evidence or develop a theory</span> that 
+                supports her suspicion of foul play.
+              </>
+            )}
           </p>
         </div>
 

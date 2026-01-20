@@ -103,7 +103,7 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
         <DocumentHTMLViewer
           documentName={`${selectedSuspectData.name} - Blackmail Evidence`}
           pages={selectedSuspectData.pages}
-          onClose={onClose}
+          onClose={() => setSelectedSuspect(null)}
         />
       </div>
     )
@@ -112,29 +112,47 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
   // Selection screen
   return (
     <div 
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       <div 
-        className="relative max-w-5xl w-full my-8"
+        className="w-full max-w-5xl h-full pt-2 pb-8 overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-colors z-10 shadow-lg"
-          aria-label="Close"
-        >
-          <X className="w-6 h-6" />
-        </button>
+        <div className="max-w-[900px] mx-auto mt-2 mb-8" onClick={(e) => e.stopPropagation()}>
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="fixed top-8 right-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+            aria-label="Close"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-        {/* Main Container */}
-        <div className="bg-[#f4f1ea] rounded-xl shadow-2xl border border-[#d1ccc0] overflow-hidden">
-          {/* Header */}
-          <div className="bg-[#2c3e50] text-white p-6">
-            <h3 className="text-2xl font-bold mb-2">Blackmail Papers (Found at Scene)</h3>
-            <p className="text-sm text-gray-300">Select a suspect to view their documents</p>
+          {/* Document title label */}
+          <div 
+            className="label"
+            style={{
+              background: '#1a1a1a',
+              color: '#ffffff',
+              padding: '12px 20px',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              letterSpacing: '2px',
+              marginBottom: '20px',
+              width: '100%',
+              borderRadius: '2px',
+              boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)',
+              border: '1px solid #333',
+              textTransform: 'uppercase',
+              fontSize: '14px'
+            }}
+          >
+            BLACKMAIL PAPERS - FOUND NEAR BODY
           </div>
+
+          {/* Main Container */}
+          <div className="bg-[#f4f1ea] rounded-xl shadow-2xl border border-[#d1ccc0] overflow-hidden">
 
           {/* Evidence Note */}
           <div className="p-6 bg-[#fff8e7] border-b-2 border-[#d97706]">
@@ -177,6 +195,7 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
                 </button>
               ))}
             </div>
+          </div>
           </div>
         </div>
       </div>

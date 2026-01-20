@@ -9,11 +9,11 @@ interface CallLogProps {
 export function CallLog({ onClose }: CallLogProps) {
   return (
     <div 
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
     >
       <div 
-        className="min-h-screen py-8 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
+        className="w-full max-w-4xl h-full pt-4 pb-8 overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
       {/* Top Left Button */}
@@ -28,7 +28,7 @@ export function CallLog({ onClose }: CallLogProps) {
       <style jsx>{`
         .document {
           background: #f4e8d8;
-          padding: 40px;
+          padding: 50px 40px 40px 40px;
           box-shadow: 0 4px 6px rgba(0,0,0,0.3);
           border: 1px solid #8b7355;
           position: relative;
@@ -56,19 +56,22 @@ export function CallLog({ onClose }: CallLogProps) {
           text-align: center;
           border-bottom: 2px solid #333;
           padding-bottom: 15px;
+          padding-top: 10px;
           margin-bottom: 25px;
+          margin-top: 0;
         }
         
         .log-header h1 {
           font-family: 'Georgia', serif;
           font-size: 24px;
           margin: 0 0 5px 0;
+          color: #222;
         }
         
         .log-header p {
           margin: 3px 0;
           font-size: 12px;
-          color: #555;
+          color: #222;
         }
         
         .log-table {
@@ -76,6 +79,8 @@ export function CallLog({ onClose }: CallLogProps) {
           border-collapse: collapse;
           background: #fff;
           font-size: 13px;
+          margin-top: 20px;
+          margin-bottom: 20px;
         }
         
         .log-table th {
@@ -97,13 +102,21 @@ export function CallLog({ onClose }: CallLogProps) {
         }
         
         .label {
-          background: #2a2520;
-          color: #f4e8d8;
-          padding: 10px 20px;
+          background: #1a1a1a;
+          color: #ffffff;
+          padding: 12px 20px;
           text-align: center;
           font-weight: bold;
-          letter-spacing: 1px;
+          letter-spacing: 2px;
           margin-bottom: 20px;
+          width: 100%;
+          border-radius: 2px;
+          box-shadow: 
+            inset 0 1px 1px rgba(255,255,255,0.1),
+            0 2px 4px rgba(0,0,0,0.4);
+          border: 1px solid #333;
+          text-transform: uppercase;
+          font-size: 14px;
         }
         
         .extension-key {
@@ -120,7 +133,7 @@ export function CallLog({ onClose }: CallLogProps) {
         
         @media (max-width: 768px) {
           .document {
-            padding: 20px;
+            padding: 30px 20px 20px 20px;
           }
           
           .log-header h1 {
@@ -152,18 +165,18 @@ export function CallLog({ onClose }: CallLogProps) {
         }
       `}</style>
 
-      <div className="max-w-[900px] mx-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="label">TELEPHONE LOG - GALA EVENING</div>
+      <div className="max-w-[900px] mx-auto mt-2 mb-8" onClick={(e) => e.stopPropagation()}>
+        <div className="label">TELEPHONE LOG - MAY 10, 1986</div>
         
         <div className="document rounded-sm">
           <div className="log-header">
             <h1>ASHCOMBE ESTATE</h1>
             <p>Private Telephone Exchange Log</p>
-            <p>Date: Saturday, November 15, 1986</p>
+            <p>Date: Saturday, May 10, 1986</p>
             <p>Operator on Duty: Mrs. Helen Cartwright</p>
           </div>
 
-          <div className="extension-key">
+          <div className="extension-key" style={{ marginBottom: '30px' }}>
             <strong>Extension Directory:</strong><br />
             <p>Ext. 101 - Main Hall | Ext. 102 - Library | Ext. 103 - Ballroom | Ext. 104 - Kitchen</p>
             <p>Ext. 201 - Master Bedroom | Ext. 202 - Guest Room A (Dr. Vale) | Ext. 203 - Guest Room B (Colin Dorsey)</p>
@@ -255,7 +268,7 @@ export function CallLog({ onClose }: CallLogProps) {
             </tbody>
           </table>
 
-          <p style={{ marginTop: '20px', fontSize: '11px', color: '#666', textAlign: 'center' }}>
+          <p style={{ marginTop: '30px', marginBottom: '10px', fontSize: '11px', color: '#666', textAlign: 'center' }}>
             All calls logged by switchboard operator. Estate extensions require operator connection.
           </p>
         </div>

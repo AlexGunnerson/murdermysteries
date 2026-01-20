@@ -81,7 +81,7 @@ BEGIN
          'Photos from the evening''s festivities, showing guests, staff, and the inner circle throughout the event.',
          NULL, '/cases/case01/images/documents/gala_photos.jpg', TRUE, 2),
         
-        (v_case_id, 'record_blackmail_floor', 'Blackmail Papers (Found at Scene)',
+        (v_case_id, 'record_blackmail_floor', 'Blackmail Papers - Found Near Body',
          'Documents found scattered near Reginald''s body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale''s page is missing.',
          NULL, '/cases/case01/images/documents/blackmail_floor.jpg', FALSE, 2),
         
