@@ -14,9 +14,13 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
 
   return (
     <div 
-      className="min-h-screen bg-[#1a1a1a] py-8 px-4 flex flex-col justify-center relative"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
       onClick={onBeginInvestigation}
     >
+      <div 
+        className="min-h-screen py-8 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
       {/* Top Left Button */}
       {isFirstView ? (
         <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
@@ -344,6 +348,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

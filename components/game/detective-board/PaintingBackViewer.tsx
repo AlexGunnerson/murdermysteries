@@ -30,7 +30,7 @@ export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: Pain
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}

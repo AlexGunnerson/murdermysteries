@@ -10,10 +10,11 @@ interface SceneViewerProps {
   onClose: () => void
   onOpenDocument?: (documentId: string) => void
   sceneId?: string
+  initialIndex?: number
 }
 
-export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId }: SceneViewerProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0 }: SceneViewerProps) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -118,7 +119,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}

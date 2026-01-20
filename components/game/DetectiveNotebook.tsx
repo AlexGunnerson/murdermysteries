@@ -89,7 +89,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showVictimCard, setShowVictimCard] = useState(false)
   const [loading, setLoading] = useState(true)
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
+  const [selectedSceneImageIndex, setSelectedSceneImageIndex] = useState<number>(0)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [selectedDocumentImageIndex, setSelectedDocumentImageIndex] = useState<number>(0)
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
   const [showSecurityFootage, setShowSecurityFootage] = useState(false)
@@ -289,46 +291,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     doc.initiallyAvailable || unlockedContent.records.has(doc.id)
   )
   const chatSuspects = Array.from(new Set(chatHistory.map(msg => msg.suspectId)))
-
-  if (showVeronicaLetter) {
-    return <VeronicaLetter onBeginInvestigation={handleCloseLetter} isFirstView={false} />
-  }
-
-  if (showThankYouNote) {
-    return <VeronicaThankYouNote onClose={() => {
-      setShowThankYouNote(false)
-      if (onPreviewClose) {
-        onPreviewClose()
-        setOnPreviewClose(null)
-      }
-      // Check for navigation stack and restore previous context
-      handleNavigationClose()
-    }} />
-  }
-
-  if (showCallLog) {
-    return <CallLog onClose={() => {
-      setShowCallLog(false)
-      if (onPreviewClose) {
-        onPreviewClose()
-        setOnPreviewClose(null)
-      }
-      // Check for navigation stack and restore previous context
-      handleNavigationClose()
-    }} />
-  }
-
-  if (showSpeechNotes) {
-    return <SpeechNotes onClose={() => {
-      setShowSpeechNotes(false)
-      if (onPreviewClose) {
-        onPreviewClose()
-        setOnPreviewClose(null)
-      }
-      // Check for navigation stack and restore previous context
-      handleNavigationClose()
-    }} />
-  }
 
   return (
     <>
@@ -544,13 +506,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                   }
                 },
                 ...unlockedDocuments
-                  // Sort: unviewed documents first, then viewed
-                  .sort((a, b) => {
-                    const aViewed = viewedDocuments.has(a.id)
-                    const bViewed = viewedDocuments.has(b.id)
-                    if (aViewed === bViewed) return 0
-                    return aViewed ? 1 : -1 // Unviewed first
-                  })
                   .map(doc => ({
                   id: doc.id,
                   name: doc.name,
@@ -668,8 +623,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           sceneName={selectedScene.name}
           images={selectedScene.images}
           sceneId={selectedScene.id}
+          initialIndex={selectedSceneImageIndex}
           onClose={() => {
             setSelectedScene(null)
+            setSelectedSceneImageIndex(0)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
@@ -707,8 +664,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <DocumentViewer
           documentName={selectedDocument.name}
           images={selectedDocument.images}
+          initialIndex={selectedDocumentImageIndex}
           onClose={() => {
             setSelectedDocument(null)
+            setSelectedDocumentImageIndex(0)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
@@ -874,7 +833,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <ValidateTheory
           isOpen={showValidateTheory}
           onClose={() => setShowValidateTheory(false)}
-          onPreviewDocument={(docId, onCloseCallback) => {
+          onPreviewDocument={(docId, onCloseCallback, imageIndex = 0) => {
             setOnPreviewClose(() => onCloseCallback)
             // Handle different document types
             if (docId === 'veronica_letter') {
@@ -904,17 +863,57 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               const doc = documents.find(d => d.id === docId)
               if (doc) {
                 setSelectedDocument(doc)
+                setSelectedDocumentImageIndex(imageIndex)
               }
             }
           }}
-          onPreviewScene={(sceneId, onCloseCallback) => {
+          onPreviewScene={(sceneId, onCloseCallback, imageIndex = 0) => {
             setOnPreviewClose(() => onCloseCallback)
             const scene = scenes.find(s => s.id === sceneId)
             if (scene) {
               setSelectedScene(scene)
+              setSelectedSceneImageIndex(imageIndex)
             }
           }}
         />
+      )}
+
+      {/* Additional Previews */}
+      {showVeronicaLetter && (
+        <VeronicaLetter onBeginInvestigation={handleCloseLetter} isFirstView={false} />
+      )}
+
+      {showThankYouNote && (
+        <VeronicaThankYouNote onClose={() => {
+          setShowThankYouNote(false)
+          if (onPreviewClose) {
+            onPreviewClose()
+            setOnPreviewClose(null)
+          }
+          handleNavigationClose()
+        }} />
+      )}
+
+      {showCallLog && (
+        <CallLog onClose={() => {
+          setShowCallLog(false)
+          if (onPreviewClose) {
+            onPreviewClose()
+            setOnPreviewClose(null)
+          }
+          handleNavigationClose()
+        }} />
+      )}
+
+      {showSpeechNotes && (
+        <SpeechNotes onClose={() => {
+          setShowSpeechNotes(false)
+          if (onPreviewClose) {
+            onPreviewClose()
+            setOnPreviewClose(null)
+          }
+          handleNavigationClose()
+        }} />
       )}
     </>
   )

@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { FileText, Image as ImageIcon, CheckCircle, ChevronRight, X } from 'lucide-react'
 import { useGameState } from '@/lib/hooks/useGameState'
+import { TheoryResultModal } from './detective-board/TheoryResultModal'
+import { ErrorNotification } from './detective-board/ErrorNotification'
 
 interface ValidateTheoryProps {
   isOpen: boolean
   onClose: () => void
-  onPreviewDocument?: (docId: string, onClosePreview: () => void) => void
-  onPreviewScene?: (sceneId: string, onClosePreview: () => void) => void
+  onPreviewDocument?: (docId: string, onClosePreview: () => void, imageIndex?: number) => void
+  onPreviewScene?: (sceneId: string, onClosePreview: () => void, imageIndex?: number) => void
 }
 
 interface EvidenceItem {
@@ -34,6 +36,8 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [showAllFilters, setShowAllFilters] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
+  const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string} | null>(null)
+  const [errorModal, setErrorModal] = useState<string | null>(null)
   const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, detectivePoints, subtractDetectivePoints } = useGameState()
   
   // Evidence data - this will be populated from the game state
@@ -155,23 +159,23 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
   const handleSubmit = async () => {
     if (!theoryText.trim()) {
-      alert('Please write your theory before submitting.')
+      setErrorModal('Please write your theory before submitting.')
       return
     }
     
     if (selectedEvidence.length === 0) {
-      alert('Please select at least one document or photo as evidence for your theory.')
+      setErrorModal('Please select at least one document or photo as evidence for your theory.')
       return
     }
 
     if (!sessionId) {
-      alert('Game session not initialized. Please refresh the page.')
+      setErrorModal('Game session not initialized. Please refresh the page.')
       return
     }
 
     const cost = -5 // Theory validation costs 5 DP
     if (detectivePoints < Math.abs(cost)) {
-      alert(`Not enough Detective Points. This action costs ${Math.abs(cost)} DP.`)
+      setErrorModal(`Not enough Detective Points. This action costs ${Math.abs(cost)} DP.`)
       return
     }
 
@@ -209,6 +213,12 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         result: data.result,
         feedback: data.feedback,
         unlockedContent: data.unlockedContent,
+      })
+
+      // Show result modal
+      setResultModal({
+        result: data.result,
+        feedback: data.feedback,
       })
 
       console.log('[VALIDATE-THEORY-UI] Checking unlocked content:', data.unlockedContent)
@@ -252,7 +262,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       setSelectedEvidence([])
     } catch (error) {
       console.error('Error submitting theory:', error)
-      alert(error instanceof Error ? error.message : 'Failed to submit theory')
+      setErrorModal(error instanceof Error ? error.message : 'Failed to submit theory')
     } finally {
       setIsSubmitting(false)
     }
@@ -261,11 +271,29 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   if (!isOpen) return null
 
   return (
-    <div 
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 ${isPreviewOpen ? 'invisible' : ''}`}
-      onClick={onClose}
-    >
-      {/* Unlock Notification */}
+    <>
+      {/* Result Modal */}
+      {resultModal && (
+        <TheoryResultModal
+          result={resultModal.result}
+          feedback={resultModal.feedback}
+          onClose={() => setResultModal(null)}
+        />
+      )}
+
+      {/* Error Modal */}
+      {errorModal && (
+        <ErrorNotification
+          message={errorModal}
+          onClose={() => setErrorModal(null)}
+        />
+      )}
+
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+        onClick={onClose}
+      >
+        {/* Unlock Notification */}
       {unlockNotification && (
         <div 
           className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[60] max-w-md px-6 py-4 bg-[#d4af37] text-black rounded-sm shadow-2xl animate-fade-in"
@@ -419,9 +447,13 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                       
                       // Open scene viewer or document viewer based on category
                       if (itemData.category === 'scene' && onPreviewScene) {
-                        onPreviewScene(itemData.sceneId, onClosePreview)
+                        // Extract image index from the item id (format: sceneId_img_index)
+                        const imageIndex = parseInt(itemData.id.split('_img_')[1] || '0')
+                        onPreviewScene(itemData.sceneId, onClosePreview, imageIndex)
                       } else if (itemData.category === 'document' && onPreviewDocument) {
-                        onPreviewDocument(itemData.docId, onClosePreview)
+                        // Extract image index from the item id (format: docId_img_index)
+                        const imageIndex = parseInt(itemData.id.split('_img_')[1] || '0')
+                        onPreviewDocument(itemData.docId, onClosePreview, imageIndex)
                       }
                     }}
                     className={`group relative rounded border-2 transition-all duration-200 cursor-pointer overflow-hidden
@@ -667,6 +699,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         </div>
       </div>
     </div>
+    </>
   )
 }
 

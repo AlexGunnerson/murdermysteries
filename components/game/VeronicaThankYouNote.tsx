@@ -12,9 +12,13 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
 
   return (
     <div 
-      className="min-h-screen bg-[#1a1a1a] py-8 px-4 flex flex-col justify-center relative"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
       onClick={onClose}
     >
+      <div 
+        className="min-h-screen py-8 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
       {/* Top Left Button */}
       <button
         onClick={onClose}
@@ -332,6 +336,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -54,7 +54,7 @@ export function validateTheory(
   if (hasProhibitedKeywords) {
     return {
       result: 'incorrect',
-      feedback: 'Your theory seems to be heading in the wrong direction. Consider reviewing the evidence more carefully.',
+      feedback: 'This theory doesn\'t quite match the clues you\'ve found so far. You might want to re-examine the evidence and see if there\'s another angle.',
       matchedFacts,
     }
   }
@@ -81,7 +81,7 @@ export function validateTheory(
 
   return {
     result: 'incorrect',
-    feedback: 'This theory doesn\'t align well with the known evidence. Try reviewing what you\'ve discovered so far.',
+    feedback: 'The current evidence doesn\'t support this theory. Keep investigating to find more connections!',
     matchedFacts,
   }
 }

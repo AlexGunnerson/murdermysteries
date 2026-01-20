@@ -71,6 +71,42 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
           z-index: -1;
         }
         
+        /* Notification Badge positioned on clipboard */
+        .clipboard-notification-badge {
+          position: absolute;
+          top: 50px;
+          left: 50%;
+          --tx: 85px;
+          transform: translateX(var(--tx));
+          background: #8b1d1d;
+          color: #f4e8d8;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Courier Prime', monospace;
+          font-weight: 700;
+          font-size: 1.1rem;
+          box-shadow: 0 0 10px rgba(139, 29, 29, 0.4),
+                      0 2px 4px rgba(0,0,0,0.5),
+                      inset 0 0 4px rgba(0,0,0,0.3);
+          animation: pulse-notification 2.5s infinite ease-in-out;
+          z-index: 10;
+        }
+
+        @keyframes pulse-notification {
+          0%, 100% { 
+            opacity: 1;
+            transform: translateX(var(--tx)) scale(1);
+          }
+          50% { 
+            opacity: 0.7;
+            transform: translateX(var(--tx)) scale(0.9);
+          }
+        }
+        
         .paper-count {
           font-family: 'Permanent Marker', cursive;
           font-size: 1.5rem;
@@ -91,14 +127,14 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
           width: 90%;
           max-height: 80vh;
           overflow-y: auto;
-          z-index: 1000;
+          z-index: 45;
         }
         
         .menu-backdrop {
           position: fixed;
           inset: 0;
           background: rgba(0,0,0,0.6);
-          z-index: 999;
+          z-index: 44;
         }
         
         .menu-title {
@@ -171,34 +207,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
           background: #6d5a47;
         }
         
-        /* Notification Badge */
-        .notification-badge {
-          position: absolute;
-          top: -10px;
-          right: -10px;
-          background: #ff0000;
-          color: white;
-          border-radius: 50%;
-          width: 28px;
-          height: 28px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Courier Prime', monospace;
-          font-weight: 700;
-          font-size: 0.85rem;
-          box-shadow: 0 0 8px rgba(255, 0, 0, 0.6),
-                      0 2px 4px rgba(0,0,0,0.3);
-          animation: pulse-notification 2s infinite;
-          z-index: 10;
-          border: 2px solid white;
-        }
-        
-        @keyframes pulse-notification {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        
         /* Unviewed Document Indicator */
         .document-item.unviewed {
           border-left: 3px solid #d4af37;
@@ -227,6 +235,16 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
             height: 420px;
             top: -55px;
           }
+          
+          .clipboard-notification-badge {
+            top: 40px;
+            left: 50%;
+            --tx: 70px;
+            transform: translateX(var(--tx));
+            width: 28px;
+            height: 28px;
+            font-size: 0.95rem;
+          }
         }
       `}</style>
 
@@ -236,9 +254,9 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
         onClick={() => setIsOpen(true)}
         style={{ transform: `rotate(${rotating}deg)`, position: 'relative' }}
       >
-        {/* Notification Badge for Unviewed Documents */}
+        {/* Notification Badge for Unviewed Documents - positioned on clipboard */}
         {unviewedCount > 0 && (
-          <div className="notification-badge">
+          <div className="clipboard-notification-badge">
             {unviewedCount}
           </div>
         )}

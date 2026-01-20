@@ -8,10 +8,11 @@ interface DocumentViewerProps {
   documentName: string
   images: string[]
   onClose: () => void
+  initialIndex?: number
 }
 
-export function DocumentViewer({ documentName, images, onClose }: DocumentViewerProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+export function DocumentViewer({ documentName, images, onClose, initialIndex = 0 }: DocumentViewerProps) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -96,7 +97,7 @@ export function DocumentViewer({ documentName, images, onClose }: DocumentViewer
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}

@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 
     // Determine result based on unlock triggers (artifact-based system)
     let finalResult: 'correct' | 'incorrect' = 'incorrect'
-    let finalFeedback = 'The evidence submitted does not support a valid theory. Try different combinations of evidence.'
+    let finalFeedback = 'The current evidence doesn\'t support this theory. Keep investigating to find more connections!'
     let unlockedContent: {
       suspects?: string[]
       scenes?: string[]
