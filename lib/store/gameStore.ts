@@ -62,6 +62,9 @@ export interface GameState {
   // Revealed content (suspects whose cards have been viewed)
   revealedContent: RevealedContent
   
+  // Viewed documents
+  viewedDocuments: Set<string>
+  
   // Game status
   isCompleted: boolean
   isSolvedCorrectly: boolean | null
@@ -89,6 +92,7 @@ export interface GameState {
   unlockRecord: (recordId: string) => void
   
   revealSuspect: (suspectId: string) => void
+  markDocumentAsViewed: (documentId: string) => void
   
   completeGame: (isCorrect: boolean) => void
   resetGame: () => void
@@ -114,6 +118,7 @@ const initialState = {
   revealedContent: {
     suspects: new Set<string>(),
   },
+  viewedDocuments: new Set<string>(),
   isCompleted: false,
   isSolvedCorrectly: null,
   hasReadVeronicaLetter: false,
@@ -392,6 +397,16 @@ export const useGameStore = create<GameState>()(
           })
         },
 
+        markDocumentAsViewed: (documentId: string) => {
+          set((state) => {
+            const newViewed = new Set(state.viewedDocuments)
+            newViewed.add(documentId)
+            return {
+              viewedDocuments: newViewed,
+            }
+          })
+        },
+
         completeGame: (isCorrect: boolean) => {
           set({
             isCompleted: true,
@@ -497,6 +512,7 @@ export const useGameStore = create<GameState>()(
           revealedContent: {
             suspects: Array.from(state.revealedContent.suspects),
           },
+          viewedDocuments: Array.from(state.viewedDocuments),
         }),
         // Deserialize arrays back to Sets when loading from storage
         merge: (persistedState: any, currentState: GameState) => {
@@ -518,6 +534,10 @@ export const useGameStore = create<GameState>()(
             merged.revealedContent = {
               suspects: new Set(persistedState.revealedContent.suspects || []),
             }
+          }
+          
+          if (persistedState?.viewedDocuments) {
+            merged.viewedDocuments = new Set(persistedState.viewedDocuments || [])
           }
           
           return merged

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
 
 interface VeronicaLetterProps {
   onBeginInvestigation: () => void
@@ -17,15 +18,25 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
       onClick={onBeginInvestigation}
     >
       {/* Top Left Button */}
-      <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
-        <Button
+      {isFirstView ? (
+        <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+          <Button
+            onClick={onBeginInvestigation}
+            className="bg-amber-600 hover:bg-amber-700 text-white"
+            size="lg"
+          >
+            Begin Investigation
+          </Button>
+        </div>
+      ) : (
+        <button
           onClick={onBeginInvestigation}
-          className="bg-amber-600 hover:bg-amber-700 text-white"
-          size="lg"
+          className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+          aria-label="Back"
         >
-          {isFirstView ? 'Begin Investigation' : '← Back to Board'}
-        </Button>
-      </div>
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+      )}
 
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Herr+Von+Muellerhoff&display=swap');

@@ -12,11 +12,27 @@ interface Document {
 
 interface DocumentStackProps {
   documents: Document[]
+  viewedDocuments?: Set<string>
   rotating?: number
+  isOpen?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function DocumentStack({ documents, rotating = 0 }: DocumentStackProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function DocumentStack({ documents, viewedDocuments = new Set(), rotating = 0, isOpen: controlledIsOpen, onOpenChange }: DocumentStackProps) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
+  
+  // Use controlled state if provided, otherwise use internal state
+  const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalIsOpen
+  const setIsOpen = (open: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(open)
+    } else {
+      setInternalIsOpen(open)
+    }
+  }
+  
+  // Calculate number of unviewed documents
+  const unviewedCount = documents.filter(doc => !viewedDocuments.has(doc.id)).length
 
   return (
     <div className="relative inline-block">
@@ -155,6 +171,47 @@ export function DocumentStack({ documents, rotating = 0 }: DocumentStackProps) {
           background: #6d5a47;
         }
         
+        /* Notification Badge */
+        .notification-badge {
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          background: #ff0000;
+          color: white;
+          border-radius: 50%;
+          width: 28px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Courier Prime', monospace;
+          font-weight: 700;
+          font-size: 0.85rem;
+          box-shadow: 0 0 8px rgba(255, 0, 0, 0.6),
+                      0 2px 4px rgba(0,0,0,0.3);
+          animation: pulse-notification 2s infinite;
+          z-index: 10;
+          border: 2px solid white;
+        }
+        
+        @keyframes pulse-notification {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        
+        /* Unviewed Document Indicator */
+        .document-item.unviewed {
+          border-left: 3px solid #d4af37;
+        }
+        
+        .document-item.unviewed .document-name::before {
+          content: '●';
+          color: #d4af37;
+          margin-right: 8px;
+          font-size: 1rem;
+          line-height: 1;
+        }
+        
         @media (max-width: 768px) {
           .text-container {
             width: 240px;
@@ -177,8 +234,15 @@ export function DocumentStack({ documents, rotating = 0 }: DocumentStackProps) {
       <div
         className="paper-stack"
         onClick={() => setIsOpen(true)}
-        style={{ transform: `rotate(${rotating}deg)` }}
+        style={{ transform: `rotate(${rotating}deg)`, position: 'relative' }}
       >
+        {/* Notification Badge for Unviewed Documents */}
+        {unviewedCount > 0 && (
+          <div className="notification-badge">
+            {unviewedCount}
+          </div>
+        )}
+        
         {/* Clipboard Image */}
         <div className="clipboard-container">
           <Image
@@ -206,23 +270,26 @@ export function DocumentStack({ documents, rotating = 0 }: DocumentStackProps) {
             </button>
             <div className="menu-title">📋 Select Document</div>
             <div>
-              {documents.map((doc) => (
-                <div
-                  key={doc.id}
-                  className="document-item"
-                  onClick={() => {
-                    setIsOpen(false)
-                    doc.onClick()
-                  }}
-                >
-                  <div className="document-name">
-                    📄 {doc.name}
+              {documents.map((doc) => {
+                const isUnviewed = !viewedDocuments.has(doc.id)
+                return (
+                  <div
+                    key={doc.id}
+                    className={`document-item ${isUnviewed ? 'unviewed' : ''}`}
+                    onClick={() => {
+                      setIsOpen(false)
+                      doc.onClick()
+                    }}
+                  >
+                    <div className="document-name">
+                      📄 {doc.name}
+                    </div>
+                    <div className="document-description">
+                      {doc.description}
+                    </div>
                   </div>
-                  <div className="document-description">
-                    {doc.description}
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </>

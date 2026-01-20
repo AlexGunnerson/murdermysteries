@@ -94,11 +94,10 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
         {/* Back button overlay */}
         <button
           onClick={() => setSelectedSuspect(null)}
-          className="fixed top-20 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg flex items-center gap-2"
-          aria-label="Back to selection"
+          className="fixed top-20 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+          aria-label="Back"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-bold">Back to List</span>
+          <ArrowLeft className="w-6 h-6" />
         </button>
 
         <DocumentHTMLViewer

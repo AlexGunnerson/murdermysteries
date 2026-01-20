@@ -79,7 +79,7 @@ interface DetectiveNotebookProps {
 }
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -102,6 +102,62 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [onPreviewClose, setOnPreviewClose] = useState<(() => void) | null>(null)
   const [showPaintingBack, setShowPaintingBack] = useState(false)
   const [storyConfig, setStoryConfig] = useState<StoryConfig | null>(null)
+  const [documentStackMenuOpen, setDocumentStackMenuOpen] = useState(false)
+
+  // Navigation stack for context-aware returns
+  type ViewerContext = {
+    type: 'scene' | 'document' | 'blackmail' | 'blackmail_scene' | 'footage' | 'painting' | 'vale_notes' | 'coroner_report' | 'call_log' | 'speech_notes' | 'document_stack'
+    data: any
+  }
+  const [navigationStack, setNavigationStack] = useState<ViewerContext[]>([])
+
+  // Helper function to close current viewer and restore previous context
+  const handleNavigationClose = () => {
+    if (navigationStack.length > 0) {
+      const previousContext = navigationStack[navigationStack.length - 1]
+      const newStack = navigationStack.slice(0, -1)
+      setNavigationStack(newStack)
+      
+      // Restore the previous viewer based on its type
+      switch (previousContext.type) {
+        case 'scene':
+          setSelectedScene(previousContext.data)
+          break
+        case 'document':
+          setSelectedDocument(previousContext.data)
+          break
+        case 'blackmail':
+          setShowBlackmailViewer(true)
+          break
+        case 'blackmail_scene':
+          setShowBlackmailSceneViewer(true)
+          break
+        case 'footage':
+          setSecurityFootageImages(previousContext.data.images)
+          setShowSecurityFootage(true)
+          break
+        case 'painting':
+          setShowPaintingBack(true)
+          break
+        case 'vale_notes':
+          setShowValeNotes(true)
+          break
+        case 'coroner_report':
+          setShowCoronerReport(true)
+          break
+        case 'call_log':
+          setShowCallLog(true)
+          break
+        case 'speech_notes':
+          setShowSpeechNotes(true)
+          break
+        case 'document_stack':
+          setDocumentStackMenuOpen(true)
+          break
+      }
+    }
+    // If no previous context, just close (return to board)
+  }
 
   // Load suspect and scene data from metadata
   useEffect(() => {
@@ -182,6 +238,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       onPreviewClose()
       setOnPreviewClose(null)
     }
+    // Check for navigation stack and restore previous context
+    handleNavigationClose()
   }
 
   const handleSuspectClick = (suspect: Suspect) => {
@@ -233,17 +291,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const chatSuspects = Array.from(new Set(chatHistory.map(msg => msg.suspectId)))
 
   if (showVeronicaLetter) {
-    return (
-      <div className="relative">
-        <button
-          onClick={handleCloseLetter}
-          className="absolute top-4 left-4 z-10 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600"
-        >
-          ← Back to Board
-        </button>
-        <VeronicaLetter onBeginInvestigation={handleCloseLetter} />
-      </div>
-    )
+    return <VeronicaLetter onBeginInvestigation={handleCloseLetter} isFirstView={false} />
   }
 
   if (showThankYouNote) {
@@ -253,6 +301,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onPreviewClose()
         setOnPreviewClose(null)
       }
+      // Check for navigation stack and restore previous context
+      handleNavigationClose()
     }} />
   }
 
@@ -263,6 +313,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onPreviewClose()
         setOnPreviewClose(null)
       }
+      // Check for navigation stack and restore previous context
+      handleNavigationClose()
     }} />
   }
 
@@ -273,6 +325,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onPreviewClose()
         setOnPreviewClose(null)
       }
+      // Check for navigation stack and restore previous context
+      handleNavigationClose()
     }} />
   }
 
@@ -474,18 +528,40 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           <div className="flex flex-col items-center gap-4" style={{ marginTop: '-380px' }}>
             <TypewrittenLabel text="DOCUMENTS" rotating={1} />
             <DocumentStack
+              viewedDocuments={viewedDocuments}
+              isOpen={documentStackMenuOpen}
+              onOpenChange={setDocumentStackMenuOpen}
               documents={[
                 {
                   id: 'veronica_letter',
                   name: "Veronica's Letter",
                   description: "May 12th, 1986 - Ashcombe Manor",
-                  onClick: () => setShowVeronicaLetter(true)
+                  onClick: () => {
+                    markDocumentAsViewed('veronica_letter')
+                    // Store document stack context in navigation
+                    setNavigationStack([...navigationStack, { type: 'document_stack', data: null }])
+                    setShowVeronicaLetter(true)
+                  }
                 },
-                ...unlockedDocuments.map(doc => ({
+                ...unlockedDocuments
+                  // Sort: unviewed documents first, then viewed
+                  .sort((a, b) => {
+                    const aViewed = viewedDocuments.has(a.id)
+                    const bViewed = viewedDocuments.has(b.id)
+                    if (aViewed === bViewed) return 0
+                    return aViewed ? 1 : -1 // Unviewed first
+                  })
+                  .map(doc => ({
                   id: doc.id,
                   name: doc.name,
                   description: doc.description,
                   onClick: () => {
+                    // Mark document as viewed
+                    markDocumentAsViewed(doc.id)
+                    
+                    // Store document stack context in navigation
+                    setNavigationStack([...navigationStack, { type: 'document_stack', data: null }])
+                    
                     // Check if it's Veronica's thank you note
                     if (doc.id === 'record_veronica_thankyou') {
                       setShowThankYouNote(true)
@@ -598,8 +674,15 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
           onOpenDocument={(documentId) => {
+            // Store current scene in navigation stack before opening document
+            if (selectedScene) {
+              setNavigationStack([...navigationStack, { type: 'scene', data: selectedScene }])
+            }
+            
             // Close scene viewer
             setSelectedScene(null)
             
@@ -630,6 +713,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}
@@ -643,6 +728,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}
@@ -656,6 +743,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}
@@ -670,6 +759,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}
@@ -684,8 +775,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
           onOpenBlackmail={() => {
+            // Store painting viewer in navigation stack before opening blackmail
+            setNavigationStack([...navigationStack, { type: 'painting', data: null }])
             setShowPaintingBack(false)
             setShowBlackmailViewer(true)
           }}
@@ -712,6 +807,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}
@@ -740,6 +837,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               onPreviewClose()
               setOnPreviewClose(null)
             }
+            // Check for navigation stack and restore previous context
+            handleNavigationClose()
           }}
         />
       )}

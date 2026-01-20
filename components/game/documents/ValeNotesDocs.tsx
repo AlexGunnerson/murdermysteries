@@ -1,40 +1,42 @@
 export const ValeNotesPage1 = () => (
-  <div className="flex justify-center items-center min-h-screen bg-[#f7f3e8] p-4 md:p-8">
+  <div className="flex justify-center items-start">
     <style jsx>{`
       @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
       
-      .log-paper {
-        background-color: #fcf8e8;
-        border: 1px solid #d4c5a7;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-        padding: 1.5rem;
-        margin: 1rem;
-        min-height: 500px;
-        max-width: 500px;
-        width: 90%;
-        transform: rotate(0.5deg);
-        transition: transform 0.3s ease-in-out;
+      .notepad {
+        width: 380px;
+        min-height: 600px;
+        background: linear-gradient(to right, #ffd6d6 1px, transparent 1px),
+                    repeating-linear-gradient(
+                      #f9f9f9 0px,
+                      #f9f9f9 31px,
+                      #e3e3e3 31px,
+                      #e3e3e3 32px
+                    );
+        background-size: 40px 100%, 100% 32px;
+        background-position: 0 0, 0 0;
+        padding: 1.5rem 1rem 1.5rem 3rem;
+        position: relative;
       }
       
       .handwritten {
         font-family: 'Caveat', cursive;
-        font-size: 1.35rem;
-        color: #2c3e50;
-        line-height: 1.5;
+        font-size: 1.2rem;
+        color: #1a1a1a;
+        line-height: 2;
       }
       
       .date {
         font-family: 'Caveat', cursive;
-        font-weight: 400;
-        color: #2c3e50;
-        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 1.2rem;
         margin-bottom: 0.25rem;
-        border-bottom: 1px dashed #d1d5db;
-        padding-bottom: 0.25rem;
+        margin-top: 0.5rem;
       }
     `}</style>
     
-    <div className="log-paper">
+    <div className="notepad">
       {/* Entry 1: The Scene */}
       <div className="mb-6">
         <div className="date">10 May 1986</div>
@@ -79,42 +81,44 @@ export const ValeNotesPage1 = () => (
 )
 
 export const ValeNotesPage2 = () => (
-  <div className="flex justify-center items-center min-h-screen bg-[#f7f3e8] p-4 md:p-8">
+  <div className="flex justify-center items-start">
     <style jsx>{`
       @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
       
-      .log-paper {
-        background-color: #fcf8e8;
-        border: 1px solid #d4c5a7;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-        padding: 1.5rem;
-        margin: 1rem;
-        min-height: 500px;
-        max-width: 500px;
-        width: 90%;
-        transform: rotate(-0.5deg);
-        transition: transform 0.3s ease-in-out;
+      .notepad {
+        width: 380px;
+        min-height: 600px;
+        background: linear-gradient(to right, #ffd6d6 1px, transparent 1px),
+                    repeating-linear-gradient(
+                      #f9f9f9 0px,
+                      #f9f9f9 31px,
+                      #e3e3e3 31px,
+                      #e3e3e3 32px
+                    );
+        background-size: 40px 100%, 100% 32px;
+        background-position: 0 0, 0 0;
+        padding: 1.5rem 1rem 1.5rem 3rem;
+        position: relative;
       }
       
       .handwritten {
         font-family: 'Caveat', cursive;
-        font-size: 1.35rem;
-        color: #2c3e50;
-        line-height: 1.5;
+        font-size: 1.2rem;
+        color: #1a1a1a;
+        line-height: 2;
       }
       
       .date {
         font-family: 'Caveat', cursive;
-        font-weight: 400;
-        color: #2c3e50;
-        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        font-size: 1.2rem;
         margin-bottom: 0.25rem;
-        border-bottom: 1px dashed #d1d5db;
-        padding-bottom: 0.25rem;
+        margin-top: 0.5rem;
       }
     `}</style>
     
-    <div className="log-paper">
+    <div className="notepad">
       {/* Entry 6 */}
       <div className="mb-4">
         <div className="date">09 Dec 1985</div>
