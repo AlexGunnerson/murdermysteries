@@ -130,7 +130,7 @@
     {
       "id": "scene_master_bedroom",
       "name": "Master Bedroom (Private Wing)",
-      "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand portrait on the wall and a piano bench where Veronica keeps sheet music.",
+      "description": "Veronica and Reginald's private quarters. Elegant and intimate, with a grand painting that Reginald's mother Elizabeth had painted hanging on the wall and a piano bench where Veronica keeps sheet music.",
       "imageUrl": "/cases/case01/images/scenes/Scene 5 - Master Bedroom/master_bedroom.jpg",
       "images": [
         "/cases/case01/images/scenes/Scene 5 - Master Bedroom/master_bedroom.jpg",
@@ -245,7 +245,7 @@
     {
       "id": "record_blackmail_portrait",
       "name": "Blackmail Papers (Found Behind Painting)",
-      "description": "The complete set of blackmail documents hidden behind a painting in the master bedroom. Contains incriminating evidence on Martin, Colin, Lydia, and Dr. Vale that Reginald had collected.",
+      "description": "The complete set of blackmail documents hidden behind a painting that Reginald's mother Elizabeth had painted, which hangs in the master bedroom. Contains incriminating evidence on Martin, Colin, Lydia, and Dr. Vale that Reginald had collected.",
       "isHTML": true,
       "dpCost": 2,
       "initiallyAvailable": false,

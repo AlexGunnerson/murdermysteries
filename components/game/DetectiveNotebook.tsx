@@ -688,7 +688,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         />
       )}
 
-      {/* Blackmail Document Viewer (Portrait - Complete) */}
+      {/* Blackmail Document Viewer (Found Behind Painting - Complete) */}
       {showBlackmailViewer && (
         <BlackmailViewer
           onClose={() => {

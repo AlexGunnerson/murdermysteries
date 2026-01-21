@@ -758,17 +758,16 @@ export function ChatInterfaceWithAttachments({
             )}
           </Button>
         </div>
-        <p 
-          className="text-xs text-gray-600 mt-2" 
-          style={{ fontFamily: 'Courier, monospace' }}
-        >
-          {attachedItems.length > 0 && (
+        {attachedItems.length > 0 && (
+          <p 
+            className="text-xs text-gray-600 mt-2" 
+            style={{ fontFamily: 'Courier, monospace' }}
+          >
             <span className="text-[#d4af37] mr-2">
               📎 {attachedItems.length} attached
             </span>
-          )}
-          Press Enter to send, Shift+Enter for new line
-        </p>
+          </p>
+        )}
       </div>
 
       {/* Custom scrollbar styles */}

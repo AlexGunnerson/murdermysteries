@@ -140,7 +140,7 @@ Example: *"Dr. Vale has confessed to stealing plants from the greenhouse! He men
 ### Test 3: Vale Confrontation
 1. Unlock Master Bedroom, retrieve complete blackmail set
 2. Talk to Dr. Vale
-3. Attach: Phone Records + Blackmail (Floor) + Blackmail (Portrait)
+3. Attach: Phone Records + Blackmail (Floor) + Blackmail (Found Behind Painting)
 4. Send a message
 5. **Expected**: Study scene unlocks
 
@@ -154,7 +154,7 @@ Example: *"Dr. Vale has confessed to stealing plants from the greenhouse! He men
 ## Button-Based Unlocks
 
 Two existing buttons continue to work as before:
-- **"Retrieve Blackmail!"** (Master Bedroom painting): Unlocks `record_blackmail_portrait`
+- **"Retrieve Blackmail!"** (Master Bedroom - painting that Elizabeth painted): Unlocks `record_blackmail_portrait`
 - **"Security Footage Available"** (Study scene): Unlocks `record_greenhouse_footage`
 
 These are naturally gated by location unlocks - players can't access them until the scenes are unlocked via the unlock system.

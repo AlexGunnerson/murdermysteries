@@ -190,7 +190,7 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
               <div className="flex-1">
                 <p className="font-bold text-gray-800 mb-1">Evidence Overview</p>
                 <p className="text-sm text-gray-700">
-                  These documents were found hidden behind a painting in the master bedroom. Each contains incriminating evidence that Reginald had collected on the suspects.
+                  These documents were found hidden behind a painting that Reginald's mother Elizabeth had painted, which hangs in the master bedroom. Each contains incriminating evidence that Reginald had collected on the suspects.
                 </p>
               </div>
             </div>

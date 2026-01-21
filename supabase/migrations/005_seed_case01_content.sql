@@ -85,8 +85,8 @@ BEGIN
          'Documents found scattered near Reginald''s body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale''s page is missing.',
          NULL, '/cases/case01/images/documents/blackmail_floor.jpg', FALSE, 2),
         
-        (v_case_id, 'record_blackmail_portrait', 'Blackmail Papers (Behind Portrait)',
-         'The complete original set of blackmail documents hidden behind a painting in the master bedroom. Includes ALL pages, including Dr. Vale''s.',
+        (v_case_id, 'record_blackmail_portrait', 'Blackmail Papers (Found Behind Painting)',
+         'The complete original set of blackmail documents hidden behind a painting that Reginald''s mother Elizabeth had painted, which hangs in the master bedroom. Includes ALL pages, including Dr. Vale''s.',
          NULL, '/cases/case01/images/documents/blackmail_portrait.jpg', FALSE, 2),
         
         (v_case_id, 'record_phone_logs', 'Phone Records',

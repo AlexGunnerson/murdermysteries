@@ -373,12 +373,6 @@ export function ChatInterface({
             )}
           </Button>
         </div>
-        <p 
-          className="text-xs text-gray-600 mt-2" 
-          style={{ fontFamily: 'Courier, monospace' }}
-        >
-          Press Enter to send, Shift+Enter for new line
-        </p>
       </div>
 
       {/* Custom scrollbar styles */}
