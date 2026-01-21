@@ -954,31 +954,106 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
 
       {/* Unlock Notification (shown after chat closes) */}
       {currentNotification && (
-        <div 
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[150] max-w-md px-8 py-6 bg-[#d4af37] text-black rounded-sm shadow-2xl"
-          style={{
-            boxShadow: '0 0 40px rgba(212, 175, 55, 0.8), 0 20px 60px rgba(0, 0, 0, 0.9)',
-            fontFamily: "'Playfair Display', serif",
-            border: '2px solid rgba(0, 0, 0, 0.2)'
-          }}
-        >
-          <button
+        <>
+          <style jsx>{`
+            @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+          `}</style>
+          <div 
+            className="fixed inset-0 z-[140] bg-black/60 flex items-center justify-center p-4"
             onClick={handleDismissNotification}
-            className="absolute top-2 right-2 p-1 hover:bg-black/10 text-black rounded-sm transition-all"
-            aria-label="Dismiss notification"
+            style={{
+              backgroundImage: `
+                radial-gradient(circle at 50% 50%, rgba(10,10,10,0.5) 0%, rgba(0,0,0,0.7) 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+              `,
+            }}
           >
-            <X className="w-5 h-5" />
-          </button>
-          <p className="font-semibold text-center text-lg pr-6">{currentNotification}</p>
-        </div>
-      )}
+            <div 
+              className="relative w-full max-w-lg mx-auto rounded-sm overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                boxShadow: `
+                  0 20px 60px rgba(0, 0, 0, 0.9),
+                  0 0 40px rgba(212, 175, 55, 0.15),
+                  inset 0 0 1px rgba(212, 175, 55, 0.3),
+                  inset 0 1px 2px rgba(255, 255, 255, 0.03)
+                `,
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+              }}
+            >
+              {/* Enhanced grain overlay */}
+              <div 
+                className="absolute inset-0 pointer-events-none z-50 mix-blend-overlay opacity-35"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                  backgroundSize: '120px 120px',
+                }}
+              />
 
-      {/* Backdrop for notification */}
-      {currentNotification && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[140]"
-          onClick={handleDismissNotification}
-        />
+              {/* Close button */}
+              <button
+                onClick={handleDismissNotification}
+                className="absolute top-4 right-4 z-[60] p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
+                aria-label="Close"
+                style={{
+                  boxShadow: `
+                    0 2px 10px rgba(0, 0, 0, 0.8),
+                    0 0 12px rgba(212, 175, 55, 0.3),
+                    inset 0 0 8px rgba(212, 175, 55, 0.1)
+                  `,
+                }}
+              >
+                <X 
+                  className="w-5 h-5" 
+                  style={{
+                    filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
+                  }}
+                />
+              </button>
+
+              {/* Modal Content */}
+              <div 
+                className="bg-[#1a1a1a] p-8 relative"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 1) 100%),
+                    repeating-linear-gradient(
+                      45deg,
+                      transparent,
+                      transparent 12px,
+                      rgba(0, 0, 0, 0.15) 12px,
+                      rgba(0, 0, 0, 0.15) 13px
+                    )
+                  `,
+                }}
+              >
+                {/* Notification Message */}
+                <div className="mb-6">
+                  <p 
+                    className="text-[#d4af37] text-2xl font-bold leading-relaxed text-center uppercase tracking-wider"
+                    style={{ fontFamily: "'Courier Prime', monospace" }}
+                  >
+                    {currentNotification}
+                  </p>
+                </div>
+
+                {/* Continue Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleDismissNotification}
+                    className="px-8 py-3 rounded-sm font-bold uppercase tracking-wider transition-all duration-200 border-2 bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border-[#d4af37]"
+                    style={{
+                      fontFamily: "'Courier Prime', monospace",
+                      boxShadow: '0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 8px rgba(212, 175, 55, 0.1)',
+                    }}
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   )

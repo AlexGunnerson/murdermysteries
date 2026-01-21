@@ -54,7 +54,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
     unlocks: {
       scenes: ['scene_master_bedroom']
     },
-    notificationMessage: 'Veronica realizes Dr. Vale\'s page is missing from the blackmail papers. She suggests checking behind the painting in the master bedroom.',
+    notificationMessage: 'Master Bedroom Unlocked!',
     description: 'Show the floor blackmail papers to Veronica to prove a page is missing'
   },
 
