@@ -79,7 +79,7 @@ interface DetectiveNotebookProps {
 }
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -669,7 +669,31 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             // Check for navigation stack and restore previous context
             handleNavigationClose()
           }}
-          onOpenDocument={(documentId) => {
+          onOpenDocument={async (documentId) => {
+            // Unlock button-click records in the database
+            if (documentId === 'record_security_footage' && sessionId) {
+              try {
+                const response = await fetch('/api/game/actions/unlock', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    sessionId,
+                    contentType: 'record',
+                    contentId: 'record_greenhouse_footage',
+                  }),
+                })
+
+                if (response.ok) {
+                  // Refresh game state to reflect the new unlock
+                  await fetchGameState()
+                }
+              } catch (error) {
+                console.error('Error unlocking security footage:', error)
+              }
+            }
+
             // Store current scene in navigation stack before opening document
             if (selectedScene) {
               setNavigationStack([...navigationStack, { type: 'scene', data: selectedScene }])
@@ -772,7 +796,31 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             // Check for navigation stack and restore previous context
             handleNavigationClose()
           }}
-          onOpenBlackmail={() => {
+          onOpenBlackmail={async () => {
+            // Unlock the blackmail record in the database
+            if (sessionId) {
+              try {
+                const response = await fetch('/api/game/actions/unlock', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    sessionId,
+                    contentType: 'record',
+                    contentId: 'record_blackmail_portrait',
+                  }),
+                })
+
+                if (response.ok) {
+                  // Refresh game state to reflect the new unlock
+                  await fetchGameState()
+                }
+              } catch (error) {
+                console.error('Error unlocking blackmail:', error)
+              }
+            }
+
             // Store painting viewer in navigation stack before opening blackmail
             setNavigationStack([...navigationStack, { type: 'painting', data: null }])
             setShowPaintingBack(false)
