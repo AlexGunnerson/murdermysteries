@@ -2,6 +2,7 @@
 
 import { X, Search, Lock } from "lucide-react"
 import Image from "next/image"
+import { useState, useRef } from "react"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 import { useGameState } from "@/lib/hooks/useGameState"
 
@@ -20,6 +21,7 @@ interface SuspectDossierViewProps {
   suspectAlibi: string
   systemPrompt: string
   onClose: () => void
+  onUnlocksQueued?: (notifications: string[]) => void
 }
 
 export function SuspectDossierView({ 
@@ -27,17 +29,32 @@ export function SuspectDossierView({
   suspectPersonality,
   suspectAlibi,
   systemPrompt,
-  onClose 
+  onClose,
+  onUnlocksQueued 
 }: SuspectDossierViewProps) {
   const { unlockedContent } = useGameState()
+  const queuedNotificationsRef = useRef<string[]>([])
   
   // Check if this suspect is unlocked for questioning
   // Veronica (suspect_veronica) is always available
   const isUnlockedForQuestioning = suspect.id === 'suspect_veronica' || unlockedContent.suspects.has(suspect.id)
+  
+  // Handle unlock notifications from chat
+  const handleUnlockQueued = (notification: string) => {
+    queuedNotificationsRef.current.push(notification)
+  }
+  
+  // Handle close and pass queued notifications to parent
+  const handleClose = () => {
+    if (queuedNotificationsRef.current.length > 0 && onUnlocksQueued) {
+      onUnlocksQueued(queuedNotificationsRef.current)
+    }
+    onClose()
+  }
   return (
     <div 
       className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={handleClose}
       style={{
         backgroundImage: `
           radial-gradient(circle at 50% 50%, rgba(10,10,10,0.85) 0%, rgba(0,0,0,0.98) 100%),
@@ -70,7 +87,7 @@ export function SuspectDossierView({
 
         {/* Close button - top right corner */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 z-[60] p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
           aria-label="Close"
           style={{
@@ -418,6 +435,7 @@ export function SuspectDossierView({
                 suspectPersonality={suspectPersonality}
                 systemPrompt={systemPrompt}
                 suspectAvatarUrl={suspect.avatarUrl}
+                onUnlockQueued={handleUnlockQueued}
               />
             ) : (
               <div className="h-full flex items-center justify-center bg-[#1a1a1a] relative">

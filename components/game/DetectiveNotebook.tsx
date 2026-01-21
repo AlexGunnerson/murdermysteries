@@ -105,6 +105,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showPaintingBack, setShowPaintingBack] = useState(false)
   const [storyConfig, setStoryConfig] = useState<StoryConfig | null>(null)
   const [documentStackMenuOpen, setDocumentStackMenuOpen] = useState(false)
+  const [queuedNotifications, setQueuedNotifications] = useState<string[]>([])
+  const [currentNotification, setCurrentNotification] = useState<string | null>(null)
 
   // Navigation stack for context-aware returns
   type ViewerContext = {
@@ -261,6 +263,29 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       })
     }
     setSelectedSuspectForReveal(null)
+  }
+
+  // Handle unlock notifications queued from chat
+  const handleUnlocksQueued = (notifications: string[]) => {
+    setQueuedNotifications(notifications)
+  }
+
+  // Display queued notifications sequentially with delay
+  useEffect(() => {
+    if (queuedNotifications.length > 0 && !currentNotification) {
+      // Show first notification after 500ms delay
+      const timer = setTimeout(() => {
+        setCurrentNotification(queuedNotifications[0])
+        setQueuedNotifications(prev => prev.slice(1))
+      }, 500)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [queuedNotifications, currentNotification])
+
+  // Clear current notification (manual dismissal only)
+  const handleDismissNotification = () => {
+    setCurrentNotification(null)
   }
 
   const handleVictimClick = () => {
@@ -828,6 +853,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             .replace('{dynamic_knowledge}', discoveredFacts.map(f => f.content).join('\n'))
           }
           onClose={handleCloseSuspectCard}
+          onUnlocksQueued={handleUnlocksQueued}
         />
       )}
 
@@ -924,6 +950,35 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           }
           handleNavigationClose()
         }} />
+      )}
+
+      {/* Unlock Notification (shown after chat closes) */}
+      {currentNotification && (
+        <div 
+          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[150] max-w-md px-8 py-6 bg-[#d4af37] text-black rounded-sm shadow-2xl"
+          style={{
+            boxShadow: '0 0 40px rgba(212, 175, 55, 0.8), 0 20px 60px rgba(0, 0, 0, 0.9)',
+            fontFamily: "'Playfair Display', serif",
+            border: '2px solid rgba(0, 0, 0, 0.2)'
+          }}
+        >
+          <button
+            onClick={handleDismissNotification}
+            className="absolute top-2 right-2 p-1 hover:bg-black/10 text-black rounded-sm transition-all"
+            aria-label="Dismiss notification"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          <p className="font-semibold text-center text-lg pr-6">{currentNotification}</p>
+        </div>
+      )}
+
+      {/* Backdrop for notification */}
+      {currentNotification && (
+        <div 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[140]"
+          onClick={handleDismissNotification}
+        />
       )}
     </>
   )

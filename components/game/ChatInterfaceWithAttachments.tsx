@@ -17,6 +17,7 @@ interface ChatInterfaceProps {
   systemPrompt: string
   suspectAvatarUrl?: string
   onFactDiscovered?: (fact: string) => void
+  onUnlockQueued?: (notification: string) => void
 }
 
 interface AttachedItem {
@@ -35,6 +36,7 @@ export function ChatInterfaceWithAttachments({
   systemPrompt,
   suspectAvatarUrl,
   onFactDiscovered,
+  onUnlockQueued,
 }: ChatInterfaceProps) {
   const [inputMessage, setInputMessage] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -54,7 +56,6 @@ export function ChatInterfaceWithAttachments({
   const [photosExpanded, setPhotosExpanded] = useState(false)
   const [photoLocationFilter, setPhotoLocationFilter] = useState<string>('all')
   const [showAllFilters, setShowAllFilters] = useState(false)
-  const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -270,13 +271,10 @@ export function ChatInterfaceWithAttachments({
                 const unlockData = data.unlock
                 let unlockMessage = unlockData.message || 'New content unlocked!'
                 
-                // Show notification
-                setUnlockNotification(unlockMessage)
-                
-                // Hide notification after 5 seconds
-                setTimeout(() => {
-                  setUnlockNotification(null)
-                }, 5000)
+                // Queue notification to show after chat closes
+                if (onUnlockQueued) {
+                  onUnlockQueued(unlockMessage)
+                }
                 
                 // Refresh game state to get new unlocked content
                 if (fetchGameState) {
@@ -357,18 +355,6 @@ export function ChatInterfaceWithAttachments({
   return (
     <div className="flex flex-col h-full bg-[#1a1a1a] text-gray-100 relative">
       {/* Unlock Notification */}
-      {unlockNotification && (
-        <div 
-          className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md px-6 py-4 bg-[#d4af37] text-black rounded-sm shadow-2xl animate-fade-in"
-          style={{
-            boxShadow: '0 0 20px rgba(212, 175, 55, 0.6)',
-            fontFamily: "'Playfair Display', serif"
-          }}
-        >
-          <p className="font-semibold text-center">{unlockNotification}</p>
-        </div>
-      )}
-      
       {/* Header - Subtle Dark */}
       <div 
         className="bg-[#121212] p-4 border-b" 
