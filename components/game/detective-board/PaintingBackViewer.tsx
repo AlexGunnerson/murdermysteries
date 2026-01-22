@@ -22,9 +22,9 @@ export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: Pain
     if (e.key === 'Escape') onClose()
   }
 
-  const handleRetrieveBlackmail = () => {
-    onOpenBlackmail()
-    onClose()
+  const handleRetrieveBlackmail = async () => {
+    await onOpenBlackmail()
+    // Don't call onClose() here - onOpenBlackmail already handles closing the painting viewer
   }
 
   return (

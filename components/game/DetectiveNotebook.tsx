@@ -797,7 +797,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             handleNavigationClose()
           }}
           onOpenBlackmail={async () => {
-            // Unlock the blackmail record in the database
+            // Open the blackmail viewer immediately for better UX
+            setNavigationStack([...navigationStack, { type: 'painting', data: null }])
+            setShowPaintingBack(false)
+            setShowBlackmailViewer(true)
+
+            // Unlock the blackmail record in the database (in background)
             if (sessionId) {
               try {
                 const response = await fetch('/api/game/actions/unlock', {
@@ -820,11 +825,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 console.error('Error unlocking blackmail:', error)
               }
             }
-
-            // Store painting viewer in navigation stack before opening blackmail
-            setNavigationStack([...navigationStack, { type: 'painting', data: null }])
-            setShowPaintingBack(false)
-            setShowBlackmailViewer(true)
           }}
         />
       )}

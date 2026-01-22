@@ -281,18 +281,21 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
                   <button
                     key={suspect.id}
                     onClick={() => setSelectedSuspect(suspect.id)}
-                    className="relative p-6 bg-[#f4f1ea] rounded-sm transition-all group text-left overflow-hidden"
+                    className="relative p-6 bg-[#f4f1ea] rounded-sm transition-all duration-200 group text-left overflow-hidden"
                     style={{
                       border: `2px solid ${suspect.accentColor}40`,
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)'
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+                      transform: 'scale(1)'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.border = `2px solid ${suspect.accentColor}80`
                       e.currentTarget.style.boxShadow = `0 4px 16px rgba(0, 0, 0, 0.4), 0 0 20px ${suspect.accentColor}40`
+                      e.currentTarget.style.transform = 'scale(1.05)'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.border = `2px solid ${suspect.accentColor}40`
                       e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)'
+                      e.currentTarget.style.transform = 'scale(1)'
                     }}
                   >
                     {/* Grain texture overlay */}
@@ -341,13 +344,6 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
                         }}
                       >
                         📎 {suspect.pageCount} {suspect.pageCount === 1 ? 'document' : 'documents'}
-                      </span>
-                      
-                      <span 
-                        className="font-bold opacity-0 group-hover:opacity-100 transition-opacity"
-                        style={{ color: suspect.accentColor }}
-                      >
-                        View →
                       </span>
                     </div>
                   </button>
