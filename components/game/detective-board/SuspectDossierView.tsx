@@ -169,7 +169,7 @@ export function SuspectDossierView({
                     textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
                   }}
                 >
-                  CASE FILE:
+                  {suspect.id === 'suspect_veronica' ? 'MY STATEMENT:' : 'CASE FILE:'}
                 </span>
               </div>
               <p 
@@ -224,7 +224,10 @@ export function SuspectDossierView({
                       className="text-[#2c2a29] text-2xl leading-relaxed"
                       style={{ fontFamily: "'Caveat', cursive" }}
                     >
-                      {suspect.veronicaNote || suspect.bio}
+                      {suspect.id === 'suspect_veronica' 
+                        ? "Sixty-two years old. I once trained as a concert pianist, that life feels so distant now. For decades, I've managed the social and charitable affairs of this estate. I was the one who found Reginald at the bottom of the stairs, a sight that will forever haunt me."
+                        : (suspect.veronicaNote || suspect.bio)
+                      }
                     </p>
                   </div>
 
@@ -233,7 +236,7 @@ export function SuspectDossierView({
                     className="text-[#2c2a29] text-3xl"
                     style={{ fontFamily: "'Caveat', cursive" }}
                   >
-                    — V. Ashcombe
+                    {suspect.id === 'suspect_veronica' ? '— Veronica Ashcombe' : '— V. Ashcombe'}
                   </p>
                 </div>
 
@@ -324,7 +327,7 @@ export function SuspectDossierView({
                 </div>
               </div>
 
-              {/* Vices */}
+              {/* Vices / Notes */}
               <div className="flex items-start gap-3 text-[#d4af37]">
                 <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xl">📋</span>
@@ -337,7 +340,7 @@ export function SuspectDossierView({
                       textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
                     }}
                   >
-                    Vices:{" "}
+                    {suspect.id === 'suspect_veronica' ? 'Notes:' : 'Vices:'}{" "}
                   </span>
                   <span 
                     className="text-[#c5a065] text-base"
@@ -346,7 +349,7 @@ export function SuspectDossierView({
                     }}
                   >
                     {suspect.id === 'suspect_martin' && 'Gambling, drinking.'}
-                    {suspect.id === 'suspect_veronica' && 'Suspicious, protective.'}
+                    {suspect.id === 'suspect_veronica' && 'Perhaps too trusting in the past. Determined to find the truth.'}
                     {suspect.id === 'suspect_colin' && 'Secretive, desperate.'}
                     {suspect.id === 'suspect_lydia' && 'Ambitious, vain.'}
                     {suspect.id === 'suspect_vale' && 'Calculating, cold.'}
