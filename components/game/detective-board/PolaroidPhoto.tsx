@@ -7,9 +7,10 @@ interface PolaroidPhotoProps {
   title: string
   onClick?: () => void
   rotating?: number
+  isViewed?: boolean
 }
 
-export function PolaroidPhoto({ imageUrl, title, onClick, rotating = 0 }: PolaroidPhotoProps) {
+export function PolaroidPhoto({ imageUrl, title, onClick, rotating = 0, isViewed = true }: PolaroidPhotoProps) {
   return (
     <button
       onClick={onClick}
@@ -33,9 +34,16 @@ export function PolaroidPhoto({ imageUrl, title, onClick, rotating = 0 }: Polaro
           src={imageUrl}
           alt={title}
           fill
-          className="object-cover group-hover:opacity-90 transition-opacity"
+          className={`object-cover group-hover:opacity-90 transition-opacity ${!isViewed ? 'brightness-50' : ''}`}
           sizes="320px"
         />
+        
+        {/* Unviewed overlay with question mark */}
+        {!isViewed && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <div className="text-6xl animate-pulse">❓</div>
+          </div>
+        )}
         
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />

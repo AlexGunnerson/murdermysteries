@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight, Camera } from "lucide-react"
 
 interface SecurityFootageViewerProps {
   images: string[]
@@ -55,17 +55,17 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
-      {/* Close button - top right */}
+      {/* Back button - top left */}
       <button
         onClick={onClose}
-        className="absolute top-8 right-8 p-3 bg-gray-800/90 hover:bg-gray-700 text-white rounded-full transition-colors shadow-lg z-10"
-        aria-label="Close"
+        className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+        aria-label="Back"
       >
-        <X className="w-6 h-6" />
+        <ArrowLeft className="w-6 h-6" />
       </button>
 
       {/* Security Camera Header */}
-      <div className="absolute top-8 left-8 bg-gray-900/95 backdrop-blur-sm px-6 py-3 rounded border border-red-600/50 shadow-lg">
+      <div className="absolute top-8 right-8 bg-gray-900/95 backdrop-blur-sm px-6 py-3 rounded border border-red-600/50 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-red-600 rounded-full animate-pulse" />
           <div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Image from "next/image"
-import { X, FileText } from "lucide-react"
+import { ArrowLeft, FileText } from "lucide-react"
 
 interface PaintingBackViewerProps {
   imagePath: string
@@ -51,13 +51,13 @@ export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: Pain
         </button>
       </div>
 
-      {/* Close button - top right */}
+      {/* Back button - top left */}
       <button
         onClick={onClose}
-        className="absolute top-8 right-8 p-3 bg-gray-800 hover:bg-gray-700 text-white rounded-full transition-colors shadow-lg z-10"
-        aria-label="Close"
+        className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+        aria-label="Back"
       >
-        <X className="w-6 h-6" />
+        <ArrowLeft className="w-6 h-6" />
       </button>
 
       {/* Main image container */}

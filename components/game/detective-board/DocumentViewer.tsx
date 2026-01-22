@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface DocumentViewerProps {
   documentName: string
@@ -102,17 +102,17 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
-      {/* Close button - top right */}
+      {/* Back button - top left */}
       <button
         onClick={onClose}
-        className="absolute top-8 right-8 p-3 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-colors shadow-lg z-10"
-        aria-label="Close"
+        className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+        aria-label="Back"
       >
-        <X className="w-6 h-6" />
+        <ArrowLeft className="w-6 h-6" />
       </button>
 
-      {/* Document title - top left */}
-      <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
+      {/* Document title - top right */}
+      <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold text-gray-800">{documentName}</h3>
         <p className="text-sm text-gray-600">
           Page {currentIndex + 1} of {images.length}

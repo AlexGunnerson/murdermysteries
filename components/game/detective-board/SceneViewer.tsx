@@ -11,9 +11,10 @@ interface SceneViewerProps {
   onOpenDocument?: (documentId: string) => void
   sceneId?: string
   initialIndex?: number
+  unlockedContent?: string[]
 }
 
-export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0 }: SceneViewerProps) {
+export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0, unlockedContent = [] }: SceneViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
@@ -36,7 +37,9 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
   const isMonitorPhoto = sceneId === 'scene_study' && currentIndex === 2
   
   // Check if this is the master bedroom painting photo (image 3 = index 2)
-  const isPaintingPhoto = sceneId === 'scene_master_bedroom' && currentIndex === 2
+  // Only show the investigate button if blackmail hasn't been retrieved yet
+  const hasRetrievedBlackmail = unlockedContent.includes('record_blackmail_portrait')
+  const isPaintingPhoto = sceneId === 'scene_master_bedroom' && currentIndex === 2 && !hasRetrievedBlackmail
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -124,17 +127,17 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
-      {/* Close button - top right */}
+      {/* Back button - top left */}
       <button
         onClick={onClose}
-        className="absolute top-8 right-8 p-3 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-colors shadow-lg z-10"
-        aria-label="Close"
+        className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+        aria-label="Back"
       >
-        <X className="w-6 h-6" />
+        <ArrowLeft className="w-6 h-6" />
       </button>
 
-      {/* Scene title - top left */}
-      <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
+      {/* Scene title - top right */}
+      <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold text-gray-800">{sceneName}</h3>
         <p className="text-sm text-gray-600">
           Image {currentIndex + 1} of {images.length}

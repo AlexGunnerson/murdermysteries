@@ -40,6 +40,7 @@ export interface UnlockedContent {
 
 export interface RevealedContent {
   suspects: Set<string>
+  scenes: Set<string>
 }
 
 export interface GameState {
@@ -92,6 +93,7 @@ export interface GameState {
   unlockRecord: (recordId: string) => void
   
   revealSuspect: (suspectId: string) => void
+  revealScene: (sceneId: string) => void
   markDocumentAsViewed: (documentId: string) => void
   
   completeGame: (isCorrect: boolean) => void
@@ -117,6 +119,7 @@ const initialState = {
   },
   revealedContent: {
     suspects: new Set<string>(),
+    scenes: new Set<string>(),
   },
   viewedDocuments: new Set<string>(),
   isCompleted: false,
@@ -214,6 +217,7 @@ export const useGameStore = create<GameState>()(
                   },
                   revealedContent: {
                     suspects: new Set(stateData.revealedContent?.suspects || []),
+                    scenes: new Set(stateData.revealedContent?.scenes || []),
                   },
                   detectivePoints: stateData.session.detective_points,
                 })
@@ -397,6 +401,19 @@ export const useGameStore = create<GameState>()(
           })
         },
 
+        revealScene: (sceneId: string) => {
+          set((state) => {
+            const newRevealed = new Set(state.revealedContent.scenes)
+            newRevealed.add(sceneId)
+            return {
+              revealedContent: {
+                ...state.revealedContent,
+                scenes: newRevealed,
+              },
+            }
+          })
+        },
+
         markDocumentAsViewed: (documentId: string) => {
           set((state) => {
             const newViewed = new Set(state.viewedDocuments)
@@ -533,6 +550,7 @@ export const useGameStore = create<GameState>()(
           if (persistedState?.revealedContent) {
             merged.revealedContent = {
               suspects: new Set(persistedState.revealedContent.suspects || []),
+              scenes: new Set(persistedState.revealedContent.scenes || []),
             }
           }
           

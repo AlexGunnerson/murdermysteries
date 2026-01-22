@@ -63,7 +63,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
         
         .parchment-front {
           transform: rotate(-0.5deg);
-          min-height: 750px;
+          height: 850px;
         }
         
         .parchment-back {
@@ -72,7 +72,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
           top: 0;
           left: 0;
           width: 100%;
-          min-height: 750px;
+          height: 850px;
         }
         
         .parchment::before {
@@ -201,7 +201,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
           }
           .parchment-front,
           .parchment-back {
-            min-height: 650px;
+            height: 750px;
           }
           .letter-title {
             font-size: 2rem;

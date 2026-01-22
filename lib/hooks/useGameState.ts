@@ -39,6 +39,7 @@ export function useGameState() {
     unlockScene: store.unlockScene,
     unlockRecord: store.unlockRecord,
     revealSuspect: store.revealSuspect,
+    revealScene: store.revealScene,
     markDocumentAsViewed: store.markDocumentAsViewed,
     completeGame: store.completeGame,
     resetGame: store.resetGame,

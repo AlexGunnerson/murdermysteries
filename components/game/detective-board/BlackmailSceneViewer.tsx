@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { X, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { DocumentHTMLViewer } from "./DocumentHTMLViewer"
 import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from "../documents/MartinBlackmailDocs"
 import { ColinBlackmailScenePage1, ColinBlackmailScenePage2 } from "../documents/ColinBlackmailSceneDocs"
@@ -94,7 +94,7 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
         {/* Back button overlay */}
         <button
           onClick={() => setSelectedSuspect(null)}
-          className="fixed top-20 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+          className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
           aria-label="Back"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -120,13 +120,13 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="max-w-[900px] mx-auto mt-2 mb-8" onClick={(e) => e.stopPropagation()}>
-          {/* Close button */}
+          {/* Back button */}
           <button
             onClick={onClose}
-            className="fixed top-8 right-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
-            aria-label="Close"
+            className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+            aria-label="Back"
           >
-            <X className="w-6 h-6" />
+            <ArrowLeft className="w-6 h-6" />
           </button>
 
           {/* Document title label */}

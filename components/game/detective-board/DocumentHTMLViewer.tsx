@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface DocumentPage {
   label: string
@@ -50,13 +50,13 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
         onClick={(e) => e.stopPropagation()}
       >
         <div className="max-w-[900px] mx-auto mt-2 mb-8" onClick={(e) => e.stopPropagation()}>
-          {/* Close button */}
+          {/* Back button */}
           <button
             onClick={onClose}
-            className="fixed top-8 right-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
-            aria-label="Close"
+            className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+            aria-label="Back"
           >
-            <X className="w-6 h-6" />
+            <ArrowLeft className="w-6 h-6" />
           </button>
 
           {/* Document title label */}
@@ -82,7 +82,7 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
           </div>
 
           {/* Document container */}
-          <div className="relative bg-[#f4e8d8] shadow-2xl border border-[#8b7355] flex flex-col">
+          <div className="relative bg-[#f4e8d8] shadow-2xl border border-[#8b7355] flex flex-col" style={{ height: '850px' }}>
             {/* Paper texture overlay */}
             <div 
               className="absolute inset-0 pointer-events-none opacity-30 z-0"
@@ -97,8 +97,8 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
               }}
             />
             
-            {/* Content */}
-            <div className="relative z-10 p-8 md:p-12" style={{ fontFamily: "'Courier New', monospace" }}>
+            {/* Content - with overflow scroll if content is too long */}
+            <div className="relative z-10 p-8 md:p-12 overflow-y-auto" style={{ fontFamily: "'Courier New', monospace", height: '100%' }}>
               {pages[currentIndex].content}
             </div>
 

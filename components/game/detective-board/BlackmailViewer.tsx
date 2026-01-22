@@ -124,22 +124,10 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
         {/* Back button overlay */}
         <button
           onClick={() => setSelectedSuspect(null)}
-          className="fixed top-20 left-8 z-[60] p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
+          className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
           aria-label="Back"
-          style={{
-            boxShadow: `
-              0 2px 10px rgba(0, 0, 0, 0.8),
-              0 0 12px rgba(212, 175, 55, 0.3),
-              inset 0 0 8px rgba(212, 175, 55, 0.1)
-            `,
-          }}
         >
-          <ArrowLeft 
-            className="w-5 h-5" 
-            style={{
-              filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
-            }}
-          />
+          <ArrowLeft className="w-6 h-6" />
         </button>
 
         <DocumentHTMLViewer
@@ -186,25 +174,13 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
           }}
         />
 
-        {/* Close button - top right corner */}
+        {/* Back button - top left */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-[60] p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
-          aria-label="Close"
-          style={{
-            boxShadow: `
-              0 2px 10px rgba(0, 0, 0, 0.8),
-              0 0 12px rgba(212, 175, 55, 0.3),
-              inset 0 0 8px rgba(212, 175, 55, 0.1)
-            `,
-          }}
+          className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
+          aria-label="Back"
         >
-          <X 
-            className="w-5 h-5" 
-            style={{
-              filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
-            }}
-          />
+          <ArrowLeft className="w-6 h-6" />
         </button>
 
         {/* Scrollable content area */}

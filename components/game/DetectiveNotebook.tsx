@@ -79,7 +79,7 @@ interface DetectiveNotebookProps {
 }
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -125,7 +125,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       // Restore the previous viewer based on its type
       switch (previousContext.type) {
         case 'scene':
-          setSelectedScene(previousContext.data)
+          setSelectedScene(previousContext.data.scene)
+          setSelectedSceneImageIndex(previousContext.data.imageIndex || 0)
           break
         case 'document':
           setSelectedDocument(previousContext.data)
@@ -613,8 +614,15 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     key={scene.id}
                     imageUrl={scene.imageUrl}
                     title={scene.name}
-                    onClick={() => setSelectedScene(scene)}
+                    onClick={() => {
+                      setSelectedScene(scene)
+                      // Mark scene as viewed when opened
+                      if (!revealedContent.scenes.has(scene.id)) {
+                        revealScene(scene.id)
+                      }
+                    }}
                     rotating={[-2, 1, -1, 2, -1.5, 1.5][idx % 6]}
+                    isViewed={revealedContent.scenes.has(scene.id)}
                   />
                 ))}
               </div>
@@ -659,6 +667,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           images={selectedScene.images}
           sceneId={selectedScene.id}
           initialIndex={selectedSceneImageIndex}
+          unlockedContent={Array.from(unlockedContent.records)}
           onClose={() => {
             setSelectedScene(null)
             setSelectedSceneImageIndex(0)
@@ -696,7 +705,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
 
             // Store current scene in navigation stack before opening document
             if (selectedScene) {
-              setNavigationStack([...navigationStack, { type: 'scene', data: selectedScene }])
+              setNavigationStack([...navigationStack, { 
+                type: 'scene', 
+                data: { scene: selectedScene, imageIndex: selectedSceneImageIndex }
+              }])
             }
             
             // Close scene viewer
@@ -798,7 +810,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           }}
           onOpenBlackmail={async () => {
             // Open the blackmail viewer immediately for better UX
-            setNavigationStack([...navigationStack, { type: 'painting', data: null }])
+            // Note: We don't add painting to navigation stack - we want to skip it and return directly to the scene
             setShowPaintingBack(false)
             setShowBlackmailViewer(true)
 

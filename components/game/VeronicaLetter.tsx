@@ -18,7 +18,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
       onClick={onBeginInvestigation}
     >
       <div 
-        className="min-h-screen py-8 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
+        className="min-h-screen pt-24 pb-16 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
         onClick={(e) => e.stopPropagation()}
       >
       {/* Top Left Button */}
@@ -77,7 +77,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
         
         .parchment-front {
           transform: rotate(-0.5deg);
-          min-height: 750px;
+          height: 850px;
         }
         
         .parchment-back {
@@ -86,7 +86,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
           top: 0;
           left: 0;
           width: 100%;
-          min-height: 750px;
+          height: 850px;
         }
         
         .parchment::before {
@@ -215,7 +215,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
           }
           .parchment-front,
           .parchment-back {
-            min-height: 650px;
+            height: 750px;
           }
           .letter-title {
             font-size: 2rem;
