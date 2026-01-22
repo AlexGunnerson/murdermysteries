@@ -13,7 +13,7 @@ export function SpeechNotes({ onClose }: SpeechNotesProps) {
       onClick={onClose}
     >
       <div 
-        className="min-h-screen py-8 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
+        className="min-h-screen pt-24 pb-16 px-4 flex flex-col justify-center relative w-full max-w-4xl mx-auto"
         onClick={(e) => e.stopPropagation()}
       >
       {/* Top Left Button */}
@@ -30,11 +30,13 @@ export function SpeechNotes({ onClose }: SpeechNotesProps) {
         
         .document {
           background: #f4e8d8;
-          padding: 40px;
+          padding: 45px 40px 70px 40px;
           box-shadow: 0 4px 6px rgba(0,0,0,0.3);
           border: 1px solid #8b7355;
           position: relative;
           font-family: 'Courier New', monospace;
+          height: 850px;
+          overflow-y: auto;
         }
         
         .document::before {
@@ -100,9 +102,10 @@ export function SpeechNotes({ onClose }: SpeechNotesProps) {
           margin-bottom: 20px;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 640px) {
           .document {
-            padding: 20px;
+            padding: 25px 20px 50px 20px;
+            height: 750px;
           }
           
           .notes {
@@ -118,17 +121,10 @@ export function SpeechNotes({ onClose }: SpeechNotesProps) {
           .notes .indent {
             margin-left: 20px;
           }
-          
-          .label {
-            font-size: 12px;
-            padding: 8px 15px;
-          }
         }
       `}</style>
 
-      <div className="max-w-[800px] mx-auto" onClick={(e) => e.stopPropagation()}>
-        <div className="label">SPEECH NOTES</div>
-        
+      <div className="max-w-[700px] mx-auto">
         <div className="document rounded-sm">
           <div className="notes">
             <h2>Opening Remarks - Annual Gala<br/>May 10, 1986</h2>
