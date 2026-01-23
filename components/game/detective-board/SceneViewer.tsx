@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react"
+import { X, ChevronLeft, ChevronRight, Camera, ArrowLeft } from "lucide-react"
 
 interface SceneViewerProps {
   sceneName: string

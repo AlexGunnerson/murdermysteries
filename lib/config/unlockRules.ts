@@ -92,13 +92,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_vale',
-    requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait'],
     logicOperator: 'AND',
     unlocks: {
       scenes: ['scene_study']
     },
     notificationMessage: 'Dr. Vale has confessed to stealing plants from the greenhouse! He mentions CCTV footage in the Study can prove his alibi.',
-    description: 'Show phone records and both blackmail sets to Vale to prove he was lying and removed his page'
+    description: 'Show phone records and blackmail Set 2 (from painting) to Vale to trigger confession'
   },
 
   // The Confrontation - Theory validation alternative
@@ -106,13 +106,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'vale_confrontation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_phone_logs', 'record_blackmail_floor', 'record_blackmail_portrait'],
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait'],
     logicOperator: 'AND',
     unlocks: {
       scenes: ['scene_study']
     },
     notificationMessage: 'Your theory about Dr. Vale\'s deception is correct! The Study may contain evidence of his whereabouts.',
-    description: 'Submit theory with phone records and both blackmail sets proving Vale lied'
+    description: 'Submit theory with phone records and blackmail Set 2 proving Vale lied'
   },
 
   // CCTV Proof - Retrieved from study (handled by button, but tracked here)
