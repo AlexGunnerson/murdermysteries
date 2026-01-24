@@ -145,7 +145,8 @@ export const useGameStore = create<GameState>()(
               if (verifyResponse.ok) {
                 const verifyData = await verifyResponse.json()
                 if (verifyData.session && verifyData.session.id === currentState.sessionId) {
-                  // Session is valid, no need to reinitialize
+                  // Session is valid, no need to reinitialize - but ensure loading is false
+                  set({ isLoading: false })
                   return
                 }
               }

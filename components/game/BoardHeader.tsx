@@ -6,6 +6,7 @@ interface BoardHeaderProps {
   onOpenMessage?: () => void
   onOpenMenu: () => void
   onOpenHelp: () => void
+  onOpenInvestigationBoard: () => void
   // Actions
   onGetClue: () => void
   onQuestionSuspects: () => void
@@ -18,6 +19,7 @@ export function BoardHeader({
   onOpenMessage,
   onOpenMenu,
   onOpenHelp,
+  onOpenInvestigationBoard,
   onGetClue,
   onQuestionSuspects,
   onSolveMurder
@@ -237,6 +239,39 @@ export function BoardHeader({
           background: linear-gradient(to bottom, #bdbdbd, #e0e0e0);
         }
 
+        .btn-investigation {
+          background: linear-gradient(to bottom, #d4af37, #8c701c);
+          color: #1a0f0a;
+          font-family: 'Courier Prime', monospace;
+          font-weight: 700;
+          font-size: 0.9rem;
+          padding: 10px 20px;
+          border-radius: 3px;
+          box-shadow: 
+            inset 1px 1px 0 rgba(255,255,255,0.4),
+            inset -1px -1px 0 rgba(0,0,0,0.3),
+            0 4px 0 #5c4a16,
+            0 5px 5px rgba(0,0,0,0.5);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          position: relative;
+          text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .btn-investigation:hover {
+          background: linear-gradient(to bottom, #e8c84a, #a08020);
+        }
+
+        .btn-investigation:active {
+          transform: translateY(2px);
+          box-shadow: 
+            inset 1px 1px 0 rgba(0,0,0,0.3),
+            inset -1px -1px 0 rgba(255,255,255,0.4),
+            0 1px 0 #5c4a16,
+            0 2px 2px rgba(0,0,0,0.5);
+          background: linear-gradient(to bottom, #8c701c, #d4af37);
+        }
+
         .icon-btn {
           background: transparent;
           width: 40px;
@@ -358,6 +393,14 @@ export function BoardHeader({
 
       {/* Right: Game Controls */}
       <div className="controls-area">
+        <button 
+          className="btn-investigation" 
+          onClick={onOpenInvestigationBoard}
+          title="Open Investigation Board"
+        >
+          🔍 Investigation Board
+        </button>
+
         <button 
           className="btn-clue" 
           onClick={onGetClue}

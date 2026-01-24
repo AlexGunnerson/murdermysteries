@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useGameState } from "@/lib/hooks/useGameState"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
 import { VeronicaThankYouNote } from "@/components/game/VeronicaThankYouNote"
@@ -79,7 +80,8 @@ interface DetectiveNotebookProps {
 }
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState } = useGameState()
+  const router = useRouter()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -327,6 +329,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onOpenMessage={() => setShowVeronicaLetter(true)}
         onOpenMenu={onOpenMenu}
         onOpenHelp={() => onAction('help')}
+        onOpenInvestigationBoard={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
         onGetClue={() => onAction('clue')}
         onQuestionSuspects={() => onAction('question')}
         onSolveMurder={() => setShowValidateTheory(true)}
@@ -629,32 +632,40 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             )}
           </div>
 
-          {/* Facts */}
+          {/* Facts Summary - Call to Action for Investigation Board */}
           <BoardSection 
             title="Facts Discovered" 
             icon="📋"
             rotating={-0.3}
             className="md:col-span-2"
           >
-            {discoveredFacts.length === 0 ? (
-              <p className="text-gray-600 text-center py-8 italic">
-                No facts discovered yet. Begin investigating to uncover clues!
+            <div className="text-center py-6">
+              <p 
+                className="text-gray-700 mb-4"
+                style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
+              >
+                You have discovered <span className="font-bold text-amber-700">{discoveredFacts.length}</span> facts.
               </p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-2">
-                {discoveredFacts.map((fact, idx) => (
-                  <StickyNote
-                    key={fact.id}
-                    content={fact.content}
-                    source={fact.sourceId === 'veronica_letter' ? "Veronica's Letter" : fact.sourceId}
-                    rotating={[
-                      -1.5, 0.5, -0.5, 1, -2, 1.5, -1, 0.5
-                    ][idx % 8]}
-                    color={['yellow', 'blue', 'pink', 'green'][idx % 4] as any}
-                  />
-                ))}
-              </div>
-            )}
+              <button
+                onClick={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
+                className="px-6 py-3 rounded-lg font-bold uppercase tracking-wider transition-all duration-200 hover:scale-105"
+                style={{
+                  background: 'linear-gradient(to bottom, #d4af37, #8c701c)',
+                  color: '#1a0f0a',
+                  fontFamily: "'Courier Prime', 'Courier New', monospace",
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+                  border: '2px solid #5c4a16',
+                }}
+              >
+                🔍 Open Investigation Board
+              </button>
+              <p 
+                className="text-gray-600 mt-4 text-sm italic"
+                style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
+              >
+                Connect facts, suspects, and clues to solve the mystery
+              </p>
+            </div>
           </BoardSection>
         </div>
       </div>
