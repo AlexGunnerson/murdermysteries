@@ -195,6 +195,7 @@ export const useGameStore = create<GameState>()(
               },
               revealedContent: {
                 suspects: new Set<string>(),
+                scenes: new Set<string>(),
               },
               isCompleted: data.session.is_completed || false,
               isSolvedCorrectly: data.session.is_solved_correctly || null,
@@ -240,6 +241,7 @@ export const useGameStore = create<GameState>()(
               },
               revealedContent: {
                 suspects: new Set<string>(),
+                scenes: new Set<string>(),
               },
               isCompleted: false,
               isSolvedCorrectly: null,
@@ -276,6 +278,10 @@ export const useGameStore = create<GameState>()(
                     suspects: new Set(data.unlockedContent.suspects || []),
                     scenes: new Set(data.unlockedContent.scenes || []),
                     records: new Set(data.unlockedContent.records || []),
+                  },
+                  revealedContent: {
+                    suspects: new Set(data.revealedContent?.suspects || []),
+                    scenes: new Set(data.revealedContent?.scenes || []),
                   },
                   detectivePoints: data.session.detective_points,
                 })
@@ -528,6 +534,7 @@ export const useGameStore = create<GameState>()(
           },
           revealedContent: {
             suspects: Array.from(state.revealedContent.suspects),
+            scenes: Array.from(state.revealedContent.scenes),
           },
           viewedDocuments: Array.from(state.viewedDocuments),
         }),
