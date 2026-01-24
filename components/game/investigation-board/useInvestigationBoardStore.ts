@@ -54,12 +54,25 @@ export function useInvestigationBoardStore(caseId: string) {
     
     try {
       const state: StoredBoardState = {
-        nodes: nodes.map(node => ({
-          id: node.id,
-          position: node.position,
-          width: node.measured?.width || node.width,
-          height: node.measured?.height || node.height,
-        })),
+        nodes: nodes.map(node => {
+          const baseNode: any = {
+            id: node.id,
+            position: node.position,
+            width: node.measured?.width || node.width,
+            height: node.measured?.height || node.height,
+          }
+          
+          // For note nodes, include the data (content and color)
+          if (node.id.startsWith('note_')) {
+            baseNode.data = {
+              id: (node.data as any).id,
+              content: (node.data as any).content,
+              color: (node.data as any).color,
+            }
+          }
+          
+          return baseNode
+        }),
         edges: edges.map(edge => ({
           id: edge.id,
           source: edge.source,

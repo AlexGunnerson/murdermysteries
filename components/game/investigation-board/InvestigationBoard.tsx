@@ -19,20 +19,27 @@ import '@xyflow/react/dist/style.css'
 
 import FactCardNode from './nodes/FactCardNode'
 import SuspectCardNode from './nodes/SuspectCardNode'
+import NoteNode from './nodes/NoteNode'
+import PhotoNode from './nodes/PhotoNode'
 import RedStringEdge from './edges/RedStringEdge'
 import { ConnectionTypePopup } from './ConnectionTypePopup'
 import { ConnectionContextMenu } from './ConnectionContextMenu'
 import { LeftPanel } from './LeftPanel'
+import { NoteToolbar } from './NoteToolbar'
+import { PhotoSelectorModal } from './PhotoSelectorModal'
 import { useInvestigationBoardStore } from './useInvestigationBoardStore'
 import { factToNodeData, calculateInitialLayout, generateConnectionId, createFactNode } from './utils'
 import { ConnectionType } from './types'
 import { DiscoveredFact } from '@/lib/store/gameStore'
+import { useGameState } from '@/lib/hooks/useGameState'
 
 // Define custom node types
 const nodeTypes = {
   fact: FactCardNode,
   suspect: SuspectCardNode,
   victim: SuspectCardNode,
+  note: NoteNode,
+  photo: PhotoNode,
 }
 
 // Define custom edge types
@@ -60,6 +67,7 @@ function InvestigationBoardContent({
   victim,
 }: InvestigationBoardContentProps) {
   const reactFlowInstance = useReactFlow()
+  const { unlockedContent } = useGameState()
   const {
     loadState,
     saveState,
@@ -74,6 +82,8 @@ function InvestigationBoardContent({
   const [isInitialized, setIsInitialized] = useState(false)
   const [placedFactIds, setPlacedFactIds] = useState<Set<string>>(new Set())
   const [isPanelOpen, setIsPanelOpen] = useState(false)
+  const [isPhotoSelectorOpen, setIsPhotoSelectorOpen] = useState(false)
+  const [copiedNode, setCopiedNode] = useState<Node | null>(null)
   
   // Wrap onNodesChange to track when fact nodes are deleted
   const onNodesChange = useCallback((changes: any[]) => {
@@ -138,6 +148,53 @@ function InvestigationBoardContent({
     })
   }, [edges])
   
+  // Note handlers
+  const handleUpdateNote = useCallback((noteId: string, content: string) => {
+    setNodes(prev => 
+      prev.map(node => 
+        node.id === noteId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                content,
+              },
+            }
+          : node
+      )
+    )
+  }, [setNodes])
+  
+  const handleDeleteNote = useCallback((noteId: string) => {
+    setNodes(prev => prev.filter(node => node.id !== noteId))
+  }, [setNodes])
+  
+  const handleColorChange = useCallback((noteId: string, color: 'yellow' | 'blue' | 'pink' | 'green') => {
+    setNodes(prev => 
+      prev.map(node => 
+        node.id === noteId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                color,
+              },
+            }
+          : node
+      )
+    )
+  }, [setNodes])
+  
+  // Photo handlers
+  const handleDeletePhoto = useCallback((photoId: string) => {
+    setNodes(prev => prev.filter(node => node.id !== photoId))
+  }, [setNodes])
+  
+  const handlePhotoClick = useCallback((photoId: string) => {
+    // TODO: Implement photo enlargement/viewer
+    console.log('Photo clicked:', photoId)
+  }, [])
+  
   // Initialize board with suspects and victim only (facts are added via drag-and-drop)
   useEffect(() => {
     if (isInitialized) return
@@ -193,7 +250,47 @@ function InvestigationBoardContent({
         }
       })
     
-    flowNodes = [...flowNodes, ...factNodes]
+    // Add note nodes from stored state
+    const noteNodes: Node[] = storedState?.nodes
+      .filter(n => n?.id?.startsWith('note_'))
+      .map(n => ({
+        id: n.id,
+        type: 'note' as const,
+        position: n.position,
+        data: {
+          ...(n as any).data,
+          onUpdate: handleUpdateNote,
+          onDelete: handleDeleteNote,
+          onColorChange: handleColorChange,
+        },
+        draggable: true,
+        width: n.width,
+        height: n.height,
+      })) || []
+    
+    // Add photo nodes from stored state
+    const photoNodes: Node[] = storedState?.nodes
+      .filter(n => n?.id?.startsWith('photo_'))
+      .map(n => ({
+        id: n.id,
+        type: 'photo' as const,
+        position: n.position,
+        data: {
+          ...(n as any).data,
+          onDelete: handleDeletePhoto,
+          onClick: handlePhotoClick,
+        },
+        draggable: true,
+        resizing: true,
+        style: (n as any).style || {
+          width: 200,
+          height: 200,
+        },
+        width: (n as any).width || (n as any).style?.width || 200,
+        height: (n as any).height || (n as any).style?.height || 200,
+      })) || []
+    
+    flowNodes = [...flowNodes, ...factNodes, ...noteNodes, ...photoNodes]
     
     // Apply stored positions if available
     const nodesWithPositions = applyStoredPositions(flowNodes, storedState)
@@ -224,6 +321,11 @@ function InvestigationBoardContent({
     setNodes,
     setEdges,
     handleEdgeContextMenu,
+    handleUpdateNote,
+    handleDeleteNote,
+    handleColorChange,
+    handleDeletePhoto,
+    handlePhotoClick,
     reactFlowInstance,
   ])
   
@@ -344,10 +446,91 @@ function InvestigationBoardContent({
     event.dataTransfer.dropEffect = 'copy'
   }, [])
   
-  // Handle drop on canvas
+  // Handle drop on canvas (facts, notes, and photos)
   const handleDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault()
     
+    // Get drop position in ReactFlow coordinates
+    const reactFlowBounds = event.currentTarget.getBoundingClientRect()
+    const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
+    
+    const position = {
+      x: (event.clientX - reactFlowBounds.left - viewportX) / zoom,
+      y: (event.clientY - reactFlowBounds.top - viewportY) / zoom,
+    }
+    
+    // Check for note drop first
+    const noteData = event.dataTransfer.getData('application/note')
+    if (noteData) {
+      const noteId = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      
+      const newNote: Node = {
+        id: noteId,
+        type: 'note',
+        position: {
+          x: position.x - 90, // Center the note (180px wide / 2)
+          y: position.y - 60, // Center the note (120px tall / 2)
+        },
+        data: {
+          id: noteId,
+          content: '',
+          color: 'yellow',
+          onUpdate: handleUpdateNote,
+          onDelete: handleDeleteNote,
+          onColorChange: handleColorChange,
+          autoFocus: true,
+        },
+        draggable: true,
+        style: {
+          width: 180,
+          height: 120,
+        },
+      }
+      
+      setNodes(prev => [...prev, newNote])
+      return
+    }
+    
+    // Check for photo drop
+    const photoDataStr = event.dataTransfer.getData('application/photo')
+    if (photoDataStr) {
+      try {
+        const photoData = JSON.parse(photoDataStr)
+        const photoId = `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        
+        const newPhoto: Node = {
+          id: photoId,
+          type: 'photo',
+          position: {
+            x: position.x - 100, // Center the photo (200px wide / 2)
+            y: position.y - 100, // Center the photo (200px tall / 2)
+          },
+          data: {
+            id: photoId,
+            imageUrl: photoData.imageUrl,
+            title: photoData.title,
+            onDelete: handleDeletePhoto,
+            onClick: handlePhotoClick,
+          },
+          draggable: true,
+          resizing: true,
+          style: {
+            width: 200,
+            height: 200,
+          },
+          width: 200,
+          height: 200,
+        }
+        
+        setNodes(prev => [...prev, newPhoto])
+        return
+      } catch (error) {
+        console.error('Failed to drop photo:', error)
+        return
+      }
+    }
+    
+    // Handle fact drop
     const factDataStr = event.dataTransfer.getData('application/fact')
     if (!factDataStr) return
     
@@ -358,15 +541,6 @@ function InvestigationBoardContent({
       if (placedFactIds.has(factData.id)) {
         console.log('Fact already placed on board')
         return
-      }
-      
-      // Get drop position in ReactFlow coordinates
-      const reactFlowBounds = event.currentTarget.getBoundingClientRect()
-      const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
-      
-      const position = {
-        x: (event.clientX - reactFlowBounds.left - viewportX) / zoom,
-        y: (event.clientY - reactFlowBounds.top - viewportY) / zoom,
       }
       
       // Create new fact node
@@ -380,13 +554,55 @@ function InvestigationBoardContent({
     } catch (error) {
       console.error('Failed to drop fact:', error)
     }
-  }, [placedFactIds, reactFlowInstance, setNodes])
+  }, [placedFactIds, reactFlowInstance, setNodes, handleUpdateNote, handleDeleteNote, handleColorChange, handleDeletePhoto, handlePhotoClick])
   
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if typing in an input
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+      
+      // Copy selected node (Ctrl+C or Cmd+C)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        const selectedNodes = nodes.filter(n => n.selected)
+        if (selectedNodes.length === 1 && selectedNodes[0].type === 'note') {
+          setCopiedNode(selectedNodes[0])
+          e.preventDefault()
+        }
+        return
+      }
+      
+      // Paste copied node (Ctrl+V or Cmd+V)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v') {
+        if (copiedNode && copiedNode.type === 'note') {
+          e.preventDefault()
+          
+          // Create a new note with copied content at an offset position
+          const noteId = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+          const newNote: Node = {
+            id: noteId,
+            type: 'note',
+            position: {
+              x: copiedNode.position.x + 30,
+              y: copiedNode.position.y + 30,
+            },
+            data: {
+              id: noteId,
+              content: (copiedNode.data as any).content || '',
+              color: (copiedNode.data as any).color || 'yellow',
+              onUpdate: handleUpdateNote,
+              onDelete: handleDeleteNote,
+              onColorChange: handleColorChange,
+              autoFocus: true,
+            },
+            draggable: true,
+            style: copiedNode.style,
+          }
+          
+          setNodes(prev => [...prev, newNote])
+        }
         return
       }
       
@@ -406,7 +622,7 @@ function InvestigationBoardContent({
     
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [reactFlowInstance])
+  }, [reactFlowInstance, nodes, copiedNode, setNodes, handleUpdateNote, handleDeleteNote])
   
   // Handle clicking on canvas to close panel
   const handlePaneClick = useCallback(() => {
@@ -414,6 +630,18 @@ function InvestigationBoardContent({
       setIsPanelOpen(false)
     }
   }, [isPanelOpen])
+  
+  // Calculate toolbar position for selected note
+  const selectedNote = nodes.find(n => n.selected && n.type === 'note')
+  const toolbarPosition = selectedNote
+    ? (() => {
+        const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
+        const nodeWidth = (selectedNote.style?.width as number) || (selectedNote.width || 180)
+        const screenX = selectedNote.position.x * zoom + viewportX + (nodeWidth * zoom) / 2
+        const screenY = selectedNote.position.y * zoom + viewportY - 50 // Position above the note
+        return { x: screenX, y: Math.max(10, screenY) }
+      })()
+    : null
   
   return (
     <div 
@@ -465,8 +693,17 @@ function InvestigationBoardContent({
         onZoomIn={() => reactFlowInstance.zoomIn()}
         onZoomOut={() => reactFlowInstance.zoomOut()}
         onFitView={() => reactFlowInstance.fitView({ padding: 0.60 })}
+        onPhotoClick={() => setIsPhotoSelectorOpen(true)}
         isOpen={isPanelOpen}
         setIsOpen={setIsPanelOpen}
+      />
+      
+      {/* Photo Selector Modal */}
+      <PhotoSelectorModal
+        isOpen={isPhotoSelectorOpen}
+        onClose={() => setIsPhotoSelectorOpen(false)}
+        unlockedContent={unlockedContent}
+        caseId={caseId}
       />
       
       {/* Connection Type Popup */}
@@ -486,6 +723,16 @@ function InvestigationBoardContent({
         onDelete={handleDeleteEdge}
         onClose={() => setContextMenu(prev => ({ ...prev, isOpen: false }))}
       />
+      
+      {/* Note Toolbar - appears when a note is selected */}
+      {selectedNote && toolbarPosition && (
+        <NoteToolbar
+          position={toolbarPosition}
+          currentColor={(selectedNote.data as any).color || 'yellow'}
+          onColorChange={(color) => handleColorChange(selectedNote.id, color)}
+          onDelete={() => handleDeleteNote(selectedNote.id)}
+        />
+      )}
     </div>
   )
 }

@@ -33,9 +33,9 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
 
 export interface BoardNode {
   id: string
-  type: 'fact' | 'suspect' | 'victim'
+  type: 'fact' | 'suspect' | 'victim' | 'note'
   position: { x: number; y: number }
-  data: FactNodeData | SuspectNodeData
+  data: FactNodeData | SuspectNodeData | NoteNodeData
   width?: number
   height?: number
 }
@@ -55,6 +55,12 @@ export interface SuspectNodeData {
   name: string
   portraitUrl: string
   isVictim?: boolean
+}
+
+export interface NoteNodeData {
+  id: string
+  content: string
+  color: 'yellow' | 'blue' | 'pink' | 'green'
 }
 
 export interface BoardConnection {

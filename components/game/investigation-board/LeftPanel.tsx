@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import { ChevronLeft, ChevronRight, FileText, MessageSquare, MapPin, Folder, StickyNote, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileText, MessageSquare, MapPin, Folder, StickyNote, ZoomIn, ZoomOut, Maximize2, Image } from 'lucide-react'
 import { DiscoveredFact } from '@/lib/store/gameStore'
 import { getFriendlySourceName } from './types'
 
@@ -14,6 +14,7 @@ interface LeftPanelProps {
   onZoomIn: () => void
   onZoomOut: () => void
   onFitView: () => void
+  onPhotoClick: () => void
   isOpen: boolean
   setIsOpen: (open: boolean) => void
 }
@@ -25,6 +26,7 @@ export function LeftPanel({
   onZoomIn,
   onZoomOut,
   onFitView,
+  onPhotoClick,
   isOpen,
   setIsOpen,
 }: LeftPanelProps) {
@@ -83,6 +85,21 @@ export function LeftPanel({
           boxShadow: '4px 0 16px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.15)',
         }}
       >
+        {/* Note button */}
+        <div
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData('application/note', 'new-note')
+            e.dataTransfer.effectAllowed = 'copy'
+          }}
+          className="cursor-grab active:cursor-grabbing"
+          title="Drag to add note"
+        >
+          <ToolbarButton>
+            <StickyNote className="w-5 h-5" />
+          </ToolbarButton>
+        </div>
+        
         {/* Facts toggle button */}
         <ToolbarButton
           onClick={() => setIsOpen(true)}
@@ -91,13 +108,12 @@ export function LeftPanel({
           <Folder className="w-6 h-6" />
         </ToolbarButton>
         
-        <div className="w-full h-px bg-gray-600 my-0.5" />
-        
+        {/* Photo button */}
         <ToolbarButton
-          disabled
-          title="Add Note (Coming Soon)"
+          onClick={onPhotoClick}
+          title="Open Photo Gallery"
         >
-          <StickyNote className="w-5 h-5" />
+          <Image className="w-5 h-5" />
         </ToolbarButton>
         
         <div className="w-full h-px bg-gray-600 my-0.5" />
