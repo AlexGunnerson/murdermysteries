@@ -59,18 +59,26 @@ export function ConnectionTypePopup({
   if (!isOpen) return null
   
   return (
-    <div
-      ref={popupRef}
-      className="fixed z-[100] min-w-[200px] p-3 rounded-lg shadow-2xl"
-      style={{
-        left: position.x,
-        top: position.y,
-        background: 'linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%)',
-        border: '1px solid #d4af37',
-        boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.15)',
-        transform: 'translate(-50%, 10px)',
-      }}
-    >
+    <>
+      {/* Backdrop overlay */}
+      <div
+        className="fixed inset-0 z-[99] bg-black/50"
+        style={{ backdropFilter: 'blur(2px)' }}
+      />
+      
+      {/* Popup */}
+      <div
+        ref={popupRef}
+        className="fixed z-[100] min-w-[200px] p-3 rounded-lg shadow-2xl"
+        style={{
+          left: position.x,
+          top: position.y,
+          background: 'linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%)',
+          border: '1px solid #d4af37',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(212,175,55,0.15)',
+          transform: 'translate(-50%, 10px)',
+        }}
+      >
       {/* Header */}
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-700">
         <h3 
@@ -139,6 +147,7 @@ export function ConnectionTypePopup({
       >
         Select the type of connection
       </p>
-    </div>
+      </div>
+    </>
   )
 }

@@ -16,7 +16,7 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
   },
   supports: {
     label: 'Supports',
-    color: '#d4af37', // Gold to match theme
+    color: '#22c55e', // Green
     bgColor: '#1a1a1a', // Dark background
   },
   alibi_for: {

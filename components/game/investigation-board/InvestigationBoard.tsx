@@ -208,19 +208,19 @@ function InvestigationBoardContent({
     const targetNode = nodes.find(n => n.id === connection.target)
     
     if (sourceNode && targetNode) {
-      // Calculate popup position (midpoint between nodes)
-      const midX = (sourceNode.position.x + targetNode.position.x) / 2
-      const midY = (sourceNode.position.y + targetNode.position.y) / 2
+      // Calculate popup position (25% of the way from source to target)
+      const posX = sourceNode.position.x + (targetNode.position.x - sourceNode.position.x) * 0.25
+      const posY = sourceNode.position.y + (targetNode.position.y - sourceNode.position.y) * 0.25
       
       // Convert to screen coordinates
       const { x, y, zoom } = reactFlowInstance.getViewport()
-      const screenX = midX * zoom + x + window.innerWidth / 2
-      const screenY = midY * zoom + y + window.innerHeight / 2
+      const screenX = posX * zoom + x
+      const screenY = posY * zoom + y
       
       setPendingConnection(connection)
       setConnectionPopupPosition({
-        x: Math.min(screenX, window.innerWidth - 120),
-        y: Math.min(screenY, window.innerHeight - 200),
+        x: Math.max(10, Math.min(screenX, window.innerWidth - 220)),
+        y: Math.max(10, Math.min(screenY, window.innerHeight - 250)),
       })
     }
   }, [nodes, reactFlowInstance])
@@ -310,6 +310,7 @@ function InvestigationBoardContent({
         nodesDraggable={true}
         nodesConnectable={true}
         elementsSelectable={true}
+        elevateEdgesOnSelect={true}
         panOnDrag={[1, 2]}
         selectionOnDrag={true}
         selectNodesOnDrag={false}
