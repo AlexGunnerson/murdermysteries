@@ -11,7 +11,7 @@ export interface ConnectionTypeConfig {
 export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
   contradicts: {
     label: 'Contradicts',
-    color: '#ef4444', // Bright red for visibility on dark
+    color: '#f59e0b', // Amber/bronze
     bgColor: '#1a1a1a', // Dark background
   },
   supports: {
@@ -26,7 +26,7 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
   },
   motive: {
     label: 'Motive',
-    color: '#f59e0b', // Amber/bronze
+    color: '#ef4444', // Bright red for visibility on dark
     bgColor: '#1a1a1a', // Dark background
   },
 }

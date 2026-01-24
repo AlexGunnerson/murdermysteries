@@ -124,10 +124,43 @@ function RedStringEdge({
         <path
           d={edgePath}
           fill="none"
-          stroke="#d4af37"
+          stroke="#9CA3AF"
           strokeWidth={6}
           opacity={0.4}
         />
+      )}
+      
+      {/* Endpoint dots when selected - for reconnection */}
+      {selected && (
+        <>
+          {/* Source endpoint dot */}
+          <circle
+            cx={sourceX}
+            cy={sourceY}
+            r={3}
+            fill={typeConfig.color}
+            stroke={typeConfig.color}
+            strokeWidth={1}
+            style={{
+              cursor: 'pointer',
+              pointerEvents: 'all',
+            }}
+          />
+          
+          {/* Target endpoint dot */}
+          <circle
+            cx={targetX}
+            cy={targetY}
+            r={3}
+            fill={typeConfig.color}
+            stroke={typeConfig.color}
+            strokeWidth={1}
+            style={{
+              cursor: 'pointer',
+              pointerEvents: 'all',
+            }}
+          />
+        </>
       )}
       
       {/* Invisible wider path for easier clicking */}
@@ -157,7 +190,7 @@ function RedStringEdge({
               px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide
               cursor-context-menu
               transition-all duration-200
-              ${selected ? 'ring-2 ring-amber-400' : ''}
+              ${selected ? 'ring-2 ring-gray-400' : ''}
             `}
             style={{
               backgroundColor: typeConfig.bgColor,

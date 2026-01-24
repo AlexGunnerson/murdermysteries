@@ -66,10 +66,10 @@ export function factToNodeData(fact: DiscoveredFact): FactNodeData {
 
 /**
  * Calculate initial positions for board elements
- * Victim in center, facts on left, suspects on right
+ * Default positions based on user's preferred layout
+ * Facts are no longer placed automatically - they must be dragged from the panel
  */
 export function calculateInitialLayout(
-  facts: FactNodeData[],
   suspects: { id: string; name: string; portraitUrl: string }[],
   victim: { id: string; name: string; portraitUrl: string },
   canvasWidth: number = 1200,
@@ -82,61 +82,52 @@ export function calculateInitialLayout(
     data: any
   }> = []
   
-  // Victim in center
-  const centerX = canvasWidth / 2
-  const centerY = canvasHeight / 2
-  
+  // Victim - center-top area
   nodes.push({
     id: victim.id,
     type: 'victim',
-    position: { x: centerX - 60, y: centerY - 80 },
+    position: { x: 640, y: 370 },
     data: { ...victim, isVictim: true },
   })
   
-  // Facts on the left side - staggered vertically
-  const factStartX = 50
-  const factStartY = 50
-  const factSpacingY = 140
-  const factSpacingX = 220
-  const factsPerColumn = Math.ceil(canvasHeight / factSpacingY) - 1
+  // Map of suspect IDs to their default positions
+  const suspectPositions: Record<string, { x: number; y: number }> = {
+    'suspect_veronica': { x: 798, y: 395 },
+    'suspect_martin': { x: 494, y: 568 },
+    'suspect_colin': { x: 987, y: 565 },
+    'suspect_lydia': { x: 645, y: 605 },
+    'suspect_vale': { x: 812, y: 596 },
+  }
   
-  facts.forEach((fact, index) => {
-    const column = Math.floor(index / factsPerColumn)
-    const row = index % factsPerColumn
-    const offsetX = (row % 2) * 20 // Slight horizontal stagger
-    const offsetY = (column % 2) * 30 // Slight vertical stagger
-    
-    nodes.push({
-      id: fact.id,
-      type: 'fact',
-      position: {
-        x: factStartX + column * factSpacingX + offsetX,
-        y: factStartY + row * factSpacingY + offsetY,
-      },
-      data: fact,
-    })
-  })
-  
-  // Suspects on the right side
-  const suspectStartX = canvasWidth - 180
-  const suspectStartY = 80
-  const suspectSpacingY = 150
-  
-  suspects.forEach((suspect, index) => {
-    const offsetX = (index % 2) * -30 // Slight horizontal stagger
+  // Place suspects using the predefined positions
+  suspects.forEach((suspect) => {
+    const position = suspectPositions[suspect.id] || { x: 700, y: 400 }
     
     nodes.push({
       id: suspect.id,
       type: 'suspect',
-      position: {
-        x: suspectStartX + offsetX,
-        y: suspectStartY + index * suspectSpacingY,
-      },
+      position,
       data: suspect,
     })
   })
   
   return nodes
+}
+
+/**
+ * Create a fact node at the dropped position
+ */
+export function createFactNode(
+  fact: FactNodeData,
+  position: { x: number; y: number }
+) {
+  return {
+    id: fact.id,
+    type: 'fact' as const,
+    position,
+    data: fact,
+    draggable: true,
+  }
 }
 
 /**

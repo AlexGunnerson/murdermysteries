@@ -18,8 +18,8 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
         minWidth={180}
         minHeight={100}
         isVisible={selected}
-        lineClassName="border-amber-600"
-        handleClassName="h-3 w-3 bg-amber-600 border border-amber-800"
+        lineClassName="border-gray-400"
+        handleClassName="h-3 w-3 bg-gray-400 border border-gray-600"
       />
       
       {/* Connection handles - invisible but functional */}
@@ -123,7 +123,7 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
               transform: 'translateX(-50%)',
               width: '8px',
               height: '8px',
-              background: '#3b82f6',
+              background: '#9CA3AF',
               borderRadius: '50%',
               zIndex: 10,
             }}
@@ -138,7 +138,7 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
               transform: 'translateX(-50%)',
               width: '8px',
               height: '8px',
-              background: '#3b82f6',
+              background: '#9CA3AF',
               borderRadius: '50%',
               zIndex: 10,
             }}
@@ -153,7 +153,7 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
               transform: 'translateY(-50%)',
               width: '8px',
               height: '8px',
-              background: '#3b82f6',
+              background: '#9CA3AF',
               borderRadius: '50%',
               zIndex: 10,
             }}
@@ -168,7 +168,7 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
               transform: 'translateY(-50%)',
               width: '8px',
               height: '8px',
-              background: '#3b82f6',
+              background: '#9CA3AF',
               borderRadius: '50%',
               zIndex: 10,
             }}
@@ -178,11 +178,7 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
       
       {/* Modern Silver Card */}
       <div
-        className={`
-          relative w-full h-full min-w-[180px] min-h-[100px] p-4 flex flex-col
-          transition-all duration-200
-          ${selected ? 'ring-2 ring-[#94a3b8]' : ''}
-        `}
+        className="relative w-full h-full min-w-[180px] min-h-[100px] p-4 flex flex-col"
         style={{
           background: 'rgba(148, 163, 184, 0.15)',
           backdropFilter: 'blur(10px)',
@@ -190,7 +186,8 @@ function FactCardNode({ data, selected }: FactCardNodeProps) {
             ? '0 8px 24px rgba(0,0,0,0.5), 0 0 20px rgba(148, 163, 184, 0.3)'
             : '0 4px 12px rgba(0,0,0,0.4), 0 0 10px rgba(148, 163, 184, 0.2)',
           borderRadius: '6px',
-          border: '1px solid rgba(148, 163, 184, 0.4)',
+          border: selected ? '2px solid #9CA3AF' : '1px solid rgba(148, 163, 184, 0.4)',
+          transition: 'box-shadow 200ms',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

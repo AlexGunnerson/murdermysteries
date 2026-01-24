@@ -22,6 +22,7 @@ export interface StoredBoardState {
     }
   }>
   viewport: Viewport
+  placedFactIds?: string[] // Track which facts have been placed on the board
 }
 
 export function useInvestigationBoardStore(caseId: string) {
@@ -46,7 +47,8 @@ export function useInvestigationBoardStore(caseId: string) {
   const saveState = useCallback((
     nodes: Node[],
     edges: Edge[],
-    viewport: Viewport
+    viewport: Viewport,
+    placedFactIds?: string[]
   ) => {
     if (typeof window === 'undefined') return
     
@@ -69,6 +71,7 @@ export function useInvestigationBoardStore(caseId: string) {
           },
         })),
         viewport,
+        placedFactIds,
       }
       
       localStorage.setItem(storageKey, JSON.stringify(state))
@@ -134,11 +137,20 @@ export function useInvestigationBoardStore(caseId: string) {
     }))
   }, [])
   
+  // Get placed fact IDs from stored state
+  const getPlacedFactIds = useCallback((
+    storedState: StoredBoardState | null
+  ): string[] => {
+    if (!storedState || !storedState.placedFactIds) return []
+    return storedState.placedFactIds
+  }, [])
+  
   return {
     loadState,
     saveState,
     clearState,
     applyStoredPositions,
     getStoredEdges,
+    getPlacedFactIds,
   }
 }

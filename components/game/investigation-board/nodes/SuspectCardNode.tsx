@@ -29,26 +29,26 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
   
   return (
     <>
-      {/* Connection handles - visible only when selected */}
+      {/* Connection handles - invisible but functional */}
       {/* Top */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       <Handle
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       
@@ -57,20 +57,20 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       <Handle
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       
@@ -79,20 +79,20 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       
@@ -101,29 +101,94 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
       <Handle
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 transition-opacity !rounded-full"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
         style={{ 
-          opacity: selected ? 1 : 0,
-          boxShadow: selected ? '0 0 0 2px rgba(59, 130, 246, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.6)' : 'none'
+          opacity: 0,
+          pointerEvents: 'auto'
         }}
       />
+      
+      {/* Custom visual dots at midpoints - only visible when selected */}
+      {selected && (
+        <>
+          {/* Top dot */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: '-4px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '8px',
+              height: '8px',
+              background: '#9CA3AF',
+              borderRadius: '50%',
+              zIndex: 10,
+            }}
+          />
+          
+          {/* Bottom dot */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              bottom: '-4px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '8px',
+              height: '8px',
+              background: '#9CA3AF',
+              borderRadius: '50%',
+              zIndex: 10,
+            }}
+          />
+          
+          {/* Left dot */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              left: '-4px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '8px',
+              height: '8px',
+              background: '#9CA3AF',
+              borderRadius: '50%',
+              zIndex: 10,
+            }}
+          />
+          
+          {/* Right dot */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              right: '-4px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '8px',
+              height: '8px',
+              background: '#9CA3AF',
+              borderRadius: '50%',
+              zIndex: 10,
+            }}
+          />
+        </>
+      )}
       
       {/* Portrait Card - Polaroid style */}
       <div
         className={`
           relative bg-white p-2 pb-8
           transition-all duration-200 hover:scale-105
-          ${selected ? 'ring-2 ring-offset-2 ring-offset-transparent ring-amber-500' : ''}
+          ${selected ? 'ring-2 ring-offset-2 ring-offset-transparent ring-gray-400' : ''}
         `}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

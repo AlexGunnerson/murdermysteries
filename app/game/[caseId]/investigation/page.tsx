@@ -115,15 +115,8 @@ export default function InvestigationPage({ params }: { params: Promise<{ caseId
           Investigation Board
         </h1>
         
-        {/* Facts Counter */}
-        <div className="flex items-center gap-2">
-          <span 
-            className="text-gray-400 text-sm"
-            style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
-          >
-            Facts: {discoveredFacts.length}
-          </span>
-        </div>
+        {/* Spacer to keep title centered */}
+        <div className="w-[120px]"></div>
       </header>
       
       {/* Full-screen Investigation Board */}

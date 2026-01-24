@@ -11,6 +11,7 @@ import {
   Connection,
   addEdge,
   OnConnect,
+  OnReconnect,
   ReactFlowProvider,
   Panel,
 } from '@xyflow/react'
@@ -19,11 +20,11 @@ import '@xyflow/react/dist/style.css'
 import FactCardNode from './nodes/FactCardNode'
 import SuspectCardNode from './nodes/SuspectCardNode'
 import RedStringEdge from './edges/RedStringEdge'
-import { BoardToolbar, BoardMode } from './BoardToolbar'
 import { ConnectionTypePopup } from './ConnectionTypePopup'
 import { ConnectionContextMenu } from './ConnectionContextMenu'
+import { LeftPanel } from './LeftPanel'
 import { useInvestigationBoardStore } from './useInvestigationBoardStore'
-import { factToNodeData, calculateInitialLayout, generateConnectionId } from './utils'
+import { factToNodeData, calculateInitialLayout, generateConnectionId, createFactNode } from './utils'
 import { ConnectionType } from './types'
 import { DiscoveredFact } from '@/lib/store/gameStore'
 
@@ -64,12 +65,43 @@ function InvestigationBoardContent({
     saveState,
     applyStoredPositions,
     getStoredEdges,
+    getPlacedFactIds,
   } = useInvestigationBoardStore(caseId)
   
   // Board state (mode removed - always in select/interact mode)
-  const [nodes, setNodes, onNodesChange] = useNodesState([] as Node[])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([] as Edge[])
+  const [nodes, setNodes, onNodesChangeBase] = useNodesState([] as Node[])
+  const [edges, setEdges, onEdgesChangeBase] = useEdgesState([] as Edge[])
   const [isInitialized, setIsInitialized] = useState(false)
+  const [placedFactIds, setPlacedFactIds] = useState<Set<string>>(new Set())
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
+  
+  // Wrap onNodesChange to track when fact nodes are deleted
+  const onNodesChange = useCallback((changes: any[]) => {
+    // Check if any nodes are being removed
+    const removedNodeIds = changes
+      .filter(change => change.type === 'remove')
+      .map(change => change.id)
+    
+    // Update placedFactIds if any fact nodes were removed
+    if (removedNodeIds.length > 0) {
+      setPlacedFactIds(prev => {
+        const newSet = new Set(prev)
+        removedNodeIds.forEach(id => {
+          // Remove from placed facts if it's a fact node
+          if (id.startsWith('fact_') || discoveredFacts.some(f => f.id === id)) {
+            newSet.delete(id)
+          }
+        })
+        return newSet
+      })
+    }
+    
+    // Call the original handler
+    onNodesChangeBase(changes)
+  }, [onNodesChangeBase, discoveredFacts])
+  
+  // Use the base onEdgesChange directly
+  const onEdgesChange = onEdgesChangeBase
   
   // Connection popup state
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(null)
@@ -106,17 +138,16 @@ function InvestigationBoardContent({
     })
   }, [edges])
   
-  // Initialize board with facts and suspects
+  // Initialize board with suspects and victim only (facts are added via drag-and-drop)
   useEffect(() => {
     if (isInitialized) return
-    if (discoveredFacts.length === 0 && suspects.length === 0) return
+    if (suspects.length === 0) return
     
-    // Convert facts to node data
-    const factNodeData = discoveredFacts.map(factToNodeData)
+    // Load stored state
+    const storedState = loadState()
     
-    // Calculate initial layout
+    // Calculate initial layout (suspects and victim only)
     const initialNodes = calculateInitialLayout(
-      factNodeData,
       suspects,
       victim,
       1400, // canvas width
@@ -124,7 +155,7 @@ function InvestigationBoardContent({
     )
     
     // Convert to ReactFlow nodes
-    const flowNodes: Node[] = initialNodes.map(node => ({
+    let flowNodes: Node[] = initialNodes.map(node => ({
       id: node.id,
       type: node.type,
       position: node.position,
@@ -132,8 +163,37 @@ function InvestigationBoardContent({
       draggable: true,
     }))
     
-    // Load stored state
-    const storedState = loadState()
+    // Get placed fact IDs from stored state
+    const storedPlacedFactIds = getPlacedFactIds(storedState)
+    const placedFactIdsSet = new Set(storedPlacedFactIds)
+    
+    // For backward compatibility: if stored state has fact nodes but no placedFactIds,
+    // assume all fact nodes in stored state were placed
+    if (storedState && storedState.nodes.some(n => n?.id?.startsWith('fact_')) && storedPlacedFactIds.length === 0) {
+      storedState.nodes.forEach(n => {
+        if (n?.id?.startsWith('fact_')) {
+          placedFactIdsSet.add(n.id)
+        }
+      })
+    }
+    
+    // Add fact nodes for placed facts
+    const factNodes: Node[] = discoveredFacts
+      .filter(fact => placedFactIdsSet.has(fact.id))
+      .map(fact => {
+        const factData = factToNodeData(fact)
+        // Try to get stored position, otherwise use a default position
+        const storedNode = storedState?.nodes.find(n => n.id === fact.id)
+        return {
+          id: fact.id,
+          type: 'fact' as const,
+          position: storedNode?.position || { x: 400, y: 200 },
+          data: factData,
+          draggable: true,
+        }
+      })
+    
+    flowNodes = [...flowNodes, ...factNodes]
     
     // Apply stored positions if available
     const nodesWithPositions = applyStoredPositions(flowNodes, storedState)
@@ -143,12 +203,14 @@ function InvestigationBoardContent({
     
     setNodes(nodesWithPositions)
     setEdges(storedEdges)
+    setPlacedFactIds(placedFactIdsSet)
     setIsInitialized(true)
     hasInitializedRef.current = true
     
-    // Fit view after a short delay
+    // Always fit view on initial load, regardless of stored viewport
+    // This ensures the default zoom is applied
     setTimeout(() => {
-      reactFlowInstance.fitView({ padding: 0.2 })
+      reactFlowInstance.fitView({ padding: 0.6, duration: 0 })
     }, 100)
   }, [
     discoveredFacts,
@@ -158,46 +220,23 @@ function InvestigationBoardContent({
     loadState,
     applyStoredPositions,
     getStoredEdges,
+    getPlacedFactIds,
     setNodes,
     setEdges,
     handleEdgeContextMenu,
     reactFlowInstance,
   ])
   
-  // Update nodes when facts change (new facts discovered)
-  useEffect(() => {
-    if (!isInitialized) return
-    
-    const existingFactIds = new Set(
-      nodes.filter(n => n.type === 'fact').map(n => n.id)
-    )
-    
-    const newFacts = discoveredFacts.filter(f => !existingFactIds.has(f.id))
-    
-    if (newFacts.length > 0) {
-      const newNodes: Node[] = newFacts.map((fact, index): Node => ({
-        id: fact.id,
-        type: 'fact',
-        position: {
-          // Place new facts in "New Facts" area (top-left)
-          x: 50 + (index % 3) * 220,
-          y: 50 + Math.floor(index / 3) * 140,
-        },
-        data: factToNodeData(fact) as unknown as Record<string, unknown>,
-        draggable: true,
-      }))
-      
-      setNodes(prev => [...prev, ...newNodes])
-    }
-  }, [discoveredFacts, isInitialized, nodes, setNodes])
+  // No longer automatically add new facts to the board when discovered
+  // Facts must be manually dragged from the FactsPanel
   
   // Save state when nodes or edges change
   useEffect(() => {
     if (!hasInitializedRef.current) return
     
     const viewport = reactFlowInstance.getViewport()
-    saveState(nodes, edges, viewport)
-  }, [nodes, edges, reactFlowInstance, saveState])
+    saveState(nodes, edges, viewport, Array.from(placedFactIds))
+  }, [nodes, edges, placedFactIds, reactFlowInstance, saveState])
   
   // Handle connection creation
   const onConnect: OnConnect = useCallback((connection) => {
@@ -263,10 +302,85 @@ function InvestigationBoardContent({
     )
   }, [contextMenu.edgeId, setEdges])
   
+  // Handle edge reconnection - preserve edge data
+  const handleReconnect: OnReconnect = useCallback((oldEdge: Edge, newConnection: Connection) => {
+    setEdges(edges => {
+      return edges.map(edge => {
+        if (edge.id === oldEdge.id) {
+          // Update this edge with new connection but preserve data
+          return {
+            ...edge,
+            source: newConnection.source!,
+            target: newConnection.target!,
+            sourceHandle: newConnection.sourceHandle || undefined,
+            targetHandle: newConnection.targetHandle || undefined,
+            type: 'redString',
+            data: {
+              connectionType: (oldEdge.data as any)?.connectionType || 'supports',
+              onContextMenu: handleEdgeContextMenu,
+            },
+          }
+        }
+        return edge
+      })
+    })
+  }, [handleEdgeContextMenu, setEdges])
+  
   // Handle edge deletion
   const handleDeleteEdge = useCallback(() => {
     setEdges(prev => prev.filter(edge => edge.id !== contextMenu.edgeId))
   }, [contextMenu.edgeId, setEdges])
+  
+  // Handle fact drag start from FactsPanel
+  const handleFactDragStart = useCallback((fact: DiscoveredFact, event: React.DragEvent) => {
+    // Store fact data in drag event
+    event.dataTransfer.setData('application/fact', JSON.stringify(factToNodeData(fact)))
+    event.dataTransfer.effectAllowed = 'copy'
+  }, [])
+  
+  // Handle drag over canvas (required to enable drop)
+  const handleDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'copy'
+  }, [])
+  
+  // Handle drop on canvas
+  const handleDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault()
+    
+    const factDataStr = event.dataTransfer.getData('application/fact')
+    if (!factDataStr) return
+    
+    try {
+      const factData = JSON.parse(factDataStr)
+      
+      // Check if fact is already placed
+      if (placedFactIds.has(factData.id)) {
+        console.log('Fact already placed on board')
+        return
+      }
+      
+      // Get drop position in ReactFlow coordinates
+      const reactFlowBounds = event.currentTarget.getBoundingClientRect()
+      const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
+      
+      const position = {
+        x: (event.clientX - reactFlowBounds.left - viewportX) / zoom,
+        y: (event.clientY - reactFlowBounds.top - viewportY) / zoom,
+      }
+      
+      // Create new fact node
+      const newNode = createFactNode(factData, position)
+      
+      // Add node to board
+      setNodes(prev => [...prev, newNode])
+      
+      // Track that this fact has been placed
+      setPlacedFactIds(prev => new Set([...prev, factData.id]))
+    } catch (error) {
+      console.error('Failed to drop fact:', error)
+    }
+  }, [placedFactIds, reactFlowInstance, setNodes])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -278,7 +392,7 @@ function InvestigationBoardContent({
       
       switch (e.key.toLowerCase()) {
         case 'f':
-          reactFlowInstance.fitView({ padding: 0.2 })
+          reactFlowInstance.fitView({ padding: 0.6 })
           break
         case '=':
         case '+':
@@ -294,14 +408,27 @@ function InvestigationBoardContent({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [reactFlowInstance])
   
+  // Handle clicking on canvas to close panel
+  const handlePaneClick = useCallback(() => {
+    if (isPanelOpen) {
+      setIsPanelOpen(false)
+    }
+  }, [isPanelOpen])
+  
   return (
-    <div className="w-full h-full relative">
+    <div 
+      className="w-full h-full relative"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onReconnect={handleReconnect}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
@@ -311,6 +438,8 @@ function InvestigationBoardContent({
         nodesConnectable={true}
         elementsSelectable={true}
         elevateEdgesOnSelect={true}
+        edgesReconnectable={true}
+        reconnectRadius={20}
         panOnDrag={[1, 2]}
         selectionOnDrag={true}
         selectNodesOnDrag={false}
@@ -318,7 +447,7 @@ function InvestigationBoardContent({
         zoomOnScroll={true}
         zoomOnPinch={true}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
+        fitViewOptions={{ padding: 0.6 }}
         minZoom={0.1}
         maxZoom={2}
         style={{
@@ -326,33 +455,18 @@ function InvestigationBoardContent({
         }}
         proOptions={{ hideAttribution: true }}
       >
-        {/* Help text */}
-        <Panel position="top-right" className="!m-4">
-          <div 
-            className="px-3 py-2 rounded-lg shadow-lg max-w-xs"
-            style={{
-              background: 'linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%)',
-              border: '1px solid #d4af37',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.1)',
-            }}
-          >
-            <p 
-              className="text-xs text-gray-300"
-              style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
-            >
-              Drag cards to move • Click cards to reveal connection points • Scroll to zoom • Right-click connections to edit
-            </p>
-          </div>
-        </Panel>
       </ReactFlow>
       
-      {/* Toolbar */}
-      <BoardToolbar
-        mode="select"
-        onModeChange={() => {}}
+      {/* Unified Left Panel */}
+      <LeftPanel
+        discoveredFacts={discoveredFacts}
+        onFactDragStart={handleFactDragStart}
+        placedFactIds={placedFactIds}
         onZoomIn={() => reactFlowInstance.zoomIn()}
         onZoomOut={() => reactFlowInstance.zoomOut()}
-        onFitView={() => reactFlowInstance.fitView({ padding: 0.2 })}
+        onFitView={() => reactFlowInstance.fitView({ padding: 0.60 })}
+        isOpen={isPanelOpen}
+        setIsOpen={setIsPanelOpen}
       />
       
       {/* Connection Type Popup */}
