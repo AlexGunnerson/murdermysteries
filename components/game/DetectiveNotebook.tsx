@@ -631,42 +631,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               </div>
             )}
           </div>
-
-          {/* Facts Summary - Call to Action for Investigation Board */}
-          <BoardSection 
-            title="Facts Discovered" 
-            icon="📋"
-            rotating={-0.3}
-            className="md:col-span-2"
-          >
-            <div className="text-center py-6">
-              <p 
-                className="text-gray-700 mb-4"
-                style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
-              >
-                You have discovered <span className="font-bold text-amber-700">{discoveredFacts.length}</span> facts.
-              </p>
-              <button
-                onClick={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
-                className="px-6 py-3 rounded-lg font-bold uppercase tracking-wider transition-all duration-200 hover:scale-105"
-                style={{
-                  background: 'linear-gradient(to bottom, #d4af37, #8c701c)',
-                  color: '#1a0f0a',
-                  fontFamily: "'Courier Prime', 'Courier New', monospace",
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
-                  border: '2px solid #5c4a16',
-                }}
-              >
-                🔍 Open Investigation Board
-              </button>
-              <p 
-                className="text-gray-600 mt-4 text-sm italic"
-                style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
-              >
-                Connect facts, suspects, and clues to solve the mystery
-              </p>
-            </div>
-          </BoardSection>
         </div>
       </div>
       </div>
