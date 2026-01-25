@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import { ChevronLeft, ChevronRight, FileText, MessageSquare, MapPin, Folder, StickyNote, ZoomIn, ZoomOut, Maximize2, Image } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileText, MessageSquare, MapPin, FileSearch, StickyNote, ZoomIn, ZoomOut, Maximize2, Image } from 'lucide-react'
 import { DiscoveredFact } from '@/lib/store/gameStore'
 import { getFriendlySourceName } from './types'
 
@@ -92,10 +92,9 @@ export function LeftPanel({
             e.dataTransfer.setData('application/note', 'new-note')
             e.dataTransfer.effectAllowed = 'copy'
           }}
-          className="cursor-grab active:cursor-grabbing"
-          title="Drag to add note"
+          className="cursor-grab active:cursor-grabbing relative group"
         >
-          <ToolbarButton>
+          <ToolbarButton title="Drag to add note">
             <StickyNote className="w-5 h-5" />
           </ToolbarButton>
         </div>
@@ -103,15 +102,15 @@ export function LeftPanel({
         {/* Facts toggle button */}
         <ToolbarButton
           onClick={() => setIsOpen(true)}
-          title={`Discovered Facts (${discoveredFacts.length})`}
+          title="Discovered Facts"
         >
-          <Folder className="w-6 h-6" />
+          <FileSearch className="w-6 h-6" />
         </ToolbarButton>
         
         {/* Photo button */}
         <ToolbarButton
           onClick={onPhotoClick}
-          title="Open Photo Gallery"
+          title="Photos"
         >
           <Image className="w-5 h-5" />
         </ToolbarButton>
@@ -164,13 +163,18 @@ export function LeftPanel({
         >
           DISCOVERED FACTS
         </h2>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="p-1.5 rounded hover:bg-gray-700/50 transition-colors"
-          title="Close Panel"
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-300" />
-        </button>
+        <div className="relative group">
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1.5 rounded hover:bg-gray-700/50 transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5 text-gray-300" />
+          </button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-gray-900 text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 shadow-lg border border-gray-300">
+            Close Panel
+            <div className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-gray-200"></div>
+          </div>
+        </div>
       </div>
       
       {/* Filter Buttons */}
@@ -179,6 +183,7 @@ export function LeftPanel({
           active={selectedFilter === 'all'}
           onClick={() => setSelectedFilter('all')}
           count={factCounts.all}
+          title="Show all facts"
         >
           All
         </FilterButton>
@@ -187,6 +192,7 @@ export function LeftPanel({
           onClick={() => setSelectedFilter('chat')}
           count={factCounts.chat}
           icon={<MessageSquare className="w-3 h-3" />}
+          title="Show facts from chat conversations"
         >
           Chat
         </FilterButton>
@@ -195,6 +201,7 @@ export function LeftPanel({
           onClick={() => setSelectedFilter('record')}
           count={factCounts.record + factCounts.clue}
           icon={<FileText className="w-3 h-3" />}
+          title="Show facts from records and clues"
         >
           Records
         </FilterButton>
@@ -203,6 +210,7 @@ export function LeftPanel({
           onClick={() => setSelectedFilter('scene')}
           count={factCounts.scene}
           icon={<MapPin className="w-3 h-3" />}
+          title="Show facts from scenes"
         >
           Scenes
         </FilterButton>
@@ -254,26 +262,35 @@ interface FilterButtonProps {
   onClick: () => void
   count: number
   icon?: React.ReactNode
+  title?: string
   children: React.ReactNode
 }
 
-function FilterButton({ active, onClick, count, icon, children }: FilterButtonProps) {
+function FilterButton({ active, onClick, count, icon, title, children }: FilterButtonProps) {
   return (
-    <button
-      onClick={onClick}
-      className={`
-        flex items-center gap-1.5 px-3 py-1.5 rounded text-xs transition-all duration-200
-        ${active 
-          ? 'bg-gray-600/30 text-gray-200 shadow-inner border border-gray-600/50' 
-          : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-gray-200 border border-gray-700'
-        }
-      `}
-      style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
-    >
-      {icon && <span className="scale-105">{icon}</span>}
-      <span>{children}</span>
-      <span className="ml-1 opacity-70">({count})</span>
-    </button>
+    <div className="relative group">
+      <button
+        onClick={onClick}
+        className={`
+          flex items-center gap-1.5 px-3 py-1.5 rounded text-xs transition-all duration-200
+          ${active 
+            ? 'bg-gray-600/30 text-gray-200 shadow-inner border border-gray-600/50' 
+            : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-gray-200 border border-gray-700'
+          }
+        `}
+        style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
+      >
+        {icon && <span className="scale-105">{icon}</span>}
+        <span>{children}</span>
+        <span className="ml-1 opacity-70">({count})</span>
+      </button>
+      {title && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-200 text-gray-900 text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 shadow-lg border border-gray-300">
+          {title}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-200"></div>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -343,24 +360,31 @@ interface ToolbarButtonProps {
 
 function ToolbarButton({ children, active, disabled, onClick, title }: ToolbarButtonProps) {
   return (
-    <button
-      className={`
-        flex items-center justify-center p-2 rounded transition-all duration-200
-        ${disabled 
-          ? 'opacity-40 cursor-not-allowed text-gray-500' 
-          : active
-            ? 'bg-gray-600/30 text-gray-200 shadow-inner'
-            : 'text-gray-300 hover:bg-gray-700 hover:text-gray-200'
-        }
-      `}
-      style={{
-        fontFamily: "'Courier Prime', 'Courier New', monospace",
-      }}
-      onClick={disabled ? undefined : onClick}
-      disabled={disabled}
-      title={title}
-    >
-      {children}
-    </button>
+    <div className="relative group">
+      <button
+        className={`
+          flex items-center justify-center p-2 rounded transition-all duration-200
+          ${disabled 
+            ? 'opacity-40 cursor-not-allowed text-gray-500' 
+            : active
+              ? 'bg-gray-600/30 text-gray-200 shadow-inner'
+              : 'text-gray-300 hover:bg-gray-700 hover:text-gray-200'
+          }
+        `}
+        style={{
+          fontFamily: "'Courier Prime', 'Courier New', monospace",
+        }}
+        onClick={disabled ? undefined : onClick}
+        disabled={disabled}
+      >
+        {children}
+      </button>
+      {title && (
+        <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-gray-900 text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 z-50 shadow-lg border border-gray-300">
+          {title}
+          <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-200"></div>
+        </div>
+      )}
+    </div>
   )
 }

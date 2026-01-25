@@ -51,47 +51,159 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
         />
       )}
       
-      {/* Connection Handles - only show when selected */}
+      {/* Connection handles - invisible but functional */}
+      {/* Top */}
+      <Handle
+        type="source"
+        position={Position.Top}
+        id="top-source"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Top}
+        id="top-target"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      
+      {/* Bottom */}
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="bottom-source"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Bottom}
+        id="bottom-target"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      
+      {/* Left */}
+      <Handle
+        type="source"
+        position={Position.Left}
+        id="left-source"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="left-target"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      
+      {/* Right */}
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="right-source"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      <Handle
+        type="target"
+        position={Position.Right}
+        id="right-target"
+        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'auto'
+        }}
+      />
+      
+      {/* Custom visual dots at midpoints - only visible when selected */}
       {selected && (
         <>
-          <Handle
-            type="target"
-            position={Position.Top}
+          {/* Top dot */}
+          <div
+            className="absolute pointer-events-none"
             style={{
-              background: '#6b7280',
+              top: '-4px',
+              left: '50%',
+              transform: 'translateX(-50%)',
               width: '8px',
               height: '8px',
+              background: '#6b7280',
               border: '2px solid white',
+              borderRadius: '50%',
+              zIndex: 100,
             }}
           />
-          <Handle
-            type="source"
-            position={Position.Bottom}
+          
+          {/* Bottom dot */}
+          <div
+            className="absolute pointer-events-none"
             style={{
-              background: '#6b7280',
+              bottom: '-4px',
+              left: '50%',
+              transform: 'translateX(-50%)',
               width: '8px',
               height: '8px',
+              background: '#6b7280',
               border: '2px solid white',
+              borderRadius: '50%',
+              zIndex: 100,
             }}
           />
-          <Handle
-            type="source"
-            position={Position.Left}
+          
+          {/* Left dot */}
+          <div
+            className="absolute pointer-events-none"
             style={{
-              background: '#6b7280',
+              left: '-4px',
+              top: '50%',
+              transform: 'translateY(-50%)',
               width: '8px',
               height: '8px',
+              background: '#6b7280',
               border: '2px solid white',
+              borderRadius: '50%',
+              zIndex: 100,
             }}
           />
-          <Handle
-            type="source"
-            position={Position.Right}
+          
+          {/* Right dot */}
+          <div
+            className="absolute pointer-events-none"
             style={{
-              background: '#6b7280',
+              right: '-4px',
+              top: '50%',
+              transform: 'translateY(-50%)',
               width: '8px',
               height: '8px',
+              background: '#6b7280',
               border: '2px solid white',
+              borderRadius: '50%',
+              zIndex: 100,
             }}
           />
         </>
@@ -100,7 +212,8 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
       {/* Delete Button - appears on hover */}
       <button
         onClick={handleDelete}
-        className="absolute -top-2 -right-2 z-10 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"
+        className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"
+        style={{ zIndex: 100 }}
         title="Delete photo"
       >
         <Trash2 className="w-3 h-3" />
@@ -109,6 +222,7 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
       {/* Photo */}
       <div
         className="relative w-full h-full bg-gray-200 overflow-hidden cursor-pointer"
+        style={{ zIndex: 1 }}
         onClick={handleClick}
       >
         <Image
