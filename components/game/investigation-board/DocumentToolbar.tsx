@@ -11,7 +11,7 @@ interface DocumentToolbarProps {
 export function DocumentToolbar({ position, onReview, onDelete }: DocumentToolbarProps) {
   return (
     <div
-      className="absolute z-50 flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg"
+      className="absolute z-50 flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg transition-all duration-75 ease-out"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,

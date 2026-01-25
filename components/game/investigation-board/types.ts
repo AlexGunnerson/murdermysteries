@@ -60,6 +60,7 @@ export interface DocumentNodeData {
 
 export interface SuspectNodeData {
   id: string
+  suspectId: string
   name: string
   portraitUrl: string
   isVictim?: boolean

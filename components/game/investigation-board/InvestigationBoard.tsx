@@ -27,7 +27,18 @@ import { ConnectionContextMenu } from './ConnectionContextMenu'
 import { LeftPanel } from './LeftPanel'
 import { NoteToolbar } from './NoteToolbar'
 import { DocumentToolbar } from './DocumentToolbar'
+import { SuspectToolbar } from './SuspectToolbar'
 import { EvidenceSelectorModal } from './EvidenceSelectorModal'
+import { DocumentViewer } from '../detective-board/DocumentViewer'
+import { DocumentHTMLViewer } from '../detective-board/DocumentHTMLViewer'
+import { BlackmailViewer } from '../detective-board/BlackmailViewer'
+import { BlackmailSceneViewer } from '../detective-board/BlackmailSceneViewer'
+import { SpeechNotes } from '../SpeechNotes'
+import { CallLog } from '../CallLog'
+import { VeronicaThankYouNote } from '../VeronicaThankYouNote'
+import { SuspectDossierView } from '../detective-board/SuspectDossierView'
+import { ValeNotesPage1, ValeNotesPage2 } from '../documents/ValeNotesDocs'
+import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from '../documents/CoronerReportDocs'
 import { useInvestigationBoardStore } from './useInvestigationBoardStore'
 import { calculateInitialLayout, generateConnectionId } from './utils'
 import { ConnectionType } from './types'
@@ -80,6 +91,14 @@ function InvestigationBoardContent({
   const [isEvidenceSelectorOpen, setIsEvidenceSelectorOpen] = useState(false)
   const [evidenceSelectorInitialTab, setEvidenceSelectorInitialTab] = useState<'photos' | 'documents'>('photos')
   const [copiedNode, setCopiedNode] = useState<Node | null>(null)
+  const [reviewingDocument, setReviewingDocument] = useState<{ title: string; images: string[] } | null>(null)
+  const [reviewingHTMLDocument, setReviewingHTMLDocument] = useState<{ title: string; documentId: string } | null>(null)
+  const [chatSuspect, setChatSuspect] = useState<any | null>(null)
+  const [storyConfig, setStoryConfig] = useState<any | null>(null)
+  const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 })
+  const [isMoving, setIsMoving] = useState(false)
+  const [isDraggingNode, setIsDraggingNode] = useState(false)
+  const moveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Use the base handlers directly
   const onNodesChange = onNodesChangeBase
@@ -173,9 +192,38 @@ function InvestigationBoardContent({
   }, [setNodes])
   
   const handleReviewDocument = useCallback((documentId: string) => {
-    // TODO: Open DocumentViewer modal with the document
-    console.log('Review document:', documentId)
-  }, [])
+    // Find the document node by documentId
+    const docNode = nodes.find(node => 
+      node.type === 'document' && 
+      (node.data as any).documentId === documentId
+    )
+    
+    if (docNode) {
+      const docData = docNode.data as any
+      
+      // Check if it's an HTML document or document with custom viewer
+      if (docData.isHTML || 
+          docData.isLetter ||
+          documentId === 'record_blackmail_portrait' || 
+          documentId === 'record_blackmail_floor' ||
+          documentId === 'record_speech_notes' ||
+          documentId === 'record_coroner' ||
+          documentId === 'record_phone_logs' ||
+          documentId === 'record_veronica_thankyou') {
+        setReviewingHTMLDocument({
+          title: docData.title || 'Document',
+          documentId: documentId
+        })
+      } else {
+        // Regular image-based document
+        const images = docData.images || (docData.documentUrl ? [docData.documentUrl] : [])
+        setReviewingDocument({
+          title: docData.title || 'Document',
+          images: images
+        })
+      }
+    }
+  }, [nodes])
   
   // Initialize board with suspects and victim only
   useEffect(() => {
@@ -255,13 +303,13 @@ function InvestigationBoardContent({
           onReview: handleReviewDocument,
         },
         draggable: true,
-        resizing: false,
+        resizing: true,
         style: {
-          width: 250,
-          height: 200,
+          width: 200,
+          height: 283,
         },
-        width: 250,
-        height: 200,
+        width: 200,
+        height: 283,
       })) || []
     
     flowNodes = [...flowNodes, ...noteNodes, ...photoNodes, ...documentNodes]
@@ -302,12 +350,29 @@ function InvestigationBoardContent({
     reactFlowInstance,
   ])
   
+  // Initialize viewport state
+  useEffect(() => {
+    if (isInitialized) {
+      const currentViewport = reactFlowInstance.getViewport()
+      setViewport(currentViewport)
+    }
+  }, [isInitialized, reactFlowInstance])
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (moveTimeoutRef.current) {
+        clearTimeout(moveTimeoutRef.current)
+      }
+    }
+  }, [])
+  
   // Save state when nodes or edges change
   useEffect(() => {
     if (!hasInitializedRef.current) return
     
-    const viewport = reactFlowInstance.getViewport()
-    saveState(nodes, edges, viewport)
+    const currentViewport = reactFlowInstance.getViewport()
+    saveState(nodes, edges, currentViewport)
   }, [nodes, edges, reactFlowInstance, saveState])
   
   // Handle connection creation
@@ -403,6 +468,49 @@ function InvestigationBoardContent({
     setEdges(prev => prev.filter(edge => edge.id !== contextMenu.edgeId))
   }, [contextMenu.edgeId, setEdges])
   
+  // Load story config and suspect metadata
+  useEffect(() => {
+    async function loadConfig() {
+      try {
+        const [metadataRes, storyRes] = await Promise.all([
+          fetch(`/cases/${caseId}/metadata.json`),
+          fetch(`/cases/${caseId}/story-config.json`)
+        ])
+        
+        const metadata = await metadataRes.json()
+        const story = await storyRes.json()
+        
+        setStoryConfig({
+          metadata,
+          story
+        })
+      } catch (error) {
+        console.error('Failed to load config:', error)
+      }
+    }
+    
+    loadConfig()
+  }, [caseId])
+  
+  // Handle opening chat with suspect/victim
+  const handleOpenChat = useCallback((suspectId: string) => {
+    if (!storyConfig) return
+    
+    // Skip if it's the victim (Reginald) - no chat for the victim
+    if (suspectId === 'victim_reginald') {
+      return
+    }
+    
+    // Find suspect in metadata
+    const suspect = storyConfig.metadata.suspects.find((s: any) => s.id === suspectId)
+    if (suspect) {
+      setChatSuspect({
+        ...suspect,
+        age: 0, // Age not used in investigation board
+      })
+    }
+  }, [storyConfig])
+  
   // Handle drag over canvas (required to enable drop)
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
@@ -486,6 +594,9 @@ function InvestigationBoardContent({
         }
         
         setNodes(prev => [...prev, newPhoto])
+        
+        // Close the evidence selector panel after dropping a photo
+        setIsEvidenceSelectorOpen(false)
         return
       } catch (error) {
         console.error('Failed to drop photo:', error)
@@ -504,8 +615,8 @@ function InvestigationBoardContent({
           id: docId,
           type: 'document',
           position: {
-            x: position.x - 125, // Center the document (250px wide / 2)
-            y: position.y - 100, // Center the document (200px tall / 2)
+            x: position.x - 70, // Center the document (140px wide / 2)
+            y: position.y - 99, // Center the document (198px tall / 2)
           },
           data: {
             id: docId,
@@ -521,16 +632,19 @@ function InvestigationBoardContent({
             onReview: handleReviewDocument,
           },
           draggable: true,
-          resizing: false,
+          resizing: true,
           style: {
-            width: 250,
-            height: 200,
+            width: 140,
+            height: 198,
           },
-          width: 250,
-          height: 200,
+          width: 140,
+          height: 198,
         }
         
         setNodes(prev => [...prev, newDocument])
+        
+        // Close the evidence selector panel after dropping a document
+        setIsEvidenceSelectorOpen(false)
         return
       } catch (error) {
         console.error('Failed to drop document:', error)
@@ -611,11 +725,16 @@ function InvestigationBoardContent({
   const selectedNote = nodes.find(n => n.selected && n.type === 'note')
   const noteToolbarPosition = selectedNote
     ? (() => {
-        const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
+        const { x: viewportX, y: viewportY, zoom } = viewport
         const nodeWidth = (selectedNote.style?.width as number) || (selectedNote.width || 180)
-        const screenX = selectedNote.position.x * zoom + viewportX + (nodeWidth * zoom) / 2
+        const toolbarWidth = 200 // Approximate toolbar width
+        const screenX = selectedNote.position.x * zoom + viewportX + (nodeWidth * zoom) / 2 - toolbarWidth / 2
         const screenY = selectedNote.position.y * zoom + viewportY - 50 // Position above the note
-        return { x: screenX, y: Math.max(10, screenY) }
+        // Keep toolbar within viewport bounds
+        return { 
+          x: Math.max(10, Math.min(screenX, window.innerWidth - toolbarWidth - 10)),
+          y: Math.max(10, screenY)
+        }
       })()
     : null
   
@@ -623,11 +742,33 @@ function InvestigationBoardContent({
   const selectedDocument = nodes.find(n => n.selected && n.type === 'document')
   const documentToolbarPosition = selectedDocument
     ? (() => {
-        const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
-        const nodeWidth = (selectedDocument.style?.width as number) || (selectedDocument.width || 250)
-        const screenX = selectedDocument.position.x * zoom + viewportX + (nodeWidth * zoom) / 2
+        const { x: viewportX, y: viewportY, zoom } = viewport
+        const nodeWidth = (selectedDocument.style?.width as number) || (selectedDocument.width || 140)
+        const toolbarWidth = 120 // Approximate toolbar width
+        const screenX = selectedDocument.position.x * zoom + viewportX + (nodeWidth * zoom) - toolbarWidth + 20 // Align to right edge with offset to move further right
         const screenY = selectedDocument.position.y * zoom + viewportY - 50 // Position above the document
-        return { x: screenX, y: Math.max(10, screenY) }
+        // Keep toolbar within viewport bounds
+        return { 
+          x: Math.max(10, Math.min(screenX, window.innerWidth - toolbarWidth - 10)),
+          y: Math.max(10, screenY)
+        }
+      })()
+    : null
+  
+  // Calculate toolbar position for selected suspect/victim
+  const selectedSuspect = nodes.find(n => n.selected && (n.type === 'suspect' || n.type === 'victim'))
+  const suspectToolbarPosition = selectedSuspect
+    ? (() => {
+        const { x: viewportX, y: viewportY, zoom } = viewport
+        const nodeWidth = 170 // Suspect card width is approximately 170px (150px + padding)
+        const toolbarWidth = 40 // Approximate width of the compact toolbar
+        const screenX = selectedSuspect.position.x * zoom + viewportX + (nodeWidth * zoom) - toolbarWidth - 8 // Position at right edge with padding
+        const screenY = selectedSuspect.position.y * zoom + viewportY + 8 // Position at top with small padding
+        // Keep toolbar within viewport bounds
+        return { 
+          x: Math.max(10, Math.min(screenX, window.innerWidth - toolbarWidth - 10)),
+          y: Math.max(10, screenY)
+        }
       })()
     : null
   
@@ -644,6 +785,22 @@ function InvestigationBoardContent({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onReconnect={handleReconnect}
+        onNodeDragStart={() => setIsDraggingNode(true)}
+        onNodeDragStop={() => setIsDraggingNode(false)}
+        onMove={(event, newViewport) => {
+          setViewport(newViewport)
+          setIsMoving(true)
+          
+          // Clear existing timeout
+          if (moveTimeoutRef.current) {
+            clearTimeout(moveTimeoutRef.current)
+          }
+          
+          // Set new timeout to hide toolbars after movement stops
+          moveTimeoutRef.current = setTimeout(() => {
+            setIsMoving(false)
+          }, 150)
+        }}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
@@ -710,9 +867,10 @@ function InvestigationBoardContent({
         onClose={() => setContextMenu(prev => ({ ...prev, isOpen: false }))}
       />
       
-      {/* Note Toolbar - appears when a note is selected */}
-      {selectedNote && noteToolbarPosition && (
+      {/* Note Toolbar - appears when a note is selected and board/node is not moving */}
+      {!isMoving && !isDraggingNode && selectedNote && noteToolbarPosition && (
         <NoteToolbar
+          key={selectedNote.id}
           position={noteToolbarPosition}
           currentColor={(selectedNote.data as any).color || 'yellow'}
           onColorChange={(color) => handleColorChange(selectedNote.id, color)}
@@ -720,12 +878,118 @@ function InvestigationBoardContent({
         />
       )}
       
-      {/* Document Toolbar - appears when a document is selected */}
-      {selectedDocument && documentToolbarPosition && (
+      {/* Document Toolbar - appears when a document is selected and board/node is not moving */}
+      {!isMoving && !isDraggingNode && selectedDocument && documentToolbarPosition && (
         <DocumentToolbar
+          key={selectedDocument.id}
           position={documentToolbarPosition}
           onReview={() => handleReviewDocument((selectedDocument.data as any).documentId)}
           onDelete={() => handleDeleteDocument(selectedDocument.id)}
+        />
+      )}
+      
+      {/* Suspect Toolbar - appears when a suspect/victim is selected and board/node is not moving */}
+      {!isMoving && !isDraggingNode && selectedSuspect && suspectToolbarPosition && (
+        <SuspectToolbar
+          key={selectedSuspect.id}
+          position={suspectToolbarPosition}
+          onChat={() => handleOpenChat((selectedSuspect.data as any).suspectId)}
+          suspectName={(selectedSuspect.data as any).name}
+        />
+      )}
+      
+      {/* Document Viewer Modal */}
+      {reviewingDocument && (
+        <DocumentViewer
+          documentName={reviewingDocument.title}
+          images={reviewingDocument.images}
+          onClose={() => setReviewingDocument(null)}
+        />
+      )}
+      
+      {/* HTML Document Viewers */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_vale_notes' && (
+        <DocumentHTMLViewer
+          documentName={reviewingHTMLDocument.title}
+          pages={[
+            {
+              label: "PAGE 1 OF 2",
+              content: <ValeNotesPage1 />
+            },
+            {
+              label: "PAGE 2 OF 2",
+              content: <ValeNotesPage2 />
+            }
+          ]}
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Blackmail Papers - Found Behind Painting (Complete) */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_portrait' && (
+        <BlackmailViewer
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Blackmail Papers - Found Near Body (Missing Vale) */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_floor' && (
+        <BlackmailSceneViewer
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Reginald's Speech Notes */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_speech_notes' && (
+        <SpeechNotes
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Coroner's Report */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_coroner' && (
+        <DocumentHTMLViewer
+          documentName="Coroner's Report"
+          pages={[
+            {
+              label: "PAGE 1 OF 3",
+              content: <CoronerReportPage1 />
+            },
+            {
+              label: "PAGE 2 OF 3",
+              content: <CoronerReportPage2 />
+            },
+            {
+              label: "PAGE 3 OF 3",
+              content: <CoronerReportPage3 />
+            }
+          ]}
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Phone Records */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_phone_logs' && (
+        <CallLog
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Veronica's Thank You Note */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_veronica_thankyou' && (
+        <VeronicaThankYouNote
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+      
+      {/* Suspect Chat Modal */}
+      {chatSuspect && storyConfig && (
+        <SuspectDossierView
+          suspect={chatSuspect}
+          suspectPersonality={storyConfig.story.suspects[chatSuspect.id]?.personality || ''}
+          suspectAlibi={storyConfig.story.suspects[chatSuspect.id]?.alibi || ''}
+          systemPrompt={storyConfig.story.systemPrompt || ''}
+          onClose={() => setChatSuspect(null)}
         />
       )}
     </div>

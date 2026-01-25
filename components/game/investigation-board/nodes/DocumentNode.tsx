@@ -1,9 +1,8 @@
 "use client"
 
 import { memo } from 'react'
-import { Handle, Position, NodeProps } from '@xyflow/react'
+import { Handle, Position, NodeProps, NodeResizer } from '@xyflow/react'
 import Image from 'next/image'
-import { Trash2 } from 'lucide-react'
 
 export interface DocumentNodeData extends Record<string, unknown> {
   id: string
@@ -21,13 +20,6 @@ export interface DocumentNodeData extends Record<string, unknown> {
 
 function DocumentNodeComponent({ data, selected }: NodeProps) {
   const docData = data as DocumentNodeData
-  
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (docData.onDelete) {
-      docData.onDelete(docData.id)
-    }
-  }
 
   const handleClick = () => {
     if (docData.onReview) {
@@ -47,6 +39,17 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
           : '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)',
       }}
     >
+      {/* Node Resizer - only show when selected, aspect ratio locked to A4 */}
+      {selected && (
+        <NodeResizer
+          minWidth={100}
+          minHeight={141}
+          isVisible={selected}
+          keepAspectRatio={true}
+          lineClassName="border-gray-400"
+          handleClassName="h-3 w-3 bg-white border-2 border-gray-400 rounded"
+        />
+      )}
       
       {/* Connection handles - invisible but functional */}
       {/* Top */}
@@ -206,16 +209,6 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         </>
       )}
 
-      {/* Delete Button - appears on hover */}
-      <button
-        onClick={handleDelete}
-        className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:bg-red-600"
-        style={{ zIndex: 100 }}
-        title="Delete document"
-      >
-        <Trash2 className="w-3 h-3" />
-      </button>
-
       {/* Document Content */}
       <div
         className="relative w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden cursor-pointer flex items-center justify-center"
@@ -237,8 +230,8 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
 
         {/* Document text - centered */}
         <div className="relative flex items-center justify-center p-4 w-full h-full">
-          <p className="text-sm font-bold text-gray-800 text-center font-mono leading-tight break-words">
-            Document: {docData.title}
+          <p className="text-sm text-gray-800 text-center font-mono leading-tight break-words">
+            {docData.title}
           </p>
         </div>
 

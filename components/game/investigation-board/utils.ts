@@ -69,17 +69,17 @@ export function calculateInitialLayout(
   nodes.push({
     id: victim.id,
     type: 'victim',
-    position: { x: 640, y: 370 },
-    data: { ...victim, isVictim: true },
+    position: { x: 622, y: 292 },
+    data: { ...victim, suspectId: victim.id, isVictim: true },
   })
   
   // Map of suspect IDs to their default positions
   const suspectPositions: Record<string, { x: number; y: number }> = {
-    'suspect_veronica': { x: 798, y: 395 },
-    'suspect_martin': { x: 494, y: 568 },
-    'suspect_colin': { x: 987, y: 565 },
-    'suspect_lydia': { x: 645, y: 605 },
-    'suspect_vale': { x: 812, y: 596 },
+    'suspect_veronica': { x: 841, y: 320 },
+    'suspect_martin': { x: 424, y: 510 },
+    'suspect_colin': { x: 1086, y: 483 },
+    'suspect_lydia': { x: 646, y: 554 },
+    'suspect_vale': { x: 853, y: 591 },
   }
   
   // Place suspects using the predefined positions
@@ -90,7 +90,7 @@ export function calculateInitialLayout(
       id: suspect.id,
       type: 'suspect',
       position,
-      data: suspect,
+      data: { ...suspect, suspectId: suspect.id },
     })
   })
   

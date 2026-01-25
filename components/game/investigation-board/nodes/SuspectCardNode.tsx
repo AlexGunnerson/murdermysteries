@@ -200,8 +200,10 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
       >
         {/* Photo */}
         <div 
-          className="relative w-24 h-28 overflow-hidden"
+          className="relative overflow-hidden"
           style={{
+            width: '150px',
+            height: '175px',
             filter: 'sepia(20%) contrast(1.1)',
           }}
         >
@@ -210,7 +212,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
             alt={data.name}
             fill
             className="object-cover"
-            sizes="96px"
+            sizes="150px"
           />
           
           {/* Vintage photo overlay */}

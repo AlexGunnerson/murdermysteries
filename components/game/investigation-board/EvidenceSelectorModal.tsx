@@ -2,8 +2,17 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
-import { X, Image as ImageIcon, FileText } from 'lucide-react'
+import { X, Image as ImageIcon, FileText, Eye } from 'lucide-react'
 import { useGameState } from '@/lib/hooks/useGameState'
+import { DocumentViewer } from '../detective-board/DocumentViewer'
+import { DocumentHTMLViewer } from '../detective-board/DocumentHTMLViewer'
+import { BlackmailViewer } from '../detective-board/BlackmailViewer'
+import { BlackmailSceneViewer } from '../detective-board/BlackmailSceneViewer'
+import { SpeechNotes } from '../SpeechNotes'
+import { CallLog } from '../CallLog'
+import { VeronicaThankYouNote } from '../VeronicaThankYouNote'
+import { ValeNotesPage1, ValeNotesPage2 } from '../documents/ValeNotesDocs'
+import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from '../documents/CoronerReportDocs'
 
 interface PhotoItem {
   id: string
@@ -45,6 +54,8 @@ export function EvidenceSelectorModal({ isOpen, onClose, initialTab = 'photos', 
   const [documents, setDocuments] = useState<DocumentItem[]>([])
   const [photoFilter, setPhotoFilter] = useState<string>('all')
   const [showAllFilters, setShowAllFilters] = useState(false)
+  const [reviewingDocument, setReviewingDocument] = useState<{ title: string; images: string[] } | null>(null)
+  const [reviewingHTMLDocument, setReviewingHTMLDocument] = useState<{ title: string; documentId: string } | null>(null)
   const { viewedDocuments } = useGameState()
 
   // Reset to initial tab when modal opens
@@ -99,9 +110,10 @@ export function EvidenceSelectorModal({ isOpen, onClose, initialTab = 'photos', 
           .filter((doc: any) => {
             // Include if initially available or unlocked
             const isAvailable = doc.initiallyAvailable || unlockedContent.records.has(doc.id) || viewedDocuments.has(doc.id)
-            // Exclude if it's only a photo gallery (multiple images but no other content)
-            const isPhotoOnly = doc.images && doc.images.length > 1 && !doc.content && !doc.isLetter && !doc.isHTML && !doc.documentUrl
-            return isAvailable && !isPhotoOnly
+            // Exclude if it's primarily a photo gallery (has images array)
+            // Photos are already shown in the Photos tab
+            const isPhotoGallery = doc.images && doc.images.length > 0
+            return isAvailable && !isPhotoGallery
           })
           .map((doc: any) => ({
             id: doc.id,
@@ -160,12 +172,36 @@ export function EvidenceSelectorModal({ isOpen, onClose, initialTab = 'photos', 
       title: doc.title,
       description: doc.description,
       thumbnailUrl: doc.thumbnailUrl,
-      images: doc.images,
+      images: doc.images || (doc.documentUrl ? [doc.documentUrl] : undefined),
       documentUrl: doc.documentUrl,
       isLetter: doc.isLetter,
       isHTML: doc.isHTML,
     }))
     e.dataTransfer.effectAllowed = 'copy'
+  }
+
+  const handleReviewDocument = (doc: DocumentItem) => {
+    // Check if it's an HTML document or document with custom viewer
+    if (doc.isHTML || 
+        doc.isLetter ||
+        doc.id === 'record_blackmail_portrait' || 
+        doc.id === 'record_blackmail_floor' ||
+        doc.id === 'record_speech_notes' ||
+        doc.id === 'record_coroner' ||
+        doc.id === 'record_phone_logs' ||
+        doc.id === 'record_veronica_thankyou') {
+      setReviewingHTMLDocument({
+        title: doc.title || 'Document',
+        documentId: doc.id
+      })
+    } else {
+      // Regular image-based document
+      const images = doc.images || (doc.documentUrl ? [doc.documentUrl] : [])
+      setReviewingDocument({
+        title: doc.title || 'Document',
+        images: images
+      })
+    }
   }
 
   if (!isOpen) return null
@@ -351,6 +387,7 @@ export function EvidenceSelectorModal({ isOpen, onClose, initialTab = 'photos', 
                       key={doc.id}
                       document={doc}
                       onDragStart={(e) => handleDocumentDragStart(doc, e)}
+                      onReview={() => handleReviewDocument(doc)}
                     />
                   ))}
                 </div>
@@ -386,6 +423,90 @@ export function EvidenceSelectorModal({ isOpen, onClose, initialTab = 'photos', 
           background: rgba(107, 114, 128, 0.7);
         }
       `}</style>
+
+      {/* Document Viewer Modal */}
+      {reviewingDocument && (
+        <DocumentViewer
+          documentName={reviewingDocument.title}
+          images={reviewingDocument.images}
+          onClose={() => setReviewingDocument(null)}
+        />
+      )}
+
+      {/* HTML Document Viewers */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_vale_notes' && (
+        <DocumentHTMLViewer
+          documentName={reviewingHTMLDocument.title}
+          pages={[
+            {
+              label: "PAGE 1 OF 2",
+              content: <ValeNotesPage1 />
+            },
+            {
+              label: "PAGE 2 OF 2",
+              content: <ValeNotesPage2 />
+            }
+          ]}
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Blackmail Papers - Found Behind Painting (Complete) */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_portrait' && (
+        <BlackmailViewer
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Blackmail Papers - Found Near Body (Missing Vale) */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_floor' && (
+        <BlackmailSceneViewer
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Reginald's Speech Notes */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_speech_notes' && (
+        <SpeechNotes
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Coroner's Report */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_coroner' && (
+        <DocumentHTMLViewer
+          documentName="Coroner's Report"
+          pages={[
+            {
+              label: "PAGE 1 OF 3",
+              content: <CoronerReportPage1 />
+            },
+            {
+              label: "PAGE 2 OF 3",
+              content: <CoronerReportPage2 />
+            },
+            {
+              label: "PAGE 3 OF 3",
+              content: <CoronerReportPage3 />
+            }
+          ]}
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Phone Records */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_phone_logs' && (
+        <CallLog
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
+
+      {/* Veronica's Thank You Note */}
+      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_veronica_thankyou' && (
+        <VeronicaThankYouNote
+          onClose={() => setReviewingHTMLDocument(null)}
+        />
+      )}
     </div>
   )
 }
@@ -450,10 +571,12 @@ function PhotoCard({ photo, onDragStart }: PhotoCardProps) {
 interface DocumentCardProps {
   document: DocumentItem
   onDragStart: (event: React.DragEvent) => void
+  onReview: () => void
 }
 
-function DocumentCard({ document, onDragStart }: DocumentCardProps) {
+function DocumentCard({ document, onDragStart, onReview }: DocumentCardProps) {
   const [isDragging, setIsDragging] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true)
@@ -464,11 +587,18 @@ function DocumentCard({ document, onDragStart }: DocumentCardProps) {
     setIsDragging(false)
   }
 
+  const handleReviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onReview()
+  }
+
   return (
     <div
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={`
         group relative rounded cursor-grab active:cursor-grabbing transition-all duration-200 overflow-hidden
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}
@@ -480,33 +610,28 @@ function DocumentCard({ document, onDragStart }: DocumentCardProps) {
         boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
       }}
     >
-      {/* Document thumbnail or icon */}
-      <div className="relative w-full aspect-[3/2] bg-gray-800 flex items-center justify-center">
-        {document.thumbnailUrl ? (
-          <Image
-            src={document.thumbnailUrl}
-            alt={document.title}
-            fill
-            className="object-cover object-top"
-            sizes="400px"
-          />
-        ) : (
-          <FileText className="w-16 h-16 text-gray-500" />
-        )}
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
-      </div>
-
-      {/* Title and description below */}
-      <div className="p-3 bg-gray-900/50">
+      {/* Title and description */}
+      <div className="p-4">
         <div className="flex items-start gap-2">
           <FileText className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <div className="font-bold text-gray-200 font-mono text-sm line-clamp-1">{document.title}</div>
-            <div className="text-xs text-gray-400 font-mono line-clamp-2 mt-1">{document.description}</div>
+            <div className="font-bold text-gray-200 font-mono text-sm mb-1">{document.title}</div>
+            <div className="text-xs text-gray-400 font-mono line-clamp-3">{document.description}</div>
           </div>
         </div>
       </div>
+
+      {/* Review eye icon - appears on hover */}
+      {isHovered && (
+        <button
+          onClick={handleReviewClick}
+          className="absolute top-2 right-2 z-10 p-1.5 rounded bg-gray-800/90 hover:bg-gray-700 transition-colors shadow-lg border border-gray-600/50"
+          title="Review Document"
+          style={{ backdropFilter: 'blur(4px)' }}
+        >
+          <Eye className="w-4 h-4 text-blue-400" />
+        </button>
+      )}
     </div>
   )
 }
