@@ -33,11 +33,29 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
 
 export interface BoardNode {
   id: string
-  type: 'suspect' | 'victim' | 'note'
+  type: 'suspect' | 'victim' | 'note' | 'photo' | 'document'
   position: { x: number; y: number }
-  data: SuspectNodeData | NoteNodeData
+  data: SuspectNodeData | NoteNodeData | PhotoNodeData | DocumentNodeData
   width?: number
   height?: number
+}
+
+export interface PhotoNodeData {
+  id: string
+  imageUrl: string
+  title: string
+}
+
+export interface DocumentNodeData {
+  id: string
+  documentId: string
+  title: string
+  description: string
+  thumbnailUrl?: string
+  images?: string[]
+  documentUrl?: string
+  isLetter?: boolean
+  isHTML?: boolean
 }
 
 export interface SuspectNodeData {

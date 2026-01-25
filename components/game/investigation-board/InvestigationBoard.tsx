@@ -20,12 +20,14 @@ import '@xyflow/react/dist/style.css'
 import SuspectCardNode from './nodes/SuspectCardNode'
 import NoteNode from './nodes/NoteNode'
 import PhotoNode from './nodes/PhotoNode'
+import DocumentNode from './nodes/DocumentNode'
 import RedStringEdge from './edges/RedStringEdge'
 import { ConnectionTypePopup } from './ConnectionTypePopup'
 import { ConnectionContextMenu } from './ConnectionContextMenu'
 import { LeftPanel } from './LeftPanel'
 import { NoteToolbar } from './NoteToolbar'
-import { PhotoSelectorModal } from './PhotoSelectorModal'
+import { DocumentToolbar } from './DocumentToolbar'
+import { EvidenceSelectorModal } from './EvidenceSelectorModal'
 import { useInvestigationBoardStore } from './useInvestigationBoardStore'
 import { calculateInitialLayout, generateConnectionId } from './utils'
 import { ConnectionType } from './types'
@@ -37,6 +39,7 @@ const nodeTypes = {
   victim: SuspectCardNode,
   note: NoteNode,
   photo: PhotoNode,
+  document: DocumentNode,
 }
 
 // Define custom edge types
@@ -74,8 +77,8 @@ function InvestigationBoardContent({
   const [nodes, setNodes, onNodesChangeBase] = useNodesState([] as Node[])
   const [edges, setEdges, onEdgesChangeBase] = useEdgesState([] as Edge[])
   const [isInitialized, setIsInitialized] = useState(false)
-  const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const [isPhotoSelectorOpen, setIsPhotoSelectorOpen] = useState(false)
+  const [isEvidenceSelectorOpen, setIsEvidenceSelectorOpen] = useState(false)
+  const [evidenceSelectorInitialTab, setEvidenceSelectorInitialTab] = useState<'photos' | 'documents'>('photos')
   const [copiedNode, setCopiedNode] = useState<Node | null>(null)
   
   // Use the base handlers directly
@@ -164,6 +167,16 @@ function InvestigationBoardContent({
     console.log('Photo clicked:', photoId)
   }, [])
   
+  // Document handlers
+  const handleDeleteDocument = useCallback((documentId: string) => {
+    setNodes(prev => prev.filter(node => node.id !== documentId))
+  }, [setNodes])
+  
+  const handleReviewDocument = useCallback((documentId: string) => {
+    // TODO: Open DocumentViewer modal with the document
+    console.log('Review document:', documentId)
+  }, [])
+  
   // Initialize board with suspects and victim only
   useEffect(() => {
     if (isInitialized) return
@@ -229,7 +242,29 @@ function InvestigationBoardContent({
         height: (n as any).height || (n as any).style?.height || 200,
       })) || []
     
-    flowNodes = [...flowNodes, ...noteNodes, ...photoNodes]
+    // Add document nodes from stored state
+    const documentNodes: Node[] = storedState?.nodes
+      .filter(n => n?.id?.startsWith('document_'))
+      .map(n => ({
+        id: n.id,
+        type: 'document' as const,
+        position: n.position,
+        data: {
+          ...(n as any).data,
+          onDelete: handleDeleteDocument,
+          onReview: handleReviewDocument,
+        },
+        draggable: true,
+        resizing: false,
+        style: {
+          width: 250,
+          height: 200,
+        },
+        width: 250,
+        height: 200,
+      })) || []
+    
+    flowNodes = [...flowNodes, ...noteNodes, ...photoNodes, ...documentNodes]
     
     // Apply stored positions if available
     const nodesWithPositions = applyStoredPositions(flowNodes, storedState)
@@ -262,6 +297,8 @@ function InvestigationBoardContent({
     handleColorChange,
     handleDeletePhoto,
     handlePhotoClick,
+    handleDeleteDocument,
+    handleReviewDocument,
     reactFlowInstance,
   ])
   
@@ -455,7 +492,52 @@ function InvestigationBoardContent({
         return
       }
     }
-  }, [reactFlowInstance, setNodes, handleUpdateNote, handleDeleteNote, handleColorChange, handleDeletePhoto, handlePhotoClick])
+    
+    // Handle document drop
+    const documentDataStr = event.dataTransfer.getData('application/document')
+    if (documentDataStr) {
+      try {
+        const documentData = JSON.parse(documentDataStr)
+        const docId = `document_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        
+        const newDocument: Node = {
+          id: docId,
+          type: 'document',
+          position: {
+            x: position.x - 125, // Center the document (250px wide / 2)
+            y: position.y - 100, // Center the document (200px tall / 2)
+          },
+          data: {
+            id: docId,
+            documentId: documentData.documentId,
+            title: documentData.title,
+            description: documentData.description,
+            thumbnailUrl: documentData.thumbnailUrl,
+            images: documentData.images,
+            documentUrl: documentData.documentUrl,
+            isLetter: documentData.isLetter,
+            isHTML: documentData.isHTML,
+            onDelete: handleDeleteDocument,
+            onReview: handleReviewDocument,
+          },
+          draggable: true,
+          resizing: false,
+          style: {
+            width: 250,
+            height: 200,
+          },
+          width: 250,
+          height: 200,
+        }
+        
+        setNodes(prev => [...prev, newDocument])
+        return
+      } catch (error) {
+        console.error('Failed to drop document:', error)
+        return
+      }
+    }
+  }, [reactFlowInstance, setNodes, handleUpdateNote, handleDeleteNote, handleColorChange, handleDeletePhoto, handlePhotoClick, handleDeleteDocument, handleReviewDocument])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -525,21 +607,26 @@ function InvestigationBoardContent({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [reactFlowInstance, nodes, copiedNode, setNodes, handleUpdateNote, handleDeleteNote])
   
-  // Handle clicking on canvas to close panel
-  const handlePaneClick = useCallback(() => {
-    if (isPanelOpen) {
-      setIsPanelOpen(false)
-    }
-  }, [isPanelOpen])
-  
   // Calculate toolbar position for selected note
   const selectedNote = nodes.find(n => n.selected && n.type === 'note')
-  const toolbarPosition = selectedNote
+  const noteToolbarPosition = selectedNote
     ? (() => {
         const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
         const nodeWidth = (selectedNote.style?.width as number) || (selectedNote.width || 180)
         const screenX = selectedNote.position.x * zoom + viewportX + (nodeWidth * zoom) / 2
         const screenY = selectedNote.position.y * zoom + viewportY - 50 // Position above the note
+        return { x: screenX, y: Math.max(10, screenY) }
+      })()
+    : null
+  
+  // Calculate toolbar position for selected document
+  const selectedDocument = nodes.find(n => n.selected && n.type === 'document')
+  const documentToolbarPosition = selectedDocument
+    ? (() => {
+        const { x: viewportX, y: viewportY, zoom } = reactFlowInstance.getViewport()
+        const nodeWidth = (selectedDocument.style?.width as number) || (selectedDocument.width || 250)
+        const screenX = selectedDocument.position.x * zoom + viewportX + (nodeWidth * zoom) / 2
+        const screenY = selectedDocument.position.y * zoom + viewportY - 50 // Position above the document
         return { x: screenX, y: Math.max(10, screenY) }
       })()
     : null
@@ -557,7 +644,6 @@ function InvestigationBoardContent({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onReconnect={handleReconnect}
-        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={{
@@ -591,13 +677,17 @@ function InvestigationBoardContent({
         onZoomIn={() => reactFlowInstance.zoomIn()}
         onZoomOut={() => reactFlowInstance.zoomOut()}
         onFitView={() => reactFlowInstance.fitView({ padding: 0.60 })}
-        onPhotoClick={() => setIsPhotoSelectorOpen(true)}
+        onEvidenceClick={(initialTab) => {
+          setEvidenceSelectorInitialTab(initialTab)
+          setIsEvidenceSelectorOpen(true)
+        }}
       />
       
-      {/* Photo Selector Modal */}
-      <PhotoSelectorModal
-        isOpen={isPhotoSelectorOpen}
-        onClose={() => setIsPhotoSelectorOpen(false)}
+      {/* Evidence Selector Modal */}
+      <EvidenceSelectorModal
+        isOpen={isEvidenceSelectorOpen}
+        onClose={() => setIsEvidenceSelectorOpen(false)}
+        initialTab={evidenceSelectorInitialTab}
         unlockedContent={unlockedContent}
         caseId={caseId}
       />
@@ -621,12 +711,21 @@ function InvestigationBoardContent({
       />
       
       {/* Note Toolbar - appears when a note is selected */}
-      {selectedNote && toolbarPosition && (
+      {selectedNote && noteToolbarPosition && (
         <NoteToolbar
-          position={toolbarPosition}
+          position={noteToolbarPosition}
           currentColor={(selectedNote.data as any).color || 'yellow'}
           onColorChange={(color) => handleColorChange(selectedNote.id, color)}
           onDelete={() => handleDeleteNote(selectedNote.id)}
+        />
+      )}
+      
+      {/* Document Toolbar - appears when a document is selected */}
+      {selectedDocument && documentToolbarPosition && (
+        <DocumentToolbar
+          position={documentToolbarPosition}
+          onReview={() => handleReviewDocument((selectedDocument.data as any).documentId)}
+          onDelete={() => handleDeleteDocument(selectedDocument.id)}
         />
       )}
     </div>

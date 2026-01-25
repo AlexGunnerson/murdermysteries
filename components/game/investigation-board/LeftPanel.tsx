@@ -1,19 +1,19 @@
 "use client"
 
-import { StickyNote, ZoomIn, ZoomOut, Maximize2, Image } from 'lucide-react'
+import { StickyNote, ZoomIn, ZoomOut, Maximize2, Image, FileText } from 'lucide-react'
 
 interface LeftPanelProps {
   onZoomIn: () => void
   onZoomOut: () => void
   onFitView: () => void
-  onPhotoClick: () => void
+  onEvidenceClick: (initialTab: 'photos' | 'documents') => void
 }
 
 export function LeftPanel({ 
   onZoomIn,
   onZoomOut,
   onFitView,
-  onPhotoClick,
+  onEvidenceClick,
 }: LeftPanelProps) {
   // Toolbar with notes, photos, and zoom controls (no facts panel)
   return (
@@ -41,10 +41,18 @@ export function LeftPanel({
       
       {/* Photo button */}
       <ToolbarButton
-        onClick={onPhotoClick}
+        onClick={() => onEvidenceClick('photos')}
         title="Photos"
       >
         <Image className="w-5 h-5" />
+      </ToolbarButton>
+      
+      {/* Document button */}
+      <ToolbarButton
+        onClick={() => onEvidenceClick('documents')}
+        title="Documents"
+      >
+        <FileText className="w-5 h-5" />
       </ToolbarButton>
       
       <div className="w-full h-px bg-gray-600 my-0.5" />
