@@ -17,7 +17,6 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
-import FactCardNode from './nodes/FactCardNode'
 import SuspectCardNode from './nodes/SuspectCardNode'
 import NoteNode from './nodes/NoteNode'
 import PhotoNode from './nodes/PhotoNode'
@@ -28,14 +27,12 @@ import { LeftPanel } from './LeftPanel'
 import { NoteToolbar } from './NoteToolbar'
 import { PhotoSelectorModal } from './PhotoSelectorModal'
 import { useInvestigationBoardStore } from './useInvestigationBoardStore'
-import { factToNodeData, calculateInitialLayout, generateConnectionId, createFactNode } from './utils'
+import { calculateInitialLayout, generateConnectionId } from './utils'
 import { ConnectionType } from './types'
-import { DiscoveredFact } from '@/lib/store/gameStore'
 import { useGameState } from '@/lib/hooks/useGameState'
 
 // Define custom node types
 const nodeTypes = {
-  fact: FactCardNode,
   suspect: SuspectCardNode,
   victim: SuspectCardNode,
   note: NoteNode,
@@ -55,14 +52,12 @@ interface Suspect {
 
 interface InvestigationBoardContentProps {
   caseId: string
-  discoveredFacts: DiscoveredFact[]
   suspects: Suspect[]
   victim: Suspect
 }
 
 function InvestigationBoardContent({
   caseId,
-  discoveredFacts,
   suspects,
   victim,
 }: InvestigationBoardContentProps) {
@@ -73,44 +68,18 @@ function InvestigationBoardContent({
     saveState,
     applyStoredPositions,
     getStoredEdges,
-    getPlacedFactIds,
   } = useInvestigationBoardStore(caseId)
   
   // Board state (mode removed - always in select/interact mode)
   const [nodes, setNodes, onNodesChangeBase] = useNodesState([] as Node[])
   const [edges, setEdges, onEdgesChangeBase] = useEdgesState([] as Edge[])
   const [isInitialized, setIsInitialized] = useState(false)
-  const [placedFactIds, setPlacedFactIds] = useState<Set<string>>(new Set())
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [isPhotoSelectorOpen, setIsPhotoSelectorOpen] = useState(false)
   const [copiedNode, setCopiedNode] = useState<Node | null>(null)
   
-  // Wrap onNodesChange to track when fact nodes are deleted
-  const onNodesChange = useCallback((changes: any[]) => {
-    // Check if any nodes are being removed
-    const removedNodeIds = changes
-      .filter(change => change.type === 'remove')
-      .map(change => change.id)
-    
-    // Update placedFactIds if any fact nodes were removed
-    if (removedNodeIds.length > 0) {
-      setPlacedFactIds(prev => {
-        const newSet = new Set(prev)
-        removedNodeIds.forEach(id => {
-          // Remove from placed facts if it's a fact node
-          if (id.startsWith('fact_') || discoveredFacts.some(f => f.id === id)) {
-            newSet.delete(id)
-          }
-        })
-        return newSet
-      })
-    }
-    
-    // Call the original handler
-    onNodesChangeBase(changes)
-  }, [onNodesChangeBase, discoveredFacts])
-  
-  // Use the base onEdgesChange directly
+  // Use the base handlers directly
+  const onNodesChange = onNodesChangeBase
   const onEdgesChange = onEdgesChangeBase
   
   // Connection popup state
@@ -195,7 +164,7 @@ function InvestigationBoardContent({
     console.log('Photo clicked:', photoId)
   }, [])
   
-  // Initialize board with suspects and victim only (facts are added via drag-and-drop)
+  // Initialize board with suspects and victim only
   useEffect(() => {
     if (isInitialized) return
     if (suspects.length === 0) return
@@ -219,36 +188,6 @@ function InvestigationBoardContent({
       data: node.data,
       draggable: true,
     }))
-    
-    // Get placed fact IDs from stored state
-    const storedPlacedFactIds = getPlacedFactIds(storedState)
-    const placedFactIdsSet = new Set(storedPlacedFactIds)
-    
-    // For backward compatibility: if stored state has fact nodes but no placedFactIds,
-    // assume all fact nodes in stored state were placed
-    if (storedState && storedState.nodes.some(n => n?.id?.startsWith('fact_')) && storedPlacedFactIds.length === 0) {
-      storedState.nodes.forEach(n => {
-        if (n?.id?.startsWith('fact_')) {
-          placedFactIdsSet.add(n.id)
-        }
-      })
-    }
-    
-    // Add fact nodes for placed facts
-    const factNodes: Node[] = discoveredFacts
-      .filter(fact => placedFactIdsSet.has(fact.id))
-      .map(fact => {
-        const factData = factToNodeData(fact)
-        // Try to get stored position, otherwise use a default position
-        const storedNode = storedState?.nodes.find(n => n.id === fact.id)
-        return {
-          id: fact.id,
-          type: 'fact' as const,
-          position: storedNode?.position || { x: 400, y: 200 },
-          data: factData,
-          draggable: true,
-        }
-      })
     
     // Add note nodes from stored state
     const noteNodes: Node[] = storedState?.nodes
@@ -290,7 +229,7 @@ function InvestigationBoardContent({
         height: (n as any).height || (n as any).style?.height || 200,
       })) || []
     
-    flowNodes = [...flowNodes, ...factNodes, ...noteNodes, ...photoNodes]
+    flowNodes = [...flowNodes, ...noteNodes, ...photoNodes]
     
     // Apply stored positions if available
     const nodesWithPositions = applyStoredPositions(flowNodes, storedState)
@@ -300,7 +239,6 @@ function InvestigationBoardContent({
     
     setNodes(nodesWithPositions)
     setEdges(storedEdges)
-    setPlacedFactIds(placedFactIdsSet)
     setIsInitialized(true)
     hasInitializedRef.current = true
     
@@ -310,14 +248,12 @@ function InvestigationBoardContent({
       reactFlowInstance.fitView({ padding: 0.6, duration: 0 })
     }, 100)
   }, [
-    discoveredFacts,
     suspects,
     victim,
     isInitialized,
     loadState,
     applyStoredPositions,
     getStoredEdges,
-    getPlacedFactIds,
     setNodes,
     setEdges,
     handleEdgeContextMenu,
@@ -329,16 +265,13 @@ function InvestigationBoardContent({
     reactFlowInstance,
   ])
   
-  // No longer automatically add new facts to the board when discovered
-  // Facts must be manually dragged from the FactsPanel
-  
   // Save state when nodes or edges change
   useEffect(() => {
     if (!hasInitializedRef.current) return
     
     const viewport = reactFlowInstance.getViewport()
-    saveState(nodes, edges, viewport, Array.from(placedFactIds))
-  }, [nodes, edges, placedFactIds, reactFlowInstance, saveState])
+    saveState(nodes, edges, viewport)
+  }, [nodes, edges, reactFlowInstance, saveState])
   
   // Handle connection creation
   const onConnect: OnConnect = useCallback((connection) => {
@@ -433,20 +366,13 @@ function InvestigationBoardContent({
     setEdges(prev => prev.filter(edge => edge.id !== contextMenu.edgeId))
   }, [contextMenu.edgeId, setEdges])
   
-  // Handle fact drag start from FactsPanel
-  const handleFactDragStart = useCallback((fact: DiscoveredFact, event: React.DragEvent) => {
-    // Store fact data in drag event
-    event.dataTransfer.setData('application/fact', JSON.stringify(factToNodeData(fact)))
-    event.dataTransfer.effectAllowed = 'copy'
-  }, [])
-  
   // Handle drag over canvas (required to enable drop)
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'copy'
   }, [])
   
-  // Handle drop on canvas (facts, notes, and photos)
+  // Handle drop on canvas (notes and photos)
   const handleDrop = useCallback((event: React.DragEvent) => {
     event.preventDefault()
     
@@ -529,32 +455,7 @@ function InvestigationBoardContent({
         return
       }
     }
-    
-    // Handle fact drop
-    const factDataStr = event.dataTransfer.getData('application/fact')
-    if (!factDataStr) return
-    
-    try {
-      const factData = JSON.parse(factDataStr)
-      
-      // Check if fact is already placed
-      if (placedFactIds.has(factData.id)) {
-        console.log('Fact already placed on board')
-        return
-      }
-      
-      // Create new fact node
-      const newNode = createFactNode(factData, position)
-      
-      // Add node to board
-      setNodes(prev => [...prev, newNode])
-      
-      // Track that this fact has been placed
-      setPlacedFactIds(prev => new Set([...prev, factData.id]))
-    } catch (error) {
-      console.error('Failed to drop fact:', error)
-    }
-  }, [placedFactIds, reactFlowInstance, setNodes, handleUpdateNote, handleDeleteNote, handleColorChange, handleDeletePhoto, handlePhotoClick])
+  }, [reactFlowInstance, setNodes, handleUpdateNote, handleDeleteNote, handleColorChange, handleDeletePhoto, handlePhotoClick])
   
   // Keyboard shortcuts
   useEffect(() => {
@@ -687,15 +588,10 @@ function InvestigationBoardContent({
       
       {/* Unified Left Panel */}
       <LeftPanel
-        discoveredFacts={discoveredFacts}
-        onFactDragStart={handleFactDragStart}
-        placedFactIds={placedFactIds}
         onZoomIn={() => reactFlowInstance.zoomIn()}
         onZoomOut={() => reactFlowInstance.zoomOut()}
         onFitView={() => reactFlowInstance.fitView({ padding: 0.60 })}
         onPhotoClick={() => setIsPhotoSelectorOpen(true)}
-        isOpen={isPanelOpen}
-        setIsOpen={setIsPanelOpen}
       />
       
       {/* Photo Selector Modal */}
@@ -740,7 +636,6 @@ function InvestigationBoardContent({
 // Main component with provider
 interface InvestigationBoardProps {
   caseId: string
-  discoveredFacts: DiscoveredFact[]
   suspects: Suspect[]
   victim: Suspect
 }

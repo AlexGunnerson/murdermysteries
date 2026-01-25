@@ -22,7 +22,6 @@ export interface StoredBoardState {
     }
   }>
   viewport: Viewport
-  placedFactIds?: string[] // Track which facts have been placed on the board
 }
 
 export function useInvestigationBoardStore(caseId: string) {
@@ -35,7 +34,28 @@ export function useInvestigationBoardStore(caseId: string) {
     try {
       const stored = localStorage.getItem(storageKey)
       if (stored) {
-        return JSON.parse(stored)
+        const parsed = JSON.parse(stored)
+        
+        // Migration: Remove any fact nodes from stored state
+        if (parsed.nodes) {
+          parsed.nodes = parsed.nodes.filter((node: any) => {
+            // Remove fact nodes (by ID pattern or explicit check)
+            return !node.id.startsWith('fact_')
+          })
+        }
+        
+        // Migration: Remove any edges connected to fact nodes
+        if (parsed.edges && parsed.nodes) {
+          const validNodeIds = new Set(parsed.nodes.map((n: any) => n.id))
+          parsed.edges = parsed.edges.filter((edge: any) => {
+            return validNodeIds.has(edge.source) && validNodeIds.has(edge.target)
+          })
+        }
+        
+        // Remove deprecated placedFactIds field
+        delete parsed.placedFactIds
+        
+        return parsed
       }
     } catch (error) {
       console.error('Failed to load board state from localStorage:', error)
@@ -47,8 +67,7 @@ export function useInvestigationBoardStore(caseId: string) {
   const saveState = useCallback((
     nodes: Node[],
     edges: Edge[],
-    viewport: Viewport,
-    placedFactIds?: string[]
+    viewport: Viewport
   ) => {
     if (typeof window === 'undefined') return
     
@@ -84,7 +103,6 @@ export function useInvestigationBoardStore(caseId: string) {
           },
         })),
         viewport,
-        placedFactIds,
       }
       
       localStorage.setItem(storageKey, JSON.stringify(state))
@@ -150,20 +168,11 @@ export function useInvestigationBoardStore(caseId: string) {
     }))
   }, [])
   
-  // Get placed fact IDs from stored state
-  const getPlacedFactIds = useCallback((
-    storedState: StoredBoardState | null
-  ): string[] => {
-    if (!storedState || !storedState.placedFactIds) return []
-    return storedState.placedFactIds
-  }, [])
-  
   return {
     loadState,
     saveState,
     clearState,
     applyStoredPositions,
     getStoredEdges,
-    getPlacedFactIds,
   }
 }

@@ -18,7 +18,6 @@ export default function InvestigationPage({ params }: { params: Promise<{ caseId
   
   // Initialize game state
   useInitializeGame(caseId)
-  const { discoveredFacts } = useGameState()
   
   // Load suspects from metadata
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -123,7 +122,6 @@ export default function InvestigationPage({ params }: { params: Promise<{ caseId
       <div className="pt-14 h-full w-full">
         <InvestigationBoard
           caseId={caseId}
-          discoveredFacts={discoveredFacts}
           suspects={suspects}
           victim={victim}
         />

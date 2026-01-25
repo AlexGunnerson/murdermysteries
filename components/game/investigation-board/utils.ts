@@ -1,7 +1,6 @@
 // Utility functions for the Investigation Board
 
-import { DiscoveredFact } from '@/lib/store/gameStore'
-import { FactNodeData, getFriendlySourceName } from './types'
+import { getFriendlySourceName } from './types'
 
 /**
  * Generate a short summary of a fact (first few meaningful words)
@@ -50,24 +49,8 @@ export function detectMentionedSuspects(content: string): string[] {
 }
 
 /**
- * Convert a DiscoveredFact to FactNodeData
- */
-export function factToNodeData(fact: DiscoveredFact): FactNodeData {
-  return {
-    id: fact.id,
-    content: fact.content,
-    summary: summarizeFact(fact.content),
-    source: fact.source,
-    sourceId: fact.sourceId,
-    friendlySourceName: getFriendlySourceName(fact.sourceId),
-    discoveredAt: fact.discoveredAt,
-  }
-}
-
-/**
  * Calculate initial positions for board elements
  * Default positions based on user's preferred layout
- * Facts are no longer placed automatically - they must be dragged from the panel
  */
 export function calculateInitialLayout(
   suspects: { id: string; name: string; portraitUrl: string }[],
@@ -77,7 +60,7 @@ export function calculateInitialLayout(
 ) {
   const nodes: Array<{
     id: string
-    type: 'fact' | 'suspect' | 'victim'
+    type: 'suspect' | 'victim'
     position: { x: number; y: number }
     data: any
   }> = []
@@ -112,22 +95,6 @@ export function calculateInitialLayout(
   })
   
   return nodes
-}
-
-/**
- * Create a fact node at the dropped position
- */
-export function createFactNode(
-  fact: FactNodeData,
-  position: { x: number; y: number }
-) {
-  return {
-    id: fact.id,
-    type: 'fact' as const,
-    position,
-    data: fact,
-    draggable: true,
-  }
 }
 
 /**
