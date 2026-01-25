@@ -38,7 +38,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
   const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string} | null>(null)
   const [errorModal, setErrorModal] = useState<string | null>(null)
-  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, detectivePoints, subtractDetectivePoints } = useGameState()
+  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState } = useGameState()
   
   // Evidence data - this will be populated from the game state
   const [evidenceData, setEvidenceData] = useState<{
@@ -173,12 +173,6 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       return
     }
 
-    const cost = -5 // Theory validation costs 5 DP
-    if (detectivePoints < Math.abs(cost)) {
-      setErrorModal(`Not enough Detective Points. This action costs ${Math.abs(cost)} DP.`)
-      return
-    }
-
     try {
       setIsSubmitting(true)
 
@@ -202,9 +196,6 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       const data = await response.json()
 
       console.log('[VALIDATE-THEORY-UI] Response received:', data)
-
-      // Update DP
-      subtractDetectivePoints(Math.abs(cost))
 
       // Add theory to history
       addTheorySubmission({

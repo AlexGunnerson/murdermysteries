@@ -26,7 +26,6 @@ const mockMetadata = {
       name: 'Crime Scene',
       description: 'The place where it happened',
       imageUrl: '/images/scene.jpg',
-      dpCost: 3,
       initiallyAvailable: true
     }
   ],
@@ -35,7 +34,6 @@ const mockMetadata = {
       id: 'record_1',
       name: 'Police Report',
       description: 'Official report',
-      dpCost: 2,
       initiallyAvailable: true
     }
   ]

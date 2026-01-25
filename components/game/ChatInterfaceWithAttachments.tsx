@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useGameState, useSuspectChatHistory } from '@/lib/hooks/useGameState'
 import { extractFactsFromResponse } from '@/lib/services/aiService'
-import { calculateFactReward } from '@/lib/utils/dpCalculator'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, Paperclip, X, FileText, Image as ImageIcon, ChevronDown, ChevronUp } from 'lucide-react'
@@ -59,7 +58,7 @@ export function ChatInterfaceWithAttachments({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const { addChatMessage, discoveredFacts, addDiscoveredFact, addDetectivePoints, unlockedContent, sessionId, fetchGameState } = useGameState()
+  const { addChatMessage, discoveredFacts, addDiscoveredFact, unlockedContent, sessionId, fetchGameState } = useGameState()
   const chatHistory = useSuspectChatHistory(suspectId)
 
   // Load available items from game state
@@ -296,7 +295,7 @@ export function ChatInterfaceWithAttachments({
                 const knownFactContents = discoveredFacts.map(f => f.content)
                 const newFacts = extractFactsFromResponse(fullResponse, knownFactContents)
 
-                // Add discovered facts and reward DP
+                // Add discovered facts
                 if (newFacts.length > 0) {
                   newFacts.forEach((factContent) => {
                     addDiscoveredFact({
@@ -305,10 +304,6 @@ export function ChatInterfaceWithAttachments({
                       sourceId: suspectId,
                     })
                   })
-
-                  // Reward +1 DP per new fact
-                  const dpReward = calculateFactReward(newFacts.length)
-                  addDetectivePoints(dpReward)
 
                   // Notify parent component if callback provided
                   if (onFactDiscovered) {

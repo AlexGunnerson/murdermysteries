@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { DP_COSTS } from '@/lib/utils/dpCalculator'
 import { createStoryService } from '@/lib/services/storyService'
 
 /**
  * POST /api/game/actions/question
  * Handle the "Question Suspects" action
- * Cost: Free (0 DP)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -80,7 +78,6 @@ export async function POST(request: NextRequest) {
     // Generate AI system prompt with discovered facts
     const systemPrompt = await storyService.getSuspectPrompt(suspectId, factKeys)
 
-    // Questioning is free, so no DP deduction needed
     // Just return suspect info for the ChatInterface
     return NextResponse.json({
       success: true,
@@ -92,7 +89,6 @@ export async function POST(request: NextRequest) {
         portraitUrl: suspect.portraitUrl,
         systemPrompt: systemPrompt,
       },
-      cost: DP_COSTS.QUESTION_SUSPECTS,
     })
   } catch (error) {
     console.error('Error in question action:', error)

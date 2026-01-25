@@ -1,7 +1,6 @@
 "use client"
 
 interface BoardHeaderProps {
-  detectivePoints: number
   hasUnreadMessage?: boolean
   onOpenMessage?: () => void
   onOpenMenu: () => void
@@ -14,7 +13,6 @@ interface BoardHeaderProps {
 }
 
 export function BoardHeader({ 
-  detectivePoints, 
   hasUnreadMessage, 
   onOpenMessage,
   onOpenMenu,
@@ -380,15 +378,7 @@ export function BoardHeader({
         }
       `}</style>
 
-      {/* Left: Detective Points Plaque */}
-      <div className="plaque-container">
-        <div className="brass-plaque" title="Detective Points">
-          <span className="plaque-label">Detective Points</span>
-          <div className="digital-counter">{detectivePoints}</div>
-        </div>
-      </div>
-
-      {/* Center: Empty Spacer */}
+      {/* Left: Empty Spacer */}
       <div className="spacer"></div>
 
       {/* Right: Game Controls */}
@@ -404,8 +394,7 @@ export function BoardHeader({
         <button 
           className="btn-clue" 
           onClick={onGetClue}
-          disabled={detectivePoints < 2}
-          title={detectivePoints < 2 ? "Not enough Detective Points" : "Get Clue (-2 DP)"}
+          title="Get Clue"
         >
           Get Clue
         </button>

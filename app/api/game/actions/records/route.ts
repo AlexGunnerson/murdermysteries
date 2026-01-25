@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
 
 /**
  * POST /api/game/actions/records
  * Handle the "Check Records" action
- * Cost: -2 DP
  */
 export async function POST(request: NextRequest) {
   try {
@@ -35,15 +33,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Session not found or unauthorized' },
         { status: 404 }
-      )
-    }
-
-    // Check if player has enough DP
-    const cost = DP_COSTS.CHECK_RECORDS
-    if (!canAffordAction(session.detective_points, cost)) {
-      return NextResponse.json(
-        { error: `Not enough Detective Points. This action costs ${Math.abs(cost)} DP.` },
-        { status: 403 }
       )
     }
 
@@ -78,16 +67,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Deduct DP
-    const newDP = session.detective_points + cost
-    await supabase
-      .from('game_sessions')
-      .update({ 
-        detective_points: newDP,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', sessionId)
-
     // Mark record as viewed if not already
     await supabase
       .from('unlocked_content')
@@ -110,8 +89,6 @@ export async function POST(request: NextRequest) {
         date: record.date,
         relatedFacts: record.related_facts,
       },
-      cost,
-      newDP,
     })
   } catch (error) {
     console.error('Error in records action:', error)
@@ -152,7 +129,7 @@ export async function GET(request: NextRequest) {
     // Verify session
     const { data: session } = await supabase
       .from('game_sessions')
-      .select('case_id, detective_points')
+      .select('case_id')
       .eq('id', sessionId)
       .eq('user_id', user.id)
       .single()
@@ -191,8 +168,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       records: availableRecords,
-      currentDP: session.detective_points,
-      cost: DP_COSTS.CHECK_RECORDS,
     })
   } catch (error) {
     console.error('Error getting records:', error)

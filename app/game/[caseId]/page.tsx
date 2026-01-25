@@ -11,7 +11,7 @@ export default function GamePage({ params }: { params: Promise<{ caseId: string 
   
   // Initialize game state from Zustand store
   useInitializeGame(caseId)
-  const { detectivePoints, sessionId, isLoading } = useGameState()
+  const { sessionId, isLoading } = useGameState()
 
   const handleAction = (action: string) => {
     console.log("Action triggered:", action)

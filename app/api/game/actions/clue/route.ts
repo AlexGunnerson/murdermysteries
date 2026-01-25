@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
 import { generateClue } from '@/lib/services/aiService'
 
 /**
  * POST /api/game/actions/clue
  * Handle the "Get Clue" action
- * Cost: -2 DP
  */
 export async function POST(request: NextRequest) {
   try {
@@ -36,15 +34,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Session not found or unauthorized' },
         { status: 404 }
-      )
-    }
-
-    // Check if player has enough DP
-    const cost = DP_COSTS.GET_CLUE
-    if (!canAffordAction(session.detective_points, cost)) {
-      return NextResponse.json(
-        { error: `Not enough Detective Points. This action costs ${Math.abs(cost)} DP.` },
-        { status: 403 }
       )
     }
 
@@ -94,16 +83,6 @@ export async function POST(request: NextRequest) {
     // Generate contextual clue
     const clueText = await generateClue(context)
 
-    // Deduct DP
-    const newDP = session.detective_points + cost
-    await supabase
-      .from('game_sessions')
-      .update({ 
-        detective_points: newDP,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', sessionId)
-
     // Log clue usage (optional, for analytics)
     try {
       await supabase
@@ -119,8 +98,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       clue: clueText,
-      cost,
-      newDP,
     })
   } catch (error) {
     console.error('Error in clue action:', error)

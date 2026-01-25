@@ -81,7 +81,7 @@ interface DetectiveNotebookProps {
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const router = useRouter()
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, detectivePoints, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -324,7 +324,6 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     <>
       {/* Header Bar */}
       <BoardHeader 
-        detectivePoints={detectivePoints}
         hasUnreadMessage={!hasReadVeronicaLetter}
         onOpenMessage={() => setShowVeronicaLetter(true)}
         onOpenMenu={onOpenMenu}

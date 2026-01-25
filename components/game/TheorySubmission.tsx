@@ -22,9 +22,7 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
     feedback: string
   } | null>(null)
 
-  const { detectivePoints, discoveredFacts, subtractDetectivePoints, addTheorySubmission } = useGameState()
-
-  const cost = -3 // Theory validation costs 3 DP
+  const { discoveredFacts, addTheorySubmission } = useGameState()
 
   const handleArtifactToggle = (artifactId: string) => {
     const newSelected = new Set(selectedArtifacts)
@@ -39,11 +37,6 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
   const handleSubmit = async () => {
     if (!theoryDescription.trim() || selectedArtifacts.size === 0) {
       alert('Please provide a theory description and select at least one artifact.')
-      return
-    }
-
-    if (detectivePoints < Math.abs(cost)) {
-      alert(`Not enough Detective Points. This action costs ${Math.abs(cost)} DP.`)
       return
     }
 
@@ -69,9 +62,6 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
       }
 
       const data = await response.json()
-
-      // Update DP
-      subtractDetectivePoints(Math.abs(cost))
 
       // Add theory to history
       addTheorySubmission({
@@ -106,8 +96,6 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
     }
   }
 
-  const canAfford = detectivePoints >= Math.abs(cost)
-
   return (
     <div className="h-full bg-gray-900 text-gray-100 p-6 overflow-y-auto">
       <div className="max-w-4xl mx-auto">
@@ -121,14 +109,6 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
             As you investigate, you may form theories about the case. Submit your theories here with
             supporting evidence to validate your thinking.
           </p>
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
-            <span className="text-gray-400">
-              Detective Points: <span className="text-amber-400 font-semibold">{detectivePoints} DP</span>
-            </span>
-            <span className={`font-semibold ${canAfford ? 'text-red-400' : 'text-red-600'}`}>
-              Cost: -3 DP
-            </span>
-          </div>
         </div>
 
         {/* Theory Description */}
@@ -232,19 +212,12 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
           disabled={
             !theoryDescription.trim() ||
             selectedArtifacts.size === 0 ||
-            isSubmitting ||
-            !canAfford
+            isSubmitting
           }
           className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3"
         >
           {isSubmitting ? 'Validating Theory...' : 'Submit Theory'}
         </Button>
-
-        {!canAfford && (
-          <p className="text-red-400 text-sm text-center mt-2">
-            Not enough Detective Points to submit a theory
-          </p>
-        )}
       </div>
     </div>
   )

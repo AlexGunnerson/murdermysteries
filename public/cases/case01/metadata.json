@@ -80,7 +80,6 @@
         "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_1.png",
         "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_2.png"
       ],
-      "dpCost": 3,
       "initiallyAvailable": true
     },
     {
@@ -98,7 +97,6 @@
         "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_6.png",
         "/cases/case01/images/scenes/Scene 2 - Greenhouse/greenhouse_7.png"
       ],
-      "dpCost": 3,
       "initiallyAvailable": true
     },
     {
@@ -110,7 +108,6 @@
         "/cases/case01/images/scenes/Scene 3 - North Lawn/north_lawn_1.png",
         "/cases/case01/images/scenes/Scene 3 - North Lawn/north_lawn_2.png"
       ],
-      "dpCost": 3,
       "initiallyAvailable": true
     },
     {
@@ -124,7 +121,6 @@
         "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_3.png",
         "/cases/case01/images/scenes/Scene 1 - Ballroom/ballroom_4.png"
       ],
-      "dpCost": 3,
       "initiallyAvailable": true
     },
     {
@@ -138,7 +134,6 @@
         "/cases/case01/images/scenes/Scene 5 - Master Bedroom/master_bedroom3.jpg",
         "/cases/case01/images/scenes/Scene 5 - Master Bedroom/master_bedroom4.png"
       ],
-      "dpCost": 3,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
@@ -156,7 +151,6 @@
         "/cases/case01/images/scenes/Scene 4 - Study/study_4.png",
         "/cases/case01/images/scenes/Scene 4 - Study/study_5.jpg"
       ],
-      "dpCost": 3,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
@@ -169,7 +163,6 @@
       "id": "record_coroner",
       "name": "Coroner's Report",
       "description": "Official autopsy and scene analysis. Rules the death as accidental.",
-      "dpCost": 2,
       "initiallyAvailable": true,
       "content": "CAUSE OF DEATH: Fatal skull fracture\n\nFINDINGS: Injury pattern consistent with fall from TOP of staircase. Single point of impact. No secondary bruising or defensive wounds.\n\nTOXICOLOGY: Alcohol present, within social drinking range.\n\nRULING: Accidental fall. No evidence of foul play."
     },
@@ -181,7 +174,6 @@
       "images": [
         "/cases/case01/images/crime_scene/reginald_wine_spill.png"
       ],
-      "dpCost": 2,
       "initiallyAvailable": true
     },
     {
@@ -206,7 +198,6 @@
         "/cases/case01/images/gala_photos/veronica_champagne.jpg",
         "/cases/case01/images/gala_photos/veronica_outside.png"
       ],
-      "dpCost": 2,
       "initiallyAvailable": true
     },
     {
@@ -214,7 +205,6 @@
       "name": "Veronica's Thank-You Note",
       "description": "A private message from Veronica, grateful for confirming her suspicions. She explains why she hid the blackmail papers and supplies them for investigation.",
       "isLetter": true,
-      "dpCost": 0,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
@@ -225,7 +215,6 @@
       "name": "Dr. Vale's Medical Notes",
       "description": "Handwritten medical log entries from Dr. Vale documenting his care of Reginald and Veronica Ashcombe. Contains routine check-ups and a notable wine allergy incident.",
       "isHTML": true,
-      "dpCost": 2,
       "initiallyAvailable": true,
       "unlockConditions": {
         "requiredFacts": []
@@ -236,7 +225,6 @@
       "name": "Blackmail Papers - Found Near Body",
       "description": "Documents found scattered near Reginald's body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale's page is missing.",
       "isHTML": true,
-      "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_staged_scene"]
@@ -247,7 +235,6 @@
       "name": "Blackmail Papers - Found Behind Painting",
       "description": "The complete set of blackmail documents hidden behind a painting that Reginald's mother Elizabeth had painted, which hangs in the master bedroom. Contains incriminating evidence on Martin, Colin, Lydia, and Dr. Vale that Reginald had collected.",
       "isHTML": true,
-      "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_page_missing"]
@@ -257,7 +244,6 @@
       "id": "record_phone_logs",
       "name": "Phone Records",
       "description": "Estate phone logs from the evening of the gala, showing all incoming and outgoing calls.",
-      "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_vale_alibi_suspicious"]
@@ -268,7 +254,6 @@
       "name": "Reginald's Speech Notes",
       "description": "Handwritten notes for Reginald's opening remarks at the gala. Contains his planned speech with personal annotations.",
       "isHTML": true,
-      "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": []
@@ -279,7 +264,6 @@
       "name": "Greenhouse Security Footage",
       "description": "Automatically uploaded security camera footage from the greenhouse, timestamped during the gala.",
       "documentUrl": "/cases/case01/images/documents/greenhouse_footage.jpg",
-      "dpCost": 2,
       "initiallyAvailable": false,
       "unlockConditions": {
         "requiredFacts": ["fact_greenhouse_camera"]
@@ -310,7 +294,6 @@
         "/cases/case01/images/evidence/securityfootage/cam3.4.jpg",
         "/cases/case01/images/evidence/securityfootage/cam3.5.jpg"
       ],
-      "dpCost": 3,
       "initiallyAvailable": false
     }
   ]

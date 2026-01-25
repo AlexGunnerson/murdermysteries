@@ -27,13 +27,12 @@ export function SolutionSubmission({
     isCorrect: boolean
     narrative: string
     summary: {
-      dpRemaining: number
       factsDiscovered: number
       theoriesTested: number
     }
   } | null>(null)
 
-  const { detectivePoints, discoveredFacts, theoryHistory, completeGame } = useGameState()
+  const { discoveredFacts, theoryHistory, completeGame } = useGameState()
 
   const handleSubmit = async () => {
     if (!killer.trim() || !motive.trim() || !keyEvidence.trim()) {
@@ -76,7 +75,6 @@ export function SolutionSubmission({
         isCorrect: data.isCorrect,
         narrative: data.narrative,
         summary: {
-          dpRemaining: detectivePoints,
           factsDiscovered: discoveredFacts.length,
           theoriesTested: theoryHistory.length,
         },
@@ -149,13 +147,7 @@ export function SolutionSubmission({
             <h2 className="text-xl font-semibold text-amber-400 mb-4">
               Your Investigation
             </h2>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="bg-gray-900 p-4 rounded">
-                <div className="text-3xl font-bold text-amber-400">
-                  {result.summary.dpRemaining}
-                </div>
-                <div className="text-sm text-gray-400">DP Remaining</div>
-              </div>
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div className="bg-gray-900 p-4 rounded">
                 <div className="text-3xl font-bold text-amber-400">
                   {result.summary.factsDiscovered}
@@ -288,7 +280,6 @@ export function SolutionSubmission({
         <div className="mt-6 p-4 bg-gray-800 border border-gray-700 rounded">
           <h3 className="text-sm font-semibold text-gray-400 mb-2">Your Investigation So Far:</h3>
           <div className="flex gap-6 text-sm text-gray-300">
-            <span>DP: <span className="text-amber-400">{detectivePoints}</span></span>
             <span>Facts: <span className="text-amber-400">{discoveredFacts.length}</span></span>
             <span>Theories: <span className="text-amber-400">{theoryHistory.length}</span></span>
           </div>

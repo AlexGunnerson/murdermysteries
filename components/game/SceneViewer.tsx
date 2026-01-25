@@ -35,7 +35,7 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact, unlockScene, isLoading: gameLoading } = useGameState()
+  const { addDiscoveredFact, unlockScene, isLoading: gameLoading } = useGameState()
 
   // Fetch available scenes
   useEffect(() => {
@@ -100,9 +100,6 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
       }
 
       const data = await response.json()
-
-      // Update DP
-      subtractDetectivePoints(Math.abs(data.cost))
       
       // Update game store
       unlockScene(scene.id)
@@ -238,10 +235,6 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
           </div>
         )}
 
-        <div className="mb-4 text-gray-400">
-          <p>Detective Points: <span className="text-amber-400 font-semibold">{detectivePoints} DP</span></p>
-          <p className="text-sm">Cost to investigate a scene: <span className="text-red-400">-3 DP</span></p>
-        </div>
 
         {isLoading ? (
           <div className="text-center py-8 text-gray-400">Loading scenes...</div>
@@ -273,11 +266,6 @@ export function SceneViewer({ sessionId, onFactDiscovered }: SceneViewerProps) {
                     </div>
                     <p className="text-sm text-gray-400">{scene.description}</p>
                   </div>
-                  {!scene.isLocked && !scene.isInvestigated && (
-                    <span className="text-red-400 text-sm font-semibold">
-                      -3 DP
-                    </span>
-                  )}
                 </div>
               </div>
             ))}

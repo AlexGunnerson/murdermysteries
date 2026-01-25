@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { DP_COSTS, canAffordAction } from '@/lib/utils/dpCalculator'
 import { evaluateUnlocks, applyUnlocks, checkAndApplyActIUnlocks } from '@/lib/services/unlockService'
 import { GameStage } from '@/lib/config/unlockRules'
 
 /**
  * POST /api/game/actions/validate-theory
  * Handle theory validation
- * Cost: -3 DP
  */
 export async function POST(request: NextRequest) {
   try {
@@ -40,15 +38,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if player has enough DP
-    const cost = DP_COSTS.VALIDATE_THEORY
-    if (!canAffordAction(session.detective_points, cost)) {
-      return NextResponse.json(
-        { error: `Not enough Detective Points. This action costs ${Math.abs(cost)} DP.` },
-        { status: 403 }
-      )
-    }
-
     // Get case data
     const { data: caseData } = await supabase
       .from('cases')
@@ -68,16 +57,6 @@ export async function POST(request: NextRequest) {
       .from('discovered_facts')
       .select('*')
       .eq('game_session_id', sessionId)
-
-    // Deduct DP
-    const newDP = session.detective_points + cost
-    await supabase
-      .from('game_sessions')
-      .update({
-        detective_points: newDP,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', sessionId)
 
     // Evaluate unlocks FIRST (before saving theory)
     // This is the authoritative source for determining correctness
@@ -144,8 +123,6 @@ export async function POST(request: NextRequest) {
       feedback: finalFeedback,
       matchedFacts: [],
       unlockedContent,
-      cost,
-      newDP,
     })
   } catch (error) {
     console.error('Error validating theory:', error)

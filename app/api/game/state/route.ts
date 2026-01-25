@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
   try {
     const user = await requireAuth()
     const body = await request.json()
-    const { caseId: caseSlug, detectivePoints, isCompleted, isSolvedCorrectly } = body
+    const { caseId: caseSlug, isCompleted, isSolvedCorrectly } = body
 
     if (!caseSlug) {
       return NextResponse.json(
@@ -156,7 +156,6 @@ export async function POST(request: NextRequest) {
       const { data, error } = await supabase
         .from('game_sessions')
         .update({
-          detective_points: detectivePoints,
           is_completed: isCompleted || false,
           is_solved_correctly: isSolvedCorrectly,
           updated_at: new Date().toISOString(),
@@ -170,12 +169,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ session: data })
     } else {
       // Create new session
+      // Note: detective_points column still exists in DB for backward compatibility
+      // but we set it to default value since it's no longer used
       const { data, error } = await supabase
         .from('game_sessions')
         .insert({
           user_id: user.id,
           case_id: caseId,
-          detective_points: detectivePoints || 25,
+          detective_points: 25, // Default value for backward compatibility
           is_completed: false,
         })
         .select()

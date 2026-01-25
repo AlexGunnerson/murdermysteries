@@ -15,7 +15,6 @@ export interface Location {
   name: string
   description: string
   imageUrl: string
-  dpCost: number
   initiallyAvailable: boolean
   unlockConditions?: {
     requiredFacts: string[]
@@ -28,7 +27,6 @@ export interface Record {
   description: string
   documentUrl?: string
   content?: string
-  dpCost: number
   initiallyAvailable: boolean
   unlockConditions?: {
     requiredFacts: string[]

@@ -84,7 +84,6 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
         },
         body: JSON.stringify({
           caseId,
-          detectivePoints: 25,
           isCompleted: false,
         }),
       })

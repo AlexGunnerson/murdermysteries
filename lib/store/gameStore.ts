@@ -49,9 +49,6 @@ export interface GameState {
   sessionId: string | null
   currentStage: 'start' | 'act_i' | 'act_ii'
   
-  // Detective Points
-  detectivePoints: number
-  
   // Discovered information
   discoveredFacts: DiscoveredFact[]
   chatHistory: ChatMessage[]
@@ -79,9 +76,6 @@ export interface GameState {
   initializeGame: (caseId: string, forceReinitialize?: boolean) => Promise<void>
   setSessionId: (sessionId: string) => void
   setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => void
-  setDetectivePoints: (points: number) => void
-  addDetectivePoints: (points: number) => void
-  subtractDetectivePoints: (points: number) => void
   fetchGameState: () => Promise<void>
   
   addDiscoveredFact: (fact: Omit<DiscoveredFact, 'id' | 'discoveredAt'>) => void
@@ -108,7 +102,6 @@ const initialState = {
   caseId: null,
   sessionId: null,
   currentStage: 'start' as const,
-  detectivePoints: 25,
   discoveredFacts: [],
   chatHistory: [],
   theoryHistory: [],
@@ -169,7 +162,6 @@ export const useGameStore = create<GameState>()(
               },
               body: JSON.stringify({
                 caseId,
-                detectivePoints: 25,
                 isCompleted: false,
               }),
             })
@@ -185,7 +177,6 @@ export const useGameStore = create<GameState>()(
               caseId,
               sessionId: data.session.id,
               currentStage: data.session.current_stage || 'start',
-              detectivePoints: data.session.detective_points,
               discoveredFacts: [],
               chatHistory: [],
               theoryHistory: [],
@@ -221,7 +212,6 @@ export const useGameStore = create<GameState>()(
                     suspects: new Set(stateData.revealedContent?.suspects || []),
                     scenes: new Set(stateData.revealedContent?.scenes || []),
                   },
-                  detectivePoints: stateData.session.detective_points,
                 })
               }
             }
@@ -231,7 +221,6 @@ export const useGameStore = create<GameState>()(
             set({
               caseId,
               sessionId: null,
-              detectivePoints: 25,
               discoveredFacts: [],
               chatHistory: [],
               theoryHistory: [],
@@ -259,10 +248,6 @@ export const useGameStore = create<GameState>()(
           set({ currentStage: stage })
         },
 
-        setDetectivePoints: (points: number) => {
-          set({ detectivePoints: Math.max(0, points) })
-        },
-
         fetchGameState: async () => {
           const state = get()
           if (!state.caseId) return
@@ -284,23 +269,12 @@ export const useGameStore = create<GameState>()(
                     suspects: new Set(data.revealedContent?.suspects || []),
                     scenes: new Set(data.revealedContent?.scenes || []),
                   },
-                  detectivePoints: data.session.detective_points,
                 })
               }
             }
           } catch (error) {
             console.error('Error fetching game state:', error)
           }
-        },
-
-        addDetectivePoints: (points: number) => {
-          const currentPoints = get().detectivePoints
-          set({ detectivePoints: currentPoints + points })
-        },
-
-        subtractDetectivePoints: (points: number) => {
-          const currentPoints = get().detectivePoints
-          set({ detectivePoints: Math.max(0, currentPoints - points) })
         },
 
         addDiscoveredFact: (fact) => {

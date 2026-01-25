@@ -28,7 +28,7 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { detectivePoints, subtractDetectivePoints, addDiscoveredFact, unlockRecord, isLoading: gameLoading } = useGameState()
+  const { addDiscoveredFact, unlockRecord, isLoading: gameLoading } = useGameState()
 
   // Fetch available records
   useEffect(() => {
@@ -93,9 +93,6 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
       }
 
       const data = await response.json()
-
-      // Update DP
-      subtractDetectivePoints(Math.abs(data.cost))
       
       // Update game store
       unlockRecord(record.id)
@@ -199,10 +196,6 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
           </div>
         )}
 
-        <div className="mb-4 text-gray-400">
-          <p>Detective Points: <span className="text-amber-400 font-semibold">{detectivePoints} DP</span></p>
-          <p className="text-sm">Cost to view a record: <span className="text-red-400">-2 DP</span></p>
-        </div>
 
         {isLoading ? (
           <div className="text-center py-8 text-gray-400">Loading records...</div>
@@ -237,11 +230,6 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
                       {record.type}
                     </span>
                   </div>
-                  {!record.isLocked && !record.isViewed && (
-                    <span className="text-red-400 text-sm font-semibold">
-                      -2 DP
-                    </span>
-                  )}
                 </div>
               </div>
             ))}

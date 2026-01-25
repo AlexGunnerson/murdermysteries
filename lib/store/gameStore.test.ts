@@ -19,7 +19,6 @@ describe('gameStore', () => {
       })
 
       expect(result.current.caseId).toBe('case01')
-      expect(result.current.detectivePoints).toBe(25)
       expect(result.current.discoveredFacts).toHaveLength(0)
       expect(result.current.isCompleted).toBe(false)
     })
@@ -32,61 +31,6 @@ describe('gameStore', () => {
       })
 
       expect(result.current.sessionId).toMatch(/^session_\d+$/)
-    })
-  })
-
-  describe('Detective Points management', () => {
-    it('sets detective points correctly', () => {
-      const { result } = renderHook(() => useGameStore())
-      
-      act(() => {
-        result.current.setDetectivePoints(15)
-      })
-
-      expect(result.current.detectivePoints).toBe(15)
-    })
-
-    it('prevents negative detective points', () => {
-      const { result } = renderHook(() => useGameStore())
-      
-      act(() => {
-        result.current.setDetectivePoints(-5)
-      })
-
-      expect(result.current.detectivePoints).toBe(0)
-    })
-
-    it('adds detective points correctly', () => {
-      const { result } = renderHook(() => useGameStore())
-      
-      act(() => {
-        result.current.setDetectivePoints(20)
-        result.current.addDetectivePoints(5)
-      })
-
-      expect(result.current.detectivePoints).toBe(25)
-    })
-
-    it('subtracts detective points correctly', () => {
-      const { result } = renderHook(() => useGameStore())
-      
-      act(() => {
-        result.current.setDetectivePoints(25)
-        result.current.subtractDetectivePoints(3)
-      })
-
-      expect(result.current.detectivePoints).toBe(22)
-    })
-
-    it('never goes below 0 when subtracting', () => {
-      const { result } = renderHook(() => useGameStore())
-      
-      act(() => {
-        result.current.setDetectivePoints(5)
-        result.current.subtractDetectivePoints(10)
-      })
-
-      expect(result.current.detectivePoints).toBe(0)
     })
   })
 
@@ -269,7 +213,6 @@ describe('gameStore', () => {
       
       act(() => {
         result.current.initializeGame('case01')
-        result.current.setDetectivePoints(10)
         result.current.addDiscoveredFact({
           content: 'Test',
           source: 'chat',
@@ -279,7 +222,6 @@ describe('gameStore', () => {
       })
 
       expect(result.current.caseId).toBeNull()
-      expect(result.current.detectivePoints).toBe(25)
       expect(result.current.discoveredFacts).toHaveLength(0)
     })
   })

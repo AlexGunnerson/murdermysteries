@@ -111,11 +111,11 @@ export default function Home() {
                 <Target className="h-6 w-6 text-amber-400" />
               </div>
               <h3 className="text-xl font-semibold text-amber-400 mb-2">
-                Strategic Resource Management
+                Strategic Investigation
               </h3>
               <p className="text-gray-400">
-                Manage Detective Points wisely. Every action has a cost, and
-                efficiency is key to solving the case.
+                Plan your investigation carefully. Each action reveals new clues
+                and unlocks deeper mysteries.
               </p>
             </div>
 
@@ -147,8 +147,8 @@ export default function Home() {
                   Start Your Case
                 </h3>
                 <p className="text-gray-400">
-                  Begin with 25 Detective Points and an introductory briefing
-                  of the murder case.
+                  Begin with an introductory briefing and access to the crime
+                  scene and key witnesses.
                 </p>
               </div>
 
