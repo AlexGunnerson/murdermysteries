@@ -218,7 +218,7 @@
       "content": "White gloves matching Colin's gala attire were found on top of the safe in the study.",
       "category": "evidence",
       "importance": 1,
-      "sources": ["scene_study", "record_gala_photos"]
+      "sources": ["scene_study", "scene_ballroom"]
     },
     {
       "id": "fact_colin_swapped_papers",

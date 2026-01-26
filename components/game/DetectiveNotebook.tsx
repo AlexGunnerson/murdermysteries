@@ -21,6 +21,7 @@ import { StickyNote } from "./detective-board/StickyNote"
 import { SuspectDossierView } from "./detective-board/SuspectDossierView"
 import { VictimCard } from "./detective-board/VictimCard"
 import { SceneViewer } from "./detective-board/SceneViewer"
+import { SceneTypeSelector } from "./detective-board/SceneTypeSelector"
 import { DocumentViewer } from "./detective-board/DocumentViewer"
 import { DocumentHTMLViewer } from "./detective-board/DocumentHTMLViewer"
 import { BlackmailViewer } from "./detective-board/BlackmailViewer"
@@ -61,6 +62,8 @@ interface Scene {
   imageUrl: string
   images: string[]
   initiallyAvailable?: boolean
+  galaImages?: string[]
+  galaAnnotations?: Record<string, string>
 }
 
 interface Document {
@@ -110,6 +113,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [documentStackMenuOpen, setDocumentStackMenuOpen] = useState(false)
   const [queuedNotifications, setQueuedNotifications] = useState<string[]>([])
   const [currentNotification, setCurrentNotification] = useState<string | null>(null)
+  const [showSceneSelector, setShowSceneSelector] = useState(false)
+  const [selectedSceneForSelector, setSelectedSceneForSelector] = useState<Scene | null>(null)
+  const [selectedPhotoType, setSelectedPhotoType] = useState<'investigation' | 'gala'>('investigation')
 
   // Navigation stack for context-aware returns
   type ViewerContext = {
@@ -210,7 +216,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           description: s.description,
           imageUrl: s.imageUrl,
           images: s.images || [s.imageUrl],
-          initiallyAvailable: s.initiallyAvailable
+          initiallyAvailable: s.initiallyAvailable,
+          galaImages: s.galaImages,
+          galaAnnotations: s.galaAnnotations
         }))
 
         const allDocuments = data.records
@@ -619,7 +627,16 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     imageUrl={scene.imageUrl}
                     title={scene.name}
                     onClick={() => {
-                      setSelectedScene(scene)
+                      // Check if scene has gala photos
+                      if (scene.galaImages && scene.galaImages.length > 0) {
+                        // Show selector
+                        setSelectedSceneForSelector(scene)
+                        setShowSceneSelector(true)
+                      } else {
+                        // Go directly to investigation photos
+                        setSelectedScene(scene)
+                        setSelectedPhotoType('investigation')
+                      }
                       // Mark scene as viewed when opened
                       if (!revealedContent.scenes.has(scene.id)) {
                         revealScene(scene.id)
@@ -636,17 +653,44 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       </div>
       </div>
 
+      {/* Scene Type Selector */}
+      {showSceneSelector && selectedSceneForSelector && (
+        <SceneTypeSelector
+          sceneName={selectedSceneForSelector.name}
+          hasGalaPhotos={!!selectedSceneForSelector.galaImages && selectedSceneForSelector.galaImages.length > 0}
+          onSelectGala={() => {
+            setShowSceneSelector(false)
+            setSelectedPhotoType('gala')
+            setSelectedScene(selectedSceneForSelector)
+            setSelectedSceneImageIndex(0)
+          }}
+          onSelectInvestigation={() => {
+            setShowSceneSelector(false)
+            setSelectedPhotoType('investigation')
+            setSelectedScene(selectedSceneForSelector)
+            setSelectedSceneImageIndex(0)
+          }}
+          onClose={() => {
+            setShowSceneSelector(false)
+            setSelectedSceneForSelector(null)
+          }}
+        />
+      )}
+
       {/* Scene Viewer with Navigation */}
-      {selectedScene && (
+      {selectedScene && !showSceneSelector && (
         <SceneViewer
           sceneName={selectedScene.name}
-          images={selectedScene.images}
+          images={selectedPhotoType === 'gala' && selectedScene.galaImages ? selectedScene.galaImages : selectedScene.images}
           sceneId={selectedScene.id}
           initialIndex={selectedSceneImageIndex}
           unlockedContent={Array.from(unlockedContent.records)}
+          photoType={selectedPhotoType}
+          annotations={selectedPhotoType === 'gala' ? selectedScene.galaAnnotations : undefined}
           onClose={() => {
             setSelectedScene(null)
             setSelectedSceneImageIndex(0)
+            setSelectedPhotoType('investigation')
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)

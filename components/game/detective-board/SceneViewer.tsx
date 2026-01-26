@@ -12,24 +12,37 @@ interface SceneViewerProps {
   sceneId?: string
   initialIndex?: number
   unlockedContent?: string[]
+  photoType?: 'investigation' | 'gala'
+  annotations?: Record<string, string>
 }
 
-export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0, unlockedContent = [] }: SceneViewerProps) {
+export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0, unlockedContent = [], photoType = 'investigation', annotations }: SceneViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Check if current image has annotations (gala photos)
+  const hasAnnotations = !!annotations
+  const getCurrentAnnotation = () => {
+    if (!annotations) return null
+    const imagePath = images[currentIndex]
+    const filename = imagePath.split('/').pop() || ''
+    return annotations[filename] || null
+  }
   
   // Auto-focus the container for keyboard navigation
   useEffect(() => {
     containerRef.current?.focus()
   }, [])
   
-  // Reset zoom when changing images
+  // Reset zoom and flip when changing images
   useEffect(() => {
     setIsZoomed(false)
+    setIsFlipped(false)
     setPanOffset({ x: 0, y: 0 })
   }, [currentIndex])
   
@@ -58,12 +71,21 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       }
     }
   }
+  
+  const toggleFlip = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsFlipped(!isFlipped)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight' && !isZoomed) goToNext()
     if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
-    if (e.key === 'z' || e.key === 'Z') {
+    if (hasAnnotations && (e.key === 'f' || e.key === 'F')) {
+      e.preventDefault()
+      setIsFlipped(!isFlipped)
+    }
+    if (!hasAnnotations && (e.key === 'z' || e.key === 'Z')) {
       e.preventDefault()
       setIsZoomed(!isZoomed)
       if (isZoomed) setPanOffset({ x: 0, y: 0 })
@@ -139,6 +161,9 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       {/* Scene title - top right */}
       <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
         <h3 className="text-xl font-bold text-gray-800">{sceneName}</h3>
+        {photoType === 'gala' && (
+          <p className="text-xs text-gray-500 mb-1">May 10th, 1986 - Gala Photos</p>
+        )}
         <p className="text-sm text-gray-600">
           Image {currentIndex + 1} of {images.length}
         </p>
@@ -241,40 +266,78 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                 }}
               >
                 {/* Polaroid frame */}
-                <div className="bg-white p-4 pb-12 shadow-2xl" style={{ width: '950px' }}>
-                  <div 
-                    className="relative w-full aspect-[3/2] bg-gray-100 overflow-hidden"
-                    style={{ 
-                      cursor: isCenter 
-                        ? isDragging 
-                          ? 'grabbing' 
-                          : isZoomed 
-                            ? 'zoom-out' 
-                            : 'zoom-in'
-                        : 'default'
+                <div 
+                  className="bg-white p-4 pb-12 shadow-2xl relative"
+                  style={{ 
+                    width: '950px',
+                    perspective: '2000px'
+                  }}
+                >
+                  <div
+                    className="relative w-full transition-transform duration-700"
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      transform: isCenter && isFlipped && hasAnnotations ? 'rotateY(180deg)' : 'rotateY(0deg)'
                     }}
-                    onClick={isCenter ? toggleZoom : undefined}
-                    onMouseDown={isCenter ? handleMouseDown : undefined}
-                    onMouseMove={isCenter ? handleMouseMove : undefined}
-                    onMouseUp={isCenter ? handleMouseUp : undefined}
-                    onMouseLeave={isCenter ? handleMouseUp : undefined}
                   >
+                    {/* Front side - Photo */}
                     <div
-                      className="relative w-full h-full transition-transform duration-300 ease-out"
+                      className="relative w-full aspect-[3/2] bg-gray-100 overflow-hidden"
                       style={{
-                        transform: isCenter && isZoomed ? `scale(2.5) translate(${panOffset.x / 2.5}px, ${panOffset.y / 2.5}px)` : 'none',
-                        transformOrigin: 'center center'
+                        backfaceVisibility: 'hidden',
+                        cursor: isCenter 
+                          ? hasAnnotations
+                            ? 'default'
+                            : isDragging 
+                              ? 'grabbing' 
+                              : isZoomed 
+                                ? 'zoom-out' 
+                                : 'zoom-in'
+                          : 'default'
                       }}
+                      onClick={isCenter && !hasAnnotations ? toggleZoom : undefined}
+                      onMouseDown={isCenter && !hasAnnotations ? handleMouseDown : undefined}
+                      onMouseMove={isCenter && !hasAnnotations ? handleMouseMove : undefined}
+                      onMouseUp={isCenter && !hasAnnotations ? handleMouseUp : undefined}
+                      onMouseLeave={isCenter && !hasAnnotations ? handleMouseUp : undefined}
                     >
-                      <Image
-                        src={images[index]}
-                        alt={`${sceneName} - Image ${index + 1}`}
-                        fill
-                        className="object-cover object-bottom"
-                        sizes="950px"
-                        priority={isCenter}
-                      />
+                      <div
+                        className="relative w-full h-full transition-transform duration-300 ease-out"
+                        style={{
+                          transform: isCenter && isZoomed && !hasAnnotations ? `scale(2.5) translate(${panOffset.x / 2.5}px, ${panOffset.y / 2.5}px)` : 'none',
+                          transformOrigin: 'center center'
+                        }}
+                      >
+                        <Image
+                          src={images[index]}
+                          alt={`${sceneName} - Image ${index + 1}`}
+                          fill
+                          className="object-cover object-bottom"
+                          sizes="950px"
+                          priority={isCenter}
+                        />
+                      </div>
                     </div>
+
+                    {/* Back side - Annotation */}
+                    {hasAnnotations && isCenter && (
+                      <div
+                        className="absolute inset-0 aspect-[3/2] bg-[#f4e8d8] overflow-hidden flex items-center justify-center p-8"
+                        style={{
+                          backfaceVisibility: 'hidden',
+                          transform: 'rotateY(180deg)'
+                        }}
+                      >
+                        <div className="max-w-full max-h-full overflow-auto">
+                          <p 
+                            className="text-gray-800 text-xl leading-relaxed"
+                            style={{ fontFamily: "'Caveat', cursive" }}
+                          >
+                            {getCurrentAnnotation()}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   {/* Polaroid caption */}
@@ -283,9 +346,19 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                       className="text-base text-gray-700"
                       style={{ fontFamily: "'Caveat', cursive" }}
                     >
-                      {sceneName}
+                      {hasAnnotations && photoType === 'gala' ? 'May 10th, 1986' : sceneName}
                     </p>
                   </div>
+
+                  {/* Flip button for annotations */}
+                  {hasAnnotations && isCenter && (
+                    <button
+                      onClick={toggleFlip}
+                      className="absolute bottom-14 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg transition-all hover:scale-105 text-sm font-medium"
+                    >
+                      {isFlipped ? 'Show Photo' : 'Read Note'}
+                    </button>
+                  )}
                 </div>
               </div>
             )

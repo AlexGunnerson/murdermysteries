@@ -135,7 +135,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_colin',
-    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'], // Photos include pocket square and gloves
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'scene_ballroom'], // Photos include pocket square and gloves
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'
@@ -149,7 +149,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'colin_accusation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'record_gala_photos'],
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'scene_ballroom'],
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'

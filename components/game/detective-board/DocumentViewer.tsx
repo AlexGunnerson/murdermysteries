@@ -183,16 +183,6 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
           animation: pulse 2s infinite;
           pointer-events: none;
           z-index: 20;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-        
-        .image-container:hover .flip-hint {
-          opacity: 1;
-        }
-        
-        .photo-back .flip-hint {
-          opacity: 1;
         }
         
         @keyframes pulse {

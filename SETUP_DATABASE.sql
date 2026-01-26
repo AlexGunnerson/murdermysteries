@@ -96,9 +96,10 @@ BEGIN
          'Photos taken at the scene, including close-ups of the body, wine spill, and staircase.',
          NULL, '/cases/case01/images/documents/crime_photos.jpg', TRUE, 2),
         
-        (v_case_id, 'record_gala_photos', 'Gala Event Photos',
-         'Photos from the evening''s festivities, showing guests, staff, and the inner circle throughout the event.',
-         NULL, '/cases/case01/images/documents/gala_photos.jpg', TRUE, 2),
+        -- Note: Gala photos are now integrated into scene locations (scene_ballroom, scene_greenhouse, scene_lawn)
+        -- (v_case_id, 'record_gala_photos', 'Gala Event Photos',
+        --  'Photos from the evening''s festivities, showing guests, staff, and the inner circle throughout the event.',
+        --  NULL, '/cases/case01/images/documents/gala_photos.jpg', TRUE, 2),
         
         (v_case_id, 'record_blackmail_floor', 'Blackmail Papers - Found Near Body',
          'Documents found scattered near Reginald''s body, collected by Veronica. Contains incriminating evidence on Martin, Lydia, and Colin - but Dr. Vale''s page is missing.',
