@@ -127,7 +127,7 @@ export const LydiaBlackmailPage2 = () => (
 export const LydiaBlackmailPage3 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-sm text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
       <p>
         Geoffrey telephoned me last week to express his pleasure at supporting the Foundation with his £50,000 donation. I congratulated him on his generosity. It was only later that I thought to check Lydia's quarterly report.
       </p>

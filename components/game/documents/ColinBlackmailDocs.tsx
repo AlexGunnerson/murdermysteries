@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export const ColinBlackmailPage1 = () => (
   <div className="bg-white border border-[#333] p-8 font-serif">
     <div className="text-center border-b-[3px] border-double border-[#333] pb-4 mb-6">
@@ -13,8 +15,15 @@ export const ColinBlackmailPage1 = () => (
       Exceptional Victorian Burma Sapphire and Diamond Ring
     </div>
 
-    <div className="bg-[#e0e0e0] p-16 text-center my-5 border-2 border-[#999] text-[#666] italic">
-      [Catalog photograph: Ring with center sapphire surrounded by diamonds in ornate platinum setting]
+    <div className="relative w-full my-5 border-2 border-[#999] bg-[#e0e0e0]">
+      <Image
+        src="/cases/case01/images/documents/colin-ring.png"
+        alt="Exceptional Victorian Burma Sapphire and Diamond Ring - Catalog photograph showing ring with center sapphire surrounded by diamonds in ornate platinum setting"
+        width={800}
+        height={600}
+        className="w-full h-auto object-contain"
+        priority
+      />
     </div>
 
     <div className="text-xl text-[#8b0000] font-bold my-5 p-2 border-t border-b border-[#999]">
@@ -53,7 +62,7 @@ export const ColinBlackmailPage1 = () => (
 export const ColinBlackmailPage2 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-sm text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
       <p>
         My mother's ring. The one piece of her I treasured above all else. Colin — my trusted estate manager, my right hand for thirty years — tried to sell it at auction like some common trinket.
       </p>

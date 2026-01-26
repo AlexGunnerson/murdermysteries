@@ -1,5 +1,7 @@
+import Image from 'next/image'
+
 export const ColinBlackmailScenePage1 = () => (
-  <div className="bg-white border border-[#333] p-8 font-serif">
+  <div className="bg-white border border-[#333] p-8" style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}>
     <div className="text-center border-b-[3px] border-double border-[#333] pb-4 mb-6">
       <h1 className="text-2xl m-0 mb-1 tracking-[3px]">MARSHALL & HAYES</h1>
       <p className="text-xs my-1 italic">Fine Jewelry & Estate Auction</p>
@@ -13,8 +15,15 @@ export const ColinBlackmailScenePage1 = () => (
       Victorian Gold Pocket Watch (Non-Functional)
     </div>
 
-    <div className="bg-[#e0e0e0] p-16 text-center my-5 border-2 border-[#999] text-[#666] italic">
-      [Catalog photograph: Gold pocket watch with ornate case, visibly tarnished]
+    <div className="relative w-full my-5 border-2 border-[#999] bg-[#e0e0e0]">
+      <Image
+        src="/cases/case01/images/documents/colin-watch.png"
+        alt="Victorian Gold Pocket Watch - Catalog photograph showing ornate case, visibly tarnished"
+        width={800}
+        height={600}
+        className="w-full h-auto object-contain"
+        priority
+      />
     </div>
 
     <div className="text-xl text-[#8b0000] font-bold my-5 p-2 border-t border-b border-[#999]">
@@ -55,7 +64,7 @@ export const ColinBlackmailScenePage1 = () => (
 export const ColinBlackmailScenePage2 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-sm text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
       <p>
         Uncle Thomas's old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes — Charles spotted it in their catalog and rang me up.
       </p>
