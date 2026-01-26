@@ -9,24 +9,36 @@ interface DocumentViewerProps {
   images: string[]
   onClose: () => void
   initialIndex?: number
+  annotations?: Record<string, string>
 }
 
-export function DocumentViewer({ documentName, images, onClose, initialIndex = 0 }: DocumentViewerProps) {
+export function DocumentViewer({ documentName, images, onClose, initialIndex = 0, annotations }: DocumentViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(false)
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Check if current image has annotations (gala photos)
+  const hasAnnotations = !!annotations
+  const getCurrentAnnotation = () => {
+    if (!annotations) return null
+    const imagePath = images[currentIndex]
+    const filename = imagePath.split('/').pop() || ''
+    return annotations[filename] || null
+  }
 
   // Auto-focus the container for keyboard navigation
   useEffect(() => {
     containerRef.current?.focus()
   }, [])
 
-  // Reset zoom when changing images
+  // Reset zoom and flip when changing images
   useEffect(() => {
     setIsZoomed(false)
+    setIsFlipped(false)
     setPanOffset({ x: 0, y: 0 })
   }, [currentIndex])
 
@@ -47,12 +59,21 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
       }
     }
   }
+  
+  const toggleFlip = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsFlipped(!isFlipped)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight' && !isZoomed) goToNext()
     if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
-    if (e.key === 'z' || e.key === 'Z') {
+    if (hasAnnotations && (e.key === 'f' || e.key === 'F')) {
+      e.preventDefault()
+      setIsFlipped(!isFlipped)
+    }
+    if (!hasAnnotations && (e.key === 'z' || e.key === 'Z')) {
       e.preventDefault()
       setIsZoomed(!isZoomed)
       if (isZoomed) setPanOffset({ x: 0, y: 0 })
@@ -94,6 +115,8 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
     ]
   }
 
+  const currentAnnotation = getCurrentAnnotation()
+  
   return (
     <div 
       ref={containerRef}
@@ -102,6 +125,94 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
+      <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
+        
+        .photo-flipper {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transition: transform 0.8s;
+          transform-style: preserve-3d;
+        }
+        
+        .photo-flipper.flipped {
+          transform: rotateY(180deg);
+        }
+        
+        .photo-front,
+        .photo-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        
+        .photo-back {
+          transform: rotateY(180deg);
+          background: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 3rem;
+        }
+        
+        .annotation-text {
+          font-family: 'Caveat', cursive;
+          font-size: 2.8rem;
+          line-height: 1.35;
+          text-shadow: 0 0 1px rgba(44, 42, 41, 0.2);
+          opacity: 0.9;
+          color: #2c2a29;
+          max-width: 700px;
+          text-align: center;
+        }
+        
+        .flip-hint {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 8px 16px;
+          border-radius: 20px;
+          font-size: 0.9rem;
+          font-family: Arial, sans-serif;
+          animation: pulse 2s infinite;
+          pointer-events: none;
+          z-index: 20;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
+        
+        .image-container:hover .flip-hint {
+          opacity: 1;
+        }
+        
+        .photo-back .flip-hint {
+          opacity: 1;
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 1; }
+        }
+        
+        @media (max-width: 640px) {
+          .annotation-text {
+            font-size: 2rem;
+            padding: 1.5rem;
+          }
+          .flip-hint {
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            bottom: 15px;
+          }
+        }
+      `}</style>
+      
       {/* Back button - top left */}
       <button
         onClick={onClose}
@@ -177,51 +288,87 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
                   `
                 }}
               >
-                {/* Polaroid frame */}
-                <div className="bg-white p-4 pb-12 shadow-2xl" style={{ width: '950px' }}>
+                {/* Polaroid frame with flip capability */}
+                <div 
+                  className="bg-white p-4 pb-12 shadow-2xl" 
+                  style={{ width: '950px', perspective: '2000px' }}
+                >
                   <div 
-                    className="relative w-full aspect-[3/2] bg-gray-100 overflow-hidden"
-                    style={{ 
-                      cursor: isCenter 
-                        ? isDragging 
-                          ? 'grabbing' 
-                          : isZoomed 
-                            ? 'zoom-out' 
-                            : 'zoom-in'
-                        : 'default'
-                    }}
-                    onClick={isCenter ? toggleZoom : undefined}
-                    onMouseDown={isCenter ? handleMouseDown : undefined}
-                    onMouseMove={isCenter ? handleMouseMove : undefined}
-                    onMouseUp={isCenter ? handleMouseUp : undefined}
-                    onMouseLeave={isCenter ? handleMouseUp : undefined}
+                    className={`photo-flipper ${isCenter && isFlipped ? 'flipped' : ''}`}
+                    style={{ height: 'calc(950px * 2/3 + 3rem)' }}
                   >
-                    <div
-                      className="relative w-full h-full transition-transform duration-300 ease-out"
-                      style={{
-                        transform: isCenter && isZoomed ? `scale(2.5) translate(${panOffset.x / 2.5}px, ${panOffset.y / 2.5}px)` : 'none',
-                        transformOrigin: 'center center'
-                      }}
-                    >
-                      <Image
-                        src={images[index]}
-                        alt={`${documentName} - Page ${index + 1}`}
-                        fill
-                        className="object-cover object-bottom"
-                        sizes="950px"
-                        priority={isCenter}
-                      />
+                    {/* Front side */}
+                    <div className="photo-front">
+                      <div 
+                        className={`relative w-full aspect-[3/2] bg-gray-100 overflow-hidden image-container ${hasAnnotations && isCenter ? 'has-flip-hint' : ''}`}
+                        style={{ 
+                          cursor: isCenter 
+                            ? hasAnnotations
+                              ? 'pointer'
+                              : isDragging 
+                                ? 'grabbing' 
+                                : isZoomed 
+                                  ? 'zoom-out' 
+                                  : 'zoom-in'
+                            : 'default'
+                        }}
+                        onClick={isCenter ? (hasAnnotations ? toggleFlip : toggleZoom) : undefined}
+                        onMouseDown={isCenter && !hasAnnotations ? handleMouseDown : undefined}
+                        onMouseMove={isCenter && !hasAnnotations ? handleMouseMove : undefined}
+                        onMouseUp={isCenter && !hasAnnotations ? handleMouseUp : undefined}
+                        onMouseLeave={isCenter && !hasAnnotations ? handleMouseUp : undefined}
+                      >
+                        <div
+                          className="relative w-full h-full transition-transform duration-300 ease-out"
+                          style={{
+                            transform: isCenter && isZoomed && !hasAnnotations ? `scale(2.5) translate(${panOffset.x / 2.5}px, ${panOffset.y / 2.5}px)` : 'none',
+                            transformOrigin: 'center center'
+                          }}
+                        >
+                          <Image
+                            src={images[index]}
+                            alt={`${documentName} - Page ${index + 1}`}
+                            fill
+                            className="object-cover object-bottom"
+                            sizes="950px"
+                            priority={isCenter}
+                          />
+                        </div>
+                        
+                        {/* Flip hint - overlayed on image at bottom */}
+                        {hasAnnotations && isCenter && (
+                          <div className="flip-hint">
+                            Click to flip →
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Polaroid caption */}
+                      <div className="mt-3 text-center">
+                        <p 
+                          className="text-base text-gray-700"
+                          style={{ fontFamily: "'Caveat', cursive" }}
+                        >
+                          {documentName}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  {/* Polaroid caption */}
-                  <div className="mt-3 text-center">
-                    <p 
-                      className="text-base text-gray-700"
-                      style={{ fontFamily: "'Caveat', cursive" }}
-                    >
-                      {documentName}
-                    </p>
+                    
+                    {/* Back side - only for photos with annotations */}
+                    {hasAnnotations && isCenter && (
+                      <div 
+                        className="photo-back"
+                        onClick={toggleFlip}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className="annotation-text">
+                          {currentAnnotation || 'No annotation available'}
+                        </div>
+                        <div className="flip-hint">
+                          ← Click to flip back
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

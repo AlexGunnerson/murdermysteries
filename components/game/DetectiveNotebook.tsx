@@ -72,6 +72,7 @@ interface Document {
   content?: string
   isLetter?: boolean
   initiallyAvailable?: boolean
+  annotations?: Record<string, string>
 }
 
 interface DetectiveNotebookProps {
@@ -222,7 +223,8 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             images: r.images || (r.documentUrl ? [r.documentUrl] : []),
             content: r.content,
             isLetter: r.isLetter,
-            initiallyAvailable: r.initiallyAvailable
+            initiallyAvailable: r.initiallyAvailable,
+            annotations: r.annotations
           }))
         
         setSuspects(allSuspects)
@@ -710,6 +712,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           documentName={selectedDocument.name}
           images={selectedDocument.images}
           initialIndex={selectedDocumentImageIndex}
+          annotations={selectedDocument.annotations}
           onClose={() => {
             setSelectedDocument(null)
             setSelectedDocumentImageIndex(0)

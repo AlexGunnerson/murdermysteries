@@ -198,6 +198,23 @@
         "/cases/case01/images/gala_photos/veronica_champagne.jpg",
         "/cases/case01/images/gala_photos/veronica_outside.png"
       ],
+      "annotations": {
+        "itinerary.png": "The evening's schedule, carefully planned to the minute. Every detail accounted for—or so we thought.",
+        "colin_white_gloves.png": "A quiet moment near the gallery entrance while the quartet played. Colin was standing watch as he always does, keeping a meticulous eye on the staff and the flow of the room from the shadows.",
+        "colin_champagne.png": "The gala in full swing. Colin was moving through the crowd with his usual precision, ensuring the champagne never ran low despite the heat in the ballroom.",
+        "lydia_networking.png": "A masterclass in networking. Lydia managed the gala floor with effortless grace, never missing a beat or a potential donor. She and I have spent many nights like this, though she always seemed to have more energy for the social dance than I did.",
+        "lydia_shaking_hands.png": "Lydia was welcoming the late arrivals near the dining area, her composure never wavering.",
+        "martin_mingling.jpg": "Martin in his element, holding court by the floral displays. He was the life of the party long after the rest of us grew tired of the pretense. There is a certain effortlessness to his irresponsibility that I've always found both fascinating and exhausting.",
+        "martin_shaking_hands.png": "Martin at the entrance, playing the welcoming host to perfection. He spent the evening greeting every arrival with that practiced academic charm, making sure the guests felt at home while the staff quietly managed the logistics right at his elbow.",
+        "martin_lounging.png": "Untied bowtie and a glass of scotch—living the life of leisure that Reginald's success has always afforded him.",
+        "reginald_lydia_conversation.jpg": "Reginald and Lydia discussing Foundation business late into the evening. Even with the music playing, the air between them felt remarkably heavy.",
+        "reginald_veronica_dancing.jpg": "Our final dance. For those few minutes, we weren't a Foundation or an estate; we were just a husband and wife, performing the role we'd perfected over forty years.",
+        "vale_greenhouse.png": "Dr. Vale taking in Reginald's rare orchids he loved so very much. The conservatory was the one place Leonard truly seemed happy.",
+        "vale_gala.png": "Leonard has always had a way of looking through people rather than at them. Even with a glass in his hand and music in the air, he seemed to be performing a diagnostic on the entire room. He hardly spoke a word all evening.",
+        "vale_gala_2.png": "Leonard spent most of the night like this—standing in the center of the ballroom but feeling worlds away.",
+        "veronica_champagne.jpg": "Mid-gala. A moment of quiet luxury before the evening took its final, sharp turn. Even then, the emeralds felt heavier than usual.",
+        "veronica_outside.png": "I needed a moment away from the heat of the ballroom. Standing there in the dark, watching the party through the glass, I realized how much I've come to prefer the silence over the performance."
+      },
       "initiallyAvailable": true
     },
     {
