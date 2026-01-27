@@ -101,7 +101,7 @@ export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, i
           bottom: -40px;
           left: 50%;
           transform: translateX(-50%) rotate(${rotating * -0.5}deg);
-          background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+          background: white;
           padding: 10px 20px;
           min-width: 140px;
           text-align: center;

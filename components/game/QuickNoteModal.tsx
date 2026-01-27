@@ -13,6 +13,7 @@ interface QuickNoteModalProps {
 export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps) {
   const [content, setContent] = useState('')
   const [isShaking, setIsShaking] = useState(false)
+  const [showMessage, setShowMessage] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const draggableRef = useRef<HTMLDivElement>(null)
@@ -56,18 +57,35 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
 
   const triggerShake = () => {
     setIsShaking(true)
+    setShowMessage(true)
     setTimeout(() => setIsShaking(false), 500)
+    setTimeout(() => setShowMessage(false), 2500)
   }
 
   if (!isOpen) return null
 
   return (
     <>
-      {/* Semi-transparent backdrop */}
+      {/* Backdrop for click detection (no visual effects) */}
       <div
-        className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[80]"
+        className="fixed inset-0 z-[80]"
         onClick={handleBackdropClick}
       />
+
+      {/* Helper Message */}
+      {showMessage && (
+        <div
+          className="fixed z-[85] animate-fade-in-out"
+          style={{
+            bottom: '528px', // 32px (bottom) + 280px (drag offset up) + 200px (note height) + 16px (spacing)
+            left: '64px', // 32px (left) + 32px (drag offset right)
+          }}
+        >
+          <div className="bg-gray-200 text-gray-800 text-xs px-4 py-2.5 rounded-lg shadow-md inline-block">
+            <p className="text-center font-medium whitespace-nowrap">Save or discard your note to continue</p>
+          </div>
+        </div>
+      )}
 
       {/* Draggable Sticky Note */}
       <Draggable
@@ -78,7 +96,7 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
       >
         <div
           ref={draggableRef}
-          className={`fixed z-[90] ${isShaking ? 'animate-shake' : ''}`}
+          className="fixed z-[90]"
           style={{
             width: '300px',
             height: '200px',
@@ -87,9 +105,9 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Sticky Note */}
+          {/* Sticky Note with shake animation */}
           <div
-            className="w-full h-full shadow-2xl"
+            className={`w-full h-full shadow-2xl ${isShaking ? 'animate-shake' : ''}`}
             style={{
               background: 'linear-gradient(135deg, #fef68a 0%, #fef08a 100%)',
               borderRadius: '2px',
@@ -159,16 +177,27 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
         </div>
       </Draggable>
 
-      {/* Shake Animation */}
+      {/* Animations */}
       <style jsx>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
-          20%, 40%, 60%, 80% { transform: translateX(8px); }
+          25%, 75% { transform: translateX(-3px); }
+          50% { transform: translateX(3px); }
+        }
+        
+        @keyframes fadeInOut {
+          0% { opacity: 0; transform: translateY(4px); }
+          10% { opacity: 1; transform: translateY(0); }
+          90% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-4px); }
         }
         
         .animate-shake {
-          animation: shake 0.5s ease-in-out;
+          animation: shake 0.4s ease-in-out;
+        }
+        
+        .animate-fade-in-out {
+          animation: fadeInOut 2.5s ease-in-out;
         }
       `}</style>
     </>

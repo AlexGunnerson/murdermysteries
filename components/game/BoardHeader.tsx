@@ -1,5 +1,7 @@
 "use client"
 
+import Image from 'next/image'
+
 interface BoardHeaderProps {
   hasUnreadMessage?: boolean
   onOpenMessage?: () => void
@@ -159,6 +161,37 @@ export function BoardHeader({
 
         .spacer {
           flex-grow: 1;
+        }
+
+        .title-image-container {
+          position: absolute;
+          left: 2rem;
+          top: 0;
+          height: 90px;
+          display: flex;
+          align-items: center;
+          z-index: 10;
+          pointer-events: none;
+        }
+
+        .title-image {
+          height: 60%;
+          width: auto;
+          max-width: 300px;
+          object-fit: contain;
+          object-position: left center;
+        }
+
+        @media (max-width: 768px) {
+          .title-image-container {
+            left: 1rem;
+            height: 70px;
+          }
+          
+          .title-image {
+            max-width: 200px;
+            height: 50%;
+          }
         }
 
         .controls-area {
@@ -377,6 +410,18 @@ export function BoardHeader({
           }
         }
       `}</style>
+
+      {/* Title Image - Top Left */}
+      <div className="title-image-container">
+        <Image
+          src="/cases/case01/images/ui/gala-title.png"
+          alt="The Final Gala at the Ashcombe Estate"
+          width={300}
+          height={54}
+          className="title-image"
+          priority
+        />
+      </div>
 
       {/* Left: Empty Spacer */}
       <div className="spacer"></div>
