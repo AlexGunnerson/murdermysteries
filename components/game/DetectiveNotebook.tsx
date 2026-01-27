@@ -31,6 +31,7 @@ import { PaintingBackViewer } from "./detective-board/PaintingBackViewer"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from "./documents/CoronerReportDocs"
 import { ValidateTheory } from "./ValidateTheory"
+import { QuickNoteButton } from "./QuickNoteButton"
 
 interface Suspect {
   id: string
@@ -1136,6 +1137,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           </div>
         </>
       )}
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </>
   )
 }

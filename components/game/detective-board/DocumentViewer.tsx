@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { QuickNoteButton } from "../QuickNoteButton"
 
 interface DocumentViewerProps {
   documentName: string
@@ -384,6 +385,9 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
           ))}
         </div>
       )}
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

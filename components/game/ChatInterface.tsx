@@ -7,6 +7,7 @@ import { extractFactsFromResponse } from '@/lib/services/aiService'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2 } from 'lucide-react'
+import { QuickNoteButton } from './QuickNoteButton'
 
 interface ChatInterfaceProps {
   suspectId: string
@@ -386,6 +387,9 @@ export function ChatInterface({
           background: #3a3a3a;
         }
       `}</style>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

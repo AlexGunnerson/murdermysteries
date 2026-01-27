@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, FileText } from "lucide-react"
+import { QuickNoteButton } from "../QuickNoteButton"
 
 interface PaintingBackViewerProps {
   imagePath: string
@@ -81,6 +82,9 @@ export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: Pain
           background: 'radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%)'
         }}></div>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

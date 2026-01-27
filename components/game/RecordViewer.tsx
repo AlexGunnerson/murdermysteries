@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useGameState } from '@/lib/hooks/useGameState'
 import { Button } from '@/components/ui/button'
 import { FileText, Lock, Eye } from 'lucide-react'
+import { QuickNoteButton } from './QuickNoteButton'
 
 interface Record {
   id: string
@@ -242,6 +243,9 @@ export function RecordViewer({ sessionId, onFactDiscovered }: RecordViewerProps)
           </div>
         )}
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

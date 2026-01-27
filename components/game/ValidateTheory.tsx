@@ -6,6 +6,7 @@ import { FileText, Image as ImageIcon, CheckCircle, ChevronRight, X } from 'luci
 import { useGameState } from '@/lib/hooks/useGameState'
 import { TheoryResultModal } from './detective-board/TheoryResultModal'
 import { ErrorNotification } from './detective-board/ErrorNotification'
+import { QuickNoteButton } from './QuickNoteButton'
 
 interface ValidateTheoryProps {
   isOpen: boolean
@@ -689,6 +690,9 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
         </div>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
     </>
   )

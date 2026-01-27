@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useState, useRef } from "react"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 import { useGameState } from "@/lib/hooks/useGameState"
+import { QuickNoteButton } from "../QuickNoteButton"
 
 interface SuspectDossierViewProps {
   suspect: {
@@ -468,6 +469,9 @@ export function SuspectDossierView({
           </div>
         </div>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

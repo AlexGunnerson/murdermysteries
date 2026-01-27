@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import { X, ChevronLeft, ChevronRight, Camera, ArrowLeft } from "lucide-react"
+import { X, ChevronLeft, ChevronRight, Camera, ArrowLeft, Repeat } from "lucide-react"
+import { QuickNoteButton } from "../QuickNoteButton"
 
 interface SceneViewerProps {
   sceneName: string
@@ -149,6 +150,45 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
+      <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
+        
+        .flip-hint {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          background: white;
+          color: white;
+          padding: 10px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          animation: pulse 2s infinite;
+          z-index: 20;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .flip-hint:hover {
+          background: #f5f5f5;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.7; }
+          50% { opacity: 1; }
+        }
+        
+        @media (max-width: 640px) {
+          .flip-hint {
+            padding: 8px;
+            bottom: 15px;
+            right: 15px;
+          }
+        }
+      `}</style>
       {/* Back button - top left */}
       <button
         onClick={onClose}
@@ -317,12 +357,23 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                           priority={isCenter}
                         />
                       </div>
+                      
+                      {/* Flip button for annotations - overlayed on photo */}
+                      {hasAnnotations && isCenter && (
+                        <button
+                          onClick={toggleFlip}
+                          className="flip-hint"
+                          title={isFlipped ? 'Flip back' : 'Flip photo'}
+                        >
+                          <Repeat className="w-5 h-5 text-gray-800" />
+                        </button>
+                      )}
                     </div>
 
                     {/* Back side - Annotation */}
                     {hasAnnotations && isCenter && (
                       <div
-                        className="absolute inset-0 aspect-[3/2] bg-[#f4e8d8] overflow-hidden flex items-center justify-center p-8"
+                        className="absolute inset-0 aspect-[3/2] bg-white overflow-hidden flex items-center justify-center p-8"
                         style={{
                           backfaceVisibility: 'hidden',
                           transform: 'rotateY(180deg)'
@@ -330,12 +381,24 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                       >
                         <div className="max-w-full max-h-full overflow-auto">
                           <p 
-                            className="text-gray-800 text-xl leading-relaxed"
-                            style={{ fontFamily: "'Caveat', cursive" }}
+                            className="text-gray-800 leading-relaxed"
+                            style={{ 
+                              fontFamily: "'Caveat', cursive",
+                              fontSize: '2.5rem'
+                            }}
                           >
                             {getCurrentAnnotation()}
                           </p>
                         </div>
+                        
+                        {/* Flip button for annotations - overlayed on annotation */}
+                        <button
+                          onClick={toggleFlip}
+                          className="flip-hint"
+                          title="Flip back"
+                        >
+                          <Repeat className="w-5 h-5 text-gray-800" />
+                        </button>
                       </div>
                     )}
                   </div>
@@ -343,22 +406,12 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                   {/* Polaroid caption */}
                   <div className="mt-3 text-center">
                     <p 
-                      className="text-base text-gray-700"
+                      className="text-2xl text-gray-700"
                       style={{ fontFamily: "'Caveat', cursive" }}
                     >
                       {hasAnnotations && photoType === 'gala' ? 'May 10th, 1986' : sceneName}
                     </p>
                   </div>
-
-                  {/* Flip button for annotations */}
-                  {hasAnnotations && isCenter && (
-                    <button
-                      onClick={toggleFlip}
-                      className="absolute bottom-14 right-4 bg-white/90 hover:bg-white text-gray-800 px-4 py-2 rounded-lg shadow-lg transition-all hover:scale-105 text-sm font-medium"
-                    >
-                      {isFlipped ? 'Show Photo' : 'Read Note'}
-                    </button>
-                  )}
                 </div>
               </div>
             )
@@ -383,6 +436,9 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
           ))}
         </div>
       )}
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Lightbulb, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { QuickNoteButton } from './QuickNoteButton'
 
 interface TheorySubmissionProps {
   sessionId: string
@@ -219,6 +220,9 @@ export function TheorySubmission({ sessionId, onTheorySubmitted }: TheorySubmiss
           {isSubmitting ? 'Validating Theory...' : 'Submit Theory'}
         </Button>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

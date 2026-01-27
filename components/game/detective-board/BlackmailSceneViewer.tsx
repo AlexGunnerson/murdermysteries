@@ -6,6 +6,7 @@ import { DocumentHTMLViewer } from "./DocumentHTMLViewer"
 import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from "../documents/MartinBlackmailDocs"
 import { ColinBlackmailScenePage1, ColinBlackmailScenePage2 } from "../documents/ColinBlackmailSceneDocs"
 import { LydiaBlackmailPage1, LydiaBlackmailPage2, LydiaBlackmailPage3 } from "../documents/LydiaBlackmailDocs"
+import { QuickNoteButton } from "../QuickNoteButton"
 
 interface BlackmailSceneViewerProps {
   onClose: () => void
@@ -299,6 +300,9 @@ export function BlackmailSceneViewer({ onClose }: BlackmailSceneViewerProps) {
           </div>
         </div>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

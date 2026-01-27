@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { CheckCircle2, XCircle, Scale } from 'lucide-react'
+import { QuickNoteButton } from './QuickNoteButton'
 
 interface SolutionSubmissionProps {
   sessionId: string
@@ -285,6 +286,9 @@ export function SolutionSubmission({
           </div>
         </div>
       </div>
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }

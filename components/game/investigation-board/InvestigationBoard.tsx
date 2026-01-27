@@ -43,6 +43,7 @@ import { useInvestigationBoardStore } from './useInvestigationBoardStore'
 import { calculateInitialLayout, generateConnectionId } from './utils'
 import { ConnectionType } from './types'
 import { useGameState } from '@/lib/hooks/useGameState'
+import { QuickNoteButton } from '../QuickNoteButton'
 
 // Define custom node types
 const nodeTypes = {
@@ -225,6 +226,116 @@ function InvestigationBoardContent({
     }
   }, [nodes])
   
+  // Listen for external note additions (from QuickNote button)
+  useEffect(() => {
+    const handleQuickNoteAdded = (e: Event) => {
+      console.log('=== QUICK NOTE ADDED EVENT RECEIVED ===')
+      console.log('Event detail:', (e as CustomEvent).detail)
+      console.log('isInitialized:', isInitialized)
+      console.log('Current nodes count:', nodes.length)
+      
+      if (!isInitialized) {
+        console.log('Board not initialized yet, skipping')
+        return
+      }
+      
+      // Reload notes from storage
+      const storedState = loadState()
+      console.log('Loaded state:', storedState)
+      console.log('Stored nodes:', storedState?.nodes?.length || 0)
+      
+      const existingNodeIds = new Set(nodes.map(n => n.id))
+      console.log('Existing node IDs:', Array.from(existingNodeIds))
+      
+      // Find new notes that don't exist yet
+      const newNotes = storedState?.nodes
+        .filter(n => n?.id?.startsWith('note_') && !existingNodeIds.has(n.id))
+        .map(n => ({
+          id: n.id,
+          type: 'note' as const,
+          position: n.position,
+          data: {
+            ...(n as any).data,
+            onUpdate: handleUpdateNote,
+            onDelete: handleDeleteNote,
+            onColorChange: handleColorChange,
+          },
+          draggable: true,
+          width: n.width,
+          height: n.height,
+        })) || []
+      
+      console.log('New notes to add:', newNotes.length)
+      console.log('New notes:', newNotes)
+      
+      if (newNotes.length > 0) {
+        console.log('Adding notes to board...')
+        setNodes(prev => {
+          const updated = [...prev, ...newNotes]
+          console.log('Updated nodes count:', updated.length)
+          return updated
+        })
+      } else {
+        console.log('No new notes to add')
+      }
+      console.log('=== END EVENT HANDLER ===')
+    }
+    
+    const handleStorageChange = (e: StorageEvent) => {
+      // Check if it's our storage key (for cross-tab updates)
+      if (e.key === `investigation-board-state-${caseId}` && e.newValue && isInitialized) {
+        handleQuickNoteAdded()
+      }
+    }
+    
+    window.addEventListener('quickNoteAdded', handleQuickNoteAdded)
+    window.addEventListener('storage', handleStorageChange)
+    
+    return () => {
+      window.removeEventListener('quickNoteAdded', handleQuickNoteAdded)
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [caseId, isInitialized, nodes, loadState, handleUpdateNote, handleDeleteNote, handleColorChange, setNodes])
+  
+  // Check for new notes when board becomes initialized
+  useEffect(() => {
+    if (!isInitialized) return
+    
+    // Small delay to ensure nodes state is set
+    const timeoutId = setTimeout(() => {
+      // Reload notes from storage to catch any that were added while board was closed
+      const storedState = loadState()
+      setNodes(prev => {
+        const existingNodeIds = new Set(prev.map(n => n.id))
+        
+        const newNotes = storedState?.nodes
+          .filter(n => n?.id?.startsWith('note_') && !existingNodeIds.has(n.id))
+          .map(n => ({
+            id: n.id,
+            type: 'note' as const,
+            position: n.position,
+            data: {
+              ...(n as any).data,
+              onUpdate: handleUpdateNote,
+              onDelete: handleDeleteNote,
+              onColorChange: handleColorChange,
+            },
+            draggable: true,
+            width: n.width,
+            height: n.height,
+          })) || []
+        
+        if (newNotes.length > 0) {
+          console.log('Found new notes after initialization:', newNotes.length)
+          return [...prev, ...newNotes]
+        }
+        return prev
+      })
+    }, 100)
+    
+    return () => clearTimeout(timeoutId)
+  }, [isInitialized, caseId, loadState, handleUpdateNote, handleDeleteNote, handleColorChange, setNodes])
+  
   // Initialize board with suspects and victim only
   useEffect(() => {
     if (isInitialized) return
@@ -370,6 +481,10 @@ function InvestigationBoardContent({
   // Save state when nodes or edges change
   useEffect(() => {
     if (!hasInitializedRef.current) return
+    
+    // Don't save if we have suspiciously few nodes (prevents overwriting during React state updates)
+    // Minimum is 6 nodes (5 suspects + 1 victim)
+    if (nodes.length < 6) return
     
     const currentViewport = reactFlowInstance.getViewport()
     saveState(nodes, edges, currentViewport)
@@ -992,6 +1107,9 @@ function InvestigationBoardContent({
           onClose={() => setChatSuspect(null)}
         />
       )}
+
+      {/* Quick Note Button */}
+      <QuickNoteButton />
     </div>
   )
 }
