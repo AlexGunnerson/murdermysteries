@@ -75,11 +75,17 @@
       "id": "scene_staircase",
       "name": "Grand Staircase (Private Wing)",
       "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
-      "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_1.png",
+      "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
       "images": [
-        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_1.png",
-        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/stairs_2.png"
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_2.png"
       ],
+      "galaImages": [
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/gala/reginald_wine_spill.png"
+      ],
+      "galaAnnotations": {
+        "reginald_wine_spill.png": "The crime scene photograph taken shortly after Reginald's body was discovered. The wine glass and its dark contents are clustered tightly near the body."
+      },
       "initiallyAvailable": true
     },
     {
@@ -206,16 +212,6 @@
       "description": "Official autopsy and scene analysis. Rules the death as accidental.",
       "initiallyAvailable": true,
       "content": "CAUSE OF DEATH: Fatal skull fracture\n\nFINDINGS: Injury pattern consistent with fall from TOP of staircase. Single point of impact. No secondary bruising or defensive wounds.\n\nTOXICOLOGY: Alcohol present, within social drinking range.\n\nRULING: Accidental fall. No evidence of foul play."
-    },
-    {
-      "id": "record_crime_scene_photos",
-      "name": "Crime Scene Photographs",
-      "description": "Photos taken at the scene, including close-ups of the body, wine spill, and staircase.",
-      "documentUrl": "/cases/case01/images/crime_scene/reginald_wine_spill.png",
-      "images": [
-        "/cases/case01/images/crime_scene/reginald_wine_spill.png"
-      ],
-      "initiallyAvailable": true
     },
     {
       "id": "record_veronica_thankyou",

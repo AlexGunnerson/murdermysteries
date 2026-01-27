@@ -100,17 +100,34 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         const scenePhotos = data.locations
           .filter((scene: any) => scene.initiallyAvailable || unlockedContent.scenes.has(scene.id))
           .flatMap((scene: any) => {
-            const sceneImages = scene.images || [scene.imageUrl]
-            return sceneImages.map((imageUrl: string, idx: number) => ({
+            const investigationImages = scene.images || [scene.imageUrl]
+            const galaImages = scene.galaImages || []
+            
+            // Investigation photos
+            const investigationPhotos = investigationImages.map((imageUrl: string, idx: number) => ({
               id: `${scene.id}_img_${idx}`,
-              title: `${scene.name}${sceneImages.length > 1 ? ` - Image ${idx + 1}` : ''}`,
+              title: `${scene.name}${investigationImages.length > 1 ? ` - Image ${idx + 1}` : ''}`,
               type: 'photo' as const,
               desc: scene.description,
               imageUrl: imageUrl,
-              images: sceneImages,
+              images: investigationImages,
               sceneId: scene.id,
               category: 'scene'
             }))
+            
+            // Gala photos
+            const galaPhotos = galaImages.map((imageUrl: string, idx: number) => ({
+              id: `${scene.id}_gala_img_${idx}`,
+              title: `${scene.name} - May 10th, 1986${galaImages.length > 1 ? ` (${idx + 1})` : ''}`,
+              type: 'photo' as const,
+              desc: scene.galaAnnotations?.[imageUrl.split('/').pop() || ''] || scene.description,
+              imageUrl: imageUrl,
+              images: galaImages,
+              sceneId: scene.id,
+              category: 'scene'
+            }))
+            
+            return [...investigationPhotos, ...galaPhotos]
           })
         
         // Load image-based documents (like gala photos)

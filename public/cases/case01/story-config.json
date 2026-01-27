@@ -127,7 +127,7 @@
       "content": "The wine spill is tightly clustered near the body with no trail up the stairs, inconsistent with a tumbling fall.",
       "category": "evidence",
       "importance": 1,
-      "sources": ["scene_staircase", "record_crime_scene_photos"]
+      "sources": ["scene_staircase"]
     },
     {
       "id": "fact_coroner_top_fall",

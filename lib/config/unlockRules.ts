@@ -31,7 +31,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'contradiction',
     stage: 'start',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_vale_notes', 'record_crime_scene_photos_img_0'],
+    requiredArtifacts: ['record_vale_notes', 'scene_staircase_gala_img_0'],
     logicOperator: 'AND',
     unlocks: {
       stage: 'act_ii',
