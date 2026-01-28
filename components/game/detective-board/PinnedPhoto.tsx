@@ -184,13 +184,6 @@ export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, i
             className={`object-cover ${!isRevealed ? 'brightness-50' : ''}`}
             sizes="(max-width: 768px) 50vw, 200px"
           />
-          
-          {/* Unrevealed overlay */}
-          {!isRevealed && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <div className="text-6xl animate-pulse">❓</div>
-            </div>
-          )}
         </div>
       </button>
 

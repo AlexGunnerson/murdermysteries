@@ -121,7 +121,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
         }
         
         .ink-text {
-          font-size: 1.4rem;
+          font-size: 1.7rem;
           line-height: 1.35;
           text-shadow: 0 0 1px rgba(44, 42, 41, 0.2);
           opacity: 0.9;
@@ -222,7 +222,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
             font-size: 2rem;
           }
           .ink-text {
-            font-size: 1rem;
+            font-size: 1.3rem;
           }
           .ink-text p {
             margin-bottom: 0.75rem;
@@ -265,38 +265,29 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
               </div>
 
               <div className="ink-text">
-                <p>To the Inquiry Agent,</p>
+                <p>Detective,</p>
 
                 <p>
-                  I write this with a trembling hand, though I pray my resolve remains steady. By now, 
-                  the countryside is awash with the news. The constable calls it a misfortune—a slip of 
-                  the foot after too much wine and celebration. He calls it an accident.
-                </p>
-
-                <p className="font-bold" style={{ color: '#202020' }}>
-                  I call it impossible.
-                </p>
-
-                <p>
-                  Reginald was a man of immense vitality. Even at his age, he moved with the grace of a 
-                  man twenty years his junior. He has descended that grand staircase thousands of times—in 
-                  darkness, in haste, in joy. To suggest he simply &quot;slipped&quot; is an insult to his memory, 
-                  and to my intelligence.
+                  Your name was the first mentioned when I asked for the finest investigator 
+                  in the field, and I pray your skills are as sharp as they say. The countryside is awash with news of 
+                  Reginald&apos;s death. The constable calls it a &quot;misfortune&quot; — a drunken 
+                  slip of the foot. <span className="font-bold" style={{ color: '#202020' }}>
+                  I call it impossible.</span>
                 </p>
 
                 <p>
-                  I was the one who found him. Mrs. Portwell and I were looking to revise a speech, and as 
-                  I descended the stairs... he was just there at the bottom. He wasn&apos;t moving. A wine glass 
+                  Reginald was a man of immense vitality who moved with the grace of someone half his age. 
+                  He had descended that grand staircase thousands of times; to suggest he simply &quot;slipped&quot; 
+                  is an insult to his memory and my intelligence.
+                </p>
+
+                <p>
+                  I was the one who found him... just lying there at the bottom of the staircase. A wine glass 
                   lay shattered near him, the dark liquid pooling across the marble like a terrible shadow. 
                   I screamed, and it must have been loud because Colin, Lydia, and Dr. Vale came running 
                   immediately.
                 </p>
 
-                <p>
-                  Dr. Vale knelt beside him and checked for a pulse. The way he looked up at me... I knew 
-                  Reginald was gone. I just stood there, frozen, unable to comprehend the silence where his 
-                  laughter should have been.
-                </p>
               </div>
 
               {/* Corner curl indicator */}
@@ -311,15 +302,21 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
             {/* BACK PAGE */}
             <div className="parchment parchment-back relative rounded-sm pt-[45px] px-[40px] pb-[70px]">
               <div className="ink-text">
+
+                <p>
+                  Dr. Vale knelt beside him and checked for a pulse. The way he looked up at me... I knew 
+                  Reginald was gone. I just stood there, frozen, unable to comprehend the silence where his 
+                  laughter should have been.
+                </p>
+                
                 <p>
                   Reginald was a generous man, but generosity often breeds resentment in the shadows. There 
-                  are those under this very roof who had reason to wish him silenced. Legacies are heavy 
-                  burdens, and not everyone in our circle carries them with grace.
+                  are those under this very roof who had reason to wish him silenced.
                 </p>
 
                 <p>
                   However, I will not have the Ashcombe name dragged through the mud on mere speculation. 
-                  I cannot allow a circus of accusations while my husband is not yet cold. Therefore 
+                  Therefore 
                   Reginald&apos;s inner circle, his closest family and friends are unavailable for your questioning 
                   until you can bring me some type of proof that this was foul play.
                 </p>

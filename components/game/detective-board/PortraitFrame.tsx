@@ -38,13 +38,6 @@ export function PortraitFrame({ imageUrl, name, role, onClick, rotating = 0, isR
           className={`object-cover group-hover:scale-105 transition-transform duration-300 ${!isRevealed ? 'brightness-50' : ''}`}
           sizes="(max-width: 768px) 50vw, 200px"
         />
-        
-        {/* Unrevealed overlay with question mark */}
-        {!isRevealed && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <div className="text-6xl animate-pulse">❓</div>
-          </div>
-        )}
       </div>
 
       {/* Name plate */}
