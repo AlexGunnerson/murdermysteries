@@ -181,7 +181,7 @@ export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, i
             src={imageUrl}
             alt={name}
             fill
-            className={`object-cover ${!isRevealed ? 'brightness-50' : ''}`}
+            className="object-cover"
             sizes="(max-width: 768px) 50vw, 200px"
           />
         </div>
