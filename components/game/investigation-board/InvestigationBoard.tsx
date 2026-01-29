@@ -228,9 +228,9 @@ function InvestigationBoardContent({
   
   // Listen for external note additions (from QuickNote button)
   useEffect(() => {
-    const handleQuickNoteAdded = (e: Event) => {
+    const handleQuickNoteAdded = (e?: Event) => {
       console.log('=== QUICK NOTE ADDED EVENT RECEIVED ===')
-      console.log('Event detail:', (e as CustomEvent).detail)
+      console.log('Event detail:', e ? (e as CustomEvent).detail : 'N/A')
       console.log('isInitialized:', isInitialized)
       console.log('Current nodes count:', nodes.length)
       
@@ -261,8 +261,9 @@ function InvestigationBoardContent({
             onColorChange: handleColorChange,
           },
           draggable: true,
-          width: n.width,
-          height: n.height,
+          style: {
+            width: n.width || 180,
+          },
         })) || []
       
       console.log('New notes to add:', newNotes.length)
@@ -321,8 +322,9 @@ function InvestigationBoardContent({
               onColorChange: handleColorChange,
             },
             draggable: true,
-            width: n.width,
-            height: n.height,
+            style: {
+              width: n.width || 180,
+            },
           })) || []
         
         if (newNotes.length > 0) {
@@ -375,8 +377,9 @@ function InvestigationBoardContent({
           onColorChange: handleColorChange,
         },
         draggable: true,
-        width: n.width,
-        height: n.height,
+        style: {
+          width: n.width || 180,
+        },
       })) || []
     
     // Add photo nodes from stored state
@@ -669,7 +672,6 @@ function InvestigationBoardContent({
         draggable: true,
         style: {
           width: 180,
-          height: 120,
         },
       }
       
@@ -810,7 +812,9 @@ function InvestigationBoardContent({
               autoFocus: true,
             },
             draggable: true,
-            style: copiedNode.style,
+            style: {
+              width: copiedNode.style?.width || 180,
+            },
           }
           
           setNodes(prev => [...prev, newNote])

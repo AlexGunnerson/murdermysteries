@@ -1,7 +1,7 @@
 "use client"
 
 import { memo, useState, useRef, useEffect } from 'react'
-import { Handle, Position, NodeResizer } from '@xyflow/react'
+import { Handle, Position, NodeResizer, useUpdateNodeInternals } from '@xyflow/react'
 
 interface NoteNodeData {
   id: string
@@ -42,6 +42,10 @@ function NoteNode({ data, selected }: NoteNodeProps) {
   const [content, setContent] = useState(data.content)
   const [wasSelected, setWasSelected] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const nodeRef = useRef<HTMLDivElement>(null)
+  const noteRef = useRef<HTMLDivElement>(null)
+  const updateNodeInternals = useUpdateNodeInternals()
   const colorStyle = colorStyles[data.color]
 
   // Auto-focus on mount if autoFocus is true
@@ -60,6 +64,48 @@ function NoteNode({ data, selected }: NoteNodeProps) {
       textareaRef.current.select()
     }
   }, [isEditing])
+
+  // Auto-resize based on content
+  useEffect(() => {
+    const measureContent = () => {
+      if (!nodeRef.current) return
+
+      const currentWidth = nodeRef.current.offsetWidth || 180
+      
+      // Create a temporary measuring element
+      const temp = document.createElement('div')
+      temp.style.cssText = `
+        position: absolute;
+        visibility: hidden;
+        width: ${currentWidth - 32}px;
+        font-family: 'Courier Prime', 'Courier New', monospace;
+        font-size: 0.875rem;
+        line-height: 1.625;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        padding: 0;
+      `
+      temp.textContent = content || 'Type your note...'
+      document.body.appendChild(temp)
+      
+      const contentHeight = temp.scrollHeight
+      document.body.removeChild(temp)
+
+      // Add padding (16px top + 16px bottom = 32px total)
+      const totalHeight = Math.max(120, contentHeight + 32)
+      
+      // Update the container height
+      if (nodeRef.current && nodeRef.current.offsetHeight !== totalHeight) {
+        nodeRef.current.style.height = `${totalHeight}px`
+        // Notify React Flow that the node dimensions changed
+        updateNodeInternals(data.id)
+      }
+    }
+
+    // Delay measurement slightly to ensure content is rendered
+    const timer = setTimeout(measureContent, 0)
+    return () => clearTimeout(timer)
+  }, [content, data.id, updateNodeInternals])
 
   // Track selection state to enable click-to-edit
   useEffect(() => {
@@ -105,7 +151,7 @@ function NoteNode({ data, selected }: NoteNodeProps) {
   }
 
   return (
-    <>
+    <div ref={nodeRef} className="relative w-full">
       <NodeResizer
         minWidth={100}
         minHeight={80}
@@ -184,7 +230,8 @@ function NoteNode({ data, selected }: NoteNodeProps) {
 
       {/* Sticky Note */}
       <div
-        className="relative w-full h-full min-w-[100px] min-h-[80px] p-4"
+        ref={noteRef}
+        className="relative w-full min-w-[100px] min-h-[120px] p-4"
         style={{
           background: colorStyle.background,
           borderRadius: '2px',
@@ -208,6 +255,7 @@ function NoteNode({ data, selected }: NoteNodeProps) {
           />
         ) : (
           <div 
+            ref={contentRef}
             className="w-full h-full text-sm text-gray-800 leading-relaxed whitespace-pre-wrap cursor-text"
             style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
           >
@@ -215,7 +263,7 @@ function NoteNode({ data, selected }: NoteNodeProps) {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }
 
