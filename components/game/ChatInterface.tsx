@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2 } from 'lucide-react'
 import { QuickNoteButton } from './QuickNoteButton'
+import { smartConcat } from '@/lib/utils/textUtils'
 
 interface ChatInterfaceProps {
   suspectId: string
@@ -151,7 +152,7 @@ export function ChatInterface({
               }
 
               if (data.text) {
-                fullResponse += data.text
+                fullResponse = smartConcat(fullResponse, data.text)
                 setCurrentResponse(fullResponse)
               }
             } catch (e) {

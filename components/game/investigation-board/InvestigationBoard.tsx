@@ -102,7 +102,24 @@ function InvestigationBoardContent({
   const moveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Use the base handlers directly
-  const onNodesChange = onNodesChangeBase
+  const onNodesChange = useCallback((changes: any[]) => {
+    const adjustedChanges = changes.map(change => {
+      if (change.type === 'dimensions') {
+        const node = nodes.find(n => n.id === change.id)
+        if (node?.type === 'note' && node.style?.height && change.dimensions) {
+          return {
+            ...change,
+            dimensions: {
+              width: change.dimensions.width,
+              height: node.style.height,
+            },
+          }
+        }
+      }
+      return change
+    })
+    onNodesChangeBase(adjustedChanges)
+  }, [onNodesChangeBase, nodes])
   const onEdgesChange = onEdgesChangeBase
   
   // Connection popup state
@@ -778,6 +795,16 @@ function InvestigationBoardContent({
         return
       }
       
+      // Delete selected edges (Delete or Backspace)
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const selectedEdges = edges.filter(edge => edge.selected)
+        if (selectedEdges.length > 0) {
+          e.preventDefault()
+          setEdges(prev => prev.filter(edge => !edge.selected))
+          return
+        }
+      }
+      
       // Copy selected node (Ctrl+C or Cmd+C)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
         const selectedNodes = nodes.filter(n => n.selected)
@@ -838,7 +865,7 @@ function InvestigationBoardContent({
     
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [reactFlowInstance, nodes, copiedNode, setNodes, handleUpdateNote, handleDeleteNote])
+  }, [reactFlowInstance, nodes, edges, copiedNode, setNodes, setEdges, handleUpdateNote, handleDeleteNote])
   
   // Calculate toolbar position for selected note
   const selectedNote = nodes.find(n => n.selected && n.type === 'note')

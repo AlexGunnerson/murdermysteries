@@ -108,7 +108,7 @@ export function VictimDossierView({ onClose }: VictimDossierViewProps) {
                   textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                 }}
               >
-                VICTIM - May 10, 1986
+                The Final Gala at the Ashcombe Estate
               </p>
             </div>
 

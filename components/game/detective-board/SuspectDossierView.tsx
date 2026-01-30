@@ -170,7 +170,7 @@ export function SuspectDossierView({
                     textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
                   }}
                 >
-                  {suspect.id === 'suspect_veronica' ? 'MY STATEMENT:' : 'CASE FILE:'}
+                  CASE FILE:
                 </span>
               </div>
               <p 
@@ -180,7 +180,7 @@ export function SuspectDossierView({
                   textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                 }}
               >
-                70s: Final Gala at the Estate
+                The Final Gala at the Ashcombe Estate
               </p>
             </div>
 
@@ -328,7 +328,7 @@ export function SuspectDossierView({
                 </div>
               </div>
 
-              {/* Vices / Notes */}
+              {/* Vices */}
               <div className="flex items-start gap-3 text-[#d4af37]">
                 <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
                   <span className="text-xl">📋</span>
@@ -341,7 +341,7 @@ export function SuspectDossierView({
                       textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
                     }}
                   >
-                    {suspect.id === 'suspect_veronica' ? 'Notes:' : 'Vices:'}{" "}
+                    Vices:{" "}
                   </span>
                   <span 
                     className="text-[#c5a065] text-base"

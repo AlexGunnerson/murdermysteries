@@ -73,7 +73,7 @@
   "locations": [
     {
       "id": "scene_staircase",
-      "name": "Grand Staircase (Private Wing)",
+      "name": "Grand Staircase",
       "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
       "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
       "images": [
@@ -84,7 +84,7 @@
         "/cases/case01/images/scenes/Scene 6 - Grand Staircase/gala/reginald_wine_spill.png"
       ],
       "galaAnnotations": {
-        "reginald_wine_spill.png": "The crime scene photograph taken shortly after Reginald's body was discovered. The wine glass and its dark contents are clustered tightly near the body."
+        "reginald_wine_spill.png": "The wine pooled there like a dark shadow, marking the place where I found him. I cannot bear to look at this for long—the memory of seeing him there, so still, will haunt me forever."
       },
       "initiallyAvailable": true
     },

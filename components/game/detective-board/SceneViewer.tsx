@@ -82,7 +82,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
     if (e.key === 'ArrowRight' && !isZoomed) goToNext()
     if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
-    if (hasAnnotations && (e.key === 'f' || e.key === 'F')) {
+    if (hasAnnotations && (e.key === 'f' || e.key === 'F' || e.key === ' ')) {
       e.preventDefault()
       setIsFlipped(!isFlipped)
     }
@@ -197,17 +197,6 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
       >
         <ArrowLeft className="w-6 h-6" />
       </button>
-
-      {/* Scene title - top right */}
-      <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800">{sceneName}</h3>
-        {photoType === 'gala' && (
-          <p className="text-xs text-gray-500 mb-1">May 10th, 1986 - Gala Photos</p>
-        )}
-        <p className="text-sm text-gray-600">
-          Image {currentIndex + 1} of {images.length}
-        </p>
-      </div>
 
       {/* Security Footage Indicator */}
       {isMonitorPhoto && (
@@ -395,7 +384,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                         <button
                           onClick={toggleFlip}
                           className="flip-hint"
-                          title="Flip back"
+                          title="Flip back (Spacebar)"
                         >
                           <Repeat className="w-5 h-5 text-gray-800" />
                         </button>

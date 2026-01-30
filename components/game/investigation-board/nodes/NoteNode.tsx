@@ -1,7 +1,7 @@
 "use client"
 
-import { memo, useState, useRef, useEffect } from 'react'
-import { Handle, Position, NodeResizer, useUpdateNodeInternals } from '@xyflow/react'
+import { memo, useState, useRef, useEffect, useLayoutEffect } from 'react'
+import { Handle, Position, NodeResizer, useReactFlow, useUpdateNodeInternals } from '@xyflow/react'
 
 interface NoteNodeData {
   id: string
@@ -45,7 +45,9 @@ function NoteNode({ data, selected }: NoteNodeProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const nodeRef = useRef<HTMLDivElement>(null)
   const noteRef = useRef<HTMLDivElement>(null)
+  const lastHeightRef = useRef<number | null>(null)
   const updateNodeInternals = useUpdateNodeInternals()
+  const { setNodes, getNode, getViewport } = useReactFlow()
   const colorStyle = colorStyles[data.color]
 
   // Auto-focus on mount if autoFocus is true
@@ -95,8 +97,21 @@ function NoteNode({ data, selected }: NoteNodeProps) {
       const totalHeight = Math.max(120, contentHeight + 32)
       
       // Update the container height
-      if (nodeRef.current && nodeRef.current.offsetHeight !== totalHeight) {
-        nodeRef.current.style.height = `${totalHeight}px`
+      if (lastHeightRef.current !== totalHeight) {
+        lastHeightRef.current = totalHeight
+        setNodes(prev =>
+          prev.map(node =>
+            node.id === data.id
+              ? {
+                  ...node,
+                  style: {
+                    ...node.style,
+                    height: totalHeight,
+                  },
+                }
+              : node
+          )
+        )
         // Notify React Flow that the node dimensions changed
         updateNodeInternals(data.id)
       }
@@ -105,7 +120,7 @@ function NoteNode({ data, selected }: NoteNodeProps) {
     // Delay measurement slightly to ensure content is rendered
     const timer = setTimeout(measureContent, 0)
     return () => clearTimeout(timer)
-  }, [content, data.id, updateNodeInternals])
+  }, [content, data.id, setNodes, updateNodeInternals])
 
   // Track selection state to enable click-to-edit
   useEffect(() => {
@@ -118,6 +133,15 @@ function NoteNode({ data, selected }: NoteNodeProps) {
       setWasSelected(false)
     }
   }, [selected])
+
+  // Sync React Flow wrapper height to match computed note height
+  useLayoutEffect(() => {
+    const parent = nodeRef.current?.parentElement
+    const styleHeight = getNode(data.id)?.style?.height
+    if (parent && styleHeight && parent.style.height !== `${styleHeight}px`) {
+      parent.style.height = `${styleHeight}px`
+    }
+  })
 
   const handleClick = (e: React.MouseEvent) => {
     if (selected && !isEditing) {
@@ -158,6 +182,10 @@ function NoteNode({ data, selected }: NoteNodeProps) {
         isVisible={selected}
         lineClassName="border-gray-400"
         handleClassName="h-3 w-3 bg-gray-400 border border-gray-600"
+        shouldResize={(event, params) => {
+          // Only allow resizing from corner handles, not edges
+          return params.direction[0] !== 0 && params.direction[1] !== 0
+        }}
       />
       
       {/* Connection handles - invisible but functional */}
@@ -249,14 +277,14 @@ function NoteNode({ data, selected }: NoteNodeProps) {
             onChange={(e) => setContent(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full h-full bg-transparent border-none outline-none resize-none text-sm text-gray-800 leading-relaxed nodrag"
+            className="w-full h-full bg-transparent border-none outline-none resize-none overflow-hidden text-sm text-gray-800 leading-relaxed nodrag"
             style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
             placeholder="Type your note..."
           />
         ) : (
           <div 
             ref={contentRef}
-            className="w-full h-full text-sm text-gray-800 leading-relaxed whitespace-pre-wrap cursor-text"
+            className="w-full h-full overflow-hidden text-sm text-gray-800 leading-relaxed whitespace-pre-wrap cursor-text"
             style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
           >
             {content}

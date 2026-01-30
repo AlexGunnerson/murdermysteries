@@ -70,7 +70,7 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
     if (e.key === 'ArrowRight' && !isZoomed) goToNext()
     if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
-    if (hasAnnotations && (e.key === 'f' || e.key === 'F')) {
+    if (hasAnnotations && (e.key === 'f' || e.key === 'F' || e.key === ' ')) {
       e.preventDefault()
       setIsFlipped(!isFlipped)
     }
@@ -213,14 +213,6 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
         <ArrowLeft className="w-6 h-6" />
       </button>
 
-      {/* Document title - top right */}
-      <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold text-gray-800">{documentName}</h3>
-        <p className="text-sm text-gray-600">
-          Page {currentIndex + 1} of {images.length}
-        </p>
-      </div>
-
       {/* Carousel container */}
       <div 
         className="relative w-full max-w-7xl h-[80vh] flex items-center justify-center"
@@ -355,8 +347,8 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
                         <div className="annotation-text">
                           {currentAnnotation || 'No annotation available'}
                         </div>
-                        <div className="flip-hint">
-                          ← Click to flip back
+                        <div className="flip-hint" title="Spacebar to flip back">
+                          ← Click to flip back (Spacebar)
                         </div>
                       </div>
                     )}

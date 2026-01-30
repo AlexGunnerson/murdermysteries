@@ -7,6 +7,7 @@ import { extractFactsFromResponse } from '@/lib/services/aiService'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, Paperclip, X, FileText, Image as ImageIcon, ChevronDown, ChevronUp } from 'lucide-react'
+import { smartConcat } from '@/lib/utils/textUtils'
 
 interface ChatInterfaceProps {
   suspectId: string
@@ -317,7 +318,7 @@ export function ChatInterfaceWithAttachments({
               }
 
               if (data.text) {
-                fullResponse += data.text
+                fullResponse = smartConcat(fullResponse, data.text)
                 setCurrentResponse(fullResponse)
               }
             } catch (e) {

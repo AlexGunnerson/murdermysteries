@@ -609,15 +609,26 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           photoType={selectedPhotoType}
           annotations={selectedPhotoType === 'gala' ? selectedScene.galaAnnotations : undefined}
           onClose={() => {
-            setSelectedScene(null)
-            setSelectedSceneImageIndex(0)
-            setSelectedPhotoType('investigation')
-            if (onPreviewClose) {
-              onPreviewClose()
-              setOnPreviewClose(null)
+            // Check if this scene has gala photos (meaning it came from a selector)
+            if (selectedScene.galaImages && selectedScene.galaImages.length > 0) {
+              // Go back to the folder selector instead of closing completely
+              setSelectedSceneForSelector(selectedScene)
+              setShowSceneSelector(true)
+              setSelectedScene(null)
+              setSelectedSceneImageIndex(0)
+              setSelectedPhotoType('investigation')
+            } else {
+              // No selector involved, close normally
+              setSelectedScene(null)
+              setSelectedSceneImageIndex(0)
+              setSelectedPhotoType('investigation')
+              if (onPreviewClose) {
+                onPreviewClose()
+                setOnPreviewClose(null)
+              }
+              // Check for navigation stack and restore previous context
+              handleNavigationClose()
             }
-            // Check for navigation stack and restore previous context
-            handleNavigationClose()
           }}
           onOpenDocument={async (documentId) => {
             // Unlock button-click records in the database
