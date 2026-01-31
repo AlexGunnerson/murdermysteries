@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests"
+    "test:watch": "jest --watch --passWithNoTests",
+    "test:integration": "jest --config jest.integration.config.js",
+    "test:integration:happy": "jest --config jest.integration.config.js investigation-happy-path",
+    "test:integration:ai": "jest --config jest.integration.config.js ai-conversation",
+    "test:all": "npm run test && npm run test:integration"
   },
   "dependencies": {
     "@google-cloud/aiplatform": "^3.27.0",
@@ -43,6 +47,7 @@
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^16.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0",
     "jest": "^29.7.0",

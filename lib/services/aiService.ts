@@ -28,12 +28,12 @@ export interface StreamResponse {
 export interface ChatContext {
   systemPrompt: string
   conversationHistory: ChatMessage[]
-  discoveredFacts: string[]
+  discoveredFacts?: string[]
   suspectProfile: {
     id: string
     name: string
     role: string
-    personality: string
+    personality?: string
   }
   attachedItems?: Array<{
     id: string
@@ -134,10 +134,13 @@ function buildPrompt(userMessage: string, context: ChatContext): string {
 
   // Add suspect profile
   prompt += `You are playing the role of ${suspectProfile.name}, a ${suspectProfile.role}.\n`
-  prompt += `Personality traits: ${suspectProfile.personality}\n\n`
+  if (suspectProfile.personality) {
+    prompt += `Personality traits: ${suspectProfile.personality}\n`
+  }
+  prompt += `\n`
 
   // Add discovered facts context
-  if (discoveredFacts.length > 0) {
+  if (discoveredFacts && discoveredFacts.length > 0) {
     prompt += `Facts the detective has discovered so far:\n`
     discoveredFacts.forEach((fact, index) => {
       prompt += `${index + 1}. ${fact}\n`

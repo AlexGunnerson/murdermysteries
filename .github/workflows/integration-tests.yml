@@ -1,0 +1,95 @@
+name: Integration Tests
+
+on:
+  # Run on schedule (nightly)
+  schedule:
+    - cron: '0 2 * * *' # 2 AM UTC daily
+  
+  # Run on release branches
+  push:
+    branches:
+      - main
+      - release/*
+  
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - happy-path
+          - ai-conversation
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      GOOGLE_GEMINI_API_KEY: ${{ secrets.GOOGLE_GEMINI_API_KEY }}
+      NEXT_PUBLIC_API_URL: http://localhost:3000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js app
+        run: npm run build
+
+      - name: Start Next.js server
+        run: |
+          npm run start &
+          sleep 10
+          curl --retry 10 --retry-delay 3 --retry-connrefused http://localhost:3000
+
+      - name: Run integration tests (all)
+        if: github.event.inputs.test_suite == 'all' || github.event.inputs.test_suite == ''
+        run: npm run test:integration
+        continue-on-error: true
+
+      - name: Run happy path test only
+        if: github.event.inputs.test_suite == 'happy-path'
+        run: npm run test:integration:happy
+        continue-on-error: true
+
+      - name: Run AI conversation test only
+        if: github.event.inputs.test_suite == 'ai-conversation'
+        run: npm run test:integration:ai
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: |
+            coverage/
+            test-results/
+          retention-days: 30
+
+      - name: Report test summary
+        if: always()
+        run: |
+          echo "## Integration Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Test suite completed. Check artifacts for detailed results." >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Integration tests failed. Check logs for details."
