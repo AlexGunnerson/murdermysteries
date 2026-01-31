@@ -2,13 +2,14 @@
 
 import { memo } from 'react'
 import React from 'react'
-import { Handle, Position } from '@xyflow/react'
+import { Handle, Position, NodeProps } from '@xyflow/react'
 import Image from 'next/image'
 import { SuspectNodeData } from '../types'
 
-interface SuspectCardNodeProps {
-  data: SuspectNodeData
-  selected?: boolean
+interface SuspectCardNodeProps extends NodeProps {
+  data: SuspectNodeData & {
+    isConnecting?: boolean
+  }
 }
 
 function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
@@ -27,28 +28,36 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
   
   const displayName = getDisplayName(data.name)
   
+  const showConnectionDots = selected || data.isConnecting
+
   return (
     <>
-      {/* Connection handles - invisible but functional */}
+      {/* Connection handles - VISIBLE FOR DEVELOPMENT, same size for easier snapping */}
       {/* Top */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
         }}
       />
       
@@ -57,20 +66,26 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
         }}
       />
       
@@ -79,20 +94,26 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
         }}
       />
       
@@ -101,25 +122,31 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
         }}
       />
       
-      {/* Custom visual dots at midpoints - only visible when selected */}
-      {selected && (
+      {/* Custom visual dots at midpoints - visible when selected or near connection */}
+      {showConnectionDots && (
         <>
           {/* Top dot */}
           <div

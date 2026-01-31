@@ -11,6 +11,7 @@ interface NoteNodeData {
   onDelete: (id: string) => void
   onColorChange: (id: string, color: 'yellow' | 'blue' | 'pink' | 'green') => void
   autoFocus?: boolean
+  isConnecting?: boolean
 }
 
 interface NoteNodeProps {
@@ -37,7 +38,7 @@ const colorStyles = {
   },
 }
 
-function NoteNode({ data, selected }: NoteNodeProps) {
+function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [content, setContent] = useState(data.content)
   const [wasSelected, setWasSelected] = useState(false)
@@ -174,6 +175,8 @@ function NoteNode({ data, selected }: NoteNodeProps) {
     }
   }
 
+  const showConnectionDots = selected || data.isConnecting
+
   return (
     <div ref={nodeRef} className="relative w-full">
       <NodeResizer
@@ -188,66 +191,114 @@ function NoteNode({ data, selected }: NoteNodeProps) {
         }}
       />
       
-      {/* Connection handles - invisible but functional */}
+      {/* Connection handles - VISIBLE FOR DEVELOPMENT, same size for easier snapping */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
+        }}
       />
       <Handle
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
+        }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
+        }}
       />
       <Handle
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
+        }}
       />
       <Handle
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
+        }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
+        }}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 1
+        }}
       />
       <Handle
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-8 !h-8 !bg-transparent !border-0"
-        style={{ opacity: 0, pointerEvents: 'auto' }}
+        className="!w-8 !h-8 !rounded-full"
+        style={{ 
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: data.isConnecting ? 'none' : 'auto',
+          zIndex: 10
+        }}
       />
 
-      {/* Custom visual dots at midpoints - only visible when selected */}
-      {selected && (
+      {/* Custom visual dots at midpoints - visible when selected or near connection */}
+      {showConnectionDots && (
         <>
           <div className="absolute pointer-events-none" style={{ top: '-10px', left: '50%', transform: 'translateX(-50%)', width: '8px', height: '8px', background: '#9CA3AF', borderRadius: '50%', zIndex: 10 }} />
           <div className="absolute pointer-events-none" style={{ bottom: '-10px', left: '50%', transform: 'translateX(-50%)', width: '8px', height: '8px', background: '#9CA3AF', borderRadius: '50%', zIndex: 10 }} />

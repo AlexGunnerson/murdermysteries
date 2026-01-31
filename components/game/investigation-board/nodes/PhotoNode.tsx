@@ -11,10 +11,12 @@ export interface PhotoNodeData extends Record<string, unknown> {
   title: string
   onDelete?: (id: string) => void
   onClick?: (id: string) => void
+  isConnecting?: boolean
 }
 
 function PhotoNodeComponent({ data, selected }: NodeProps) {
   const photoData = data as PhotoNodeData
+  
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (photoData.onDelete) {
@@ -27,6 +29,8 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
       photoData.onClick(photoData.id)
     }
   }
+
+  const showConnectionDots = selected || photoData.isConnecting
 
   return (
     <div
@@ -51,26 +55,32 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
         />
       )}
       
-      {/* Connection handles - invisible but functional */}
+      {/* Connection handles - VISIBLE FOR DEVELOPMENT, same size for easier snapping */}
       {/* Top */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: photoData.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: 'auto',
+          zIndex: 10
         }}
       />
       
@@ -79,20 +89,26 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: photoData.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: 'auto',
+          zIndex: 10
         }}
       />
       
@@ -101,20 +117,26 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: photoData.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: 'auto',
+          zIndex: 10
         }}
       />
       
@@ -123,25 +145,31 @@ function PhotoNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          border: '2px solid rgba(59, 130, 246, 0.8)',
+          pointerEvents: photoData.isConnecting ? 'none' : 'auto',
+          zIndex: 1
         }}
       />
       <Handle
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0,
-          pointerEvents: 'auto'
+          opacity: 0.3,
+          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          border: '2px solid rgba(239, 68, 68, 0.8)',
+          pointerEvents: 'auto',
+          zIndex: 10
         }}
       />
       
-      {/* Custom visual dots at midpoints - only visible when selected */}
-      {selected && (
+      {/* Custom visual dots at midpoints - visible when selected or near connection */}
+      {showConnectionDots && (
         <>
           {/* Top dot */}
           <div

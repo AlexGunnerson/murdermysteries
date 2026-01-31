@@ -101,6 +101,9 @@ function InvestigationBoardContent({
   const [isDraggingNode, setIsDraggingNode] = useState(false)
   const moveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
+  // Connection state to show dots on all nodes
+  const [isConnecting, setIsConnecting] = useState(false)
+  
   // Use the base handlers directly
   const onNodesChange = useCallback((changes: any[]) => {
     const adjustedChanges = changes.map(change => {
@@ -498,6 +501,21 @@ function InvestigationBoardContent({
     }
   }, [])
   
+  // Update all nodes with connection state to show dots
+  useEffect(() => {
+    if (!isInitialized) return
+    
+    setNodes(prevNodes =>
+      prevNodes.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          isConnecting,
+        },
+      }))
+    )
+  }, [isConnecting, isInitialized, setNodes])
+  
   // Save state when nodes or edges change
   useEffect(() => {
     if (!hasInitializedRef.current) return
@@ -506,8 +524,17 @@ function InvestigationBoardContent({
     // Minimum is 6 nodes (5 suspects + 1 victim)
     if (nodes.length < 6) return
     
+    // Strip connection state before saving (it's transient UI state)
+    const nodesToSave = nodes.map(n => ({
+      ...n,
+      data: {
+        ...n.data,
+        isConnecting: undefined,
+      }
+    }))
+    
     const currentViewport = reactFlowInstance.getViewport()
-    saveState(nodes, edges, currentViewport)
+    saveState(nodesToSave, edges, currentViewport)
   }, [nodes, edges, reactFlowInstance, saveState])
   
   // Handle connection creation
@@ -602,6 +629,40 @@ function InvestigationBoardContent({
   const handleDeleteEdge = useCallback(() => {
     setEdges(prev => prev.filter(edge => edge.id !== contextMenu.edgeId))
   }, [contextMenu.edgeId, setEdges])
+  
+  // Handle connection start - show dots on all nodes
+  const handleConnectStart = useCallback(() => {
+    setIsConnecting(true)
+  }, [])
+  
+  // Handle connection end - hide dots on all nodes
+  const handleConnectEnd = useCallback(() => {
+    setIsConnecting(false)
+  }, [])
+  
+  // Detect handle drag start/end reliably
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return
+      const target = event.target as HTMLElement | null
+      if (!target) return
+      if (target.closest('.react-flow__handle')) {
+        setIsConnecting(true)
+      }
+    }
+
+    const handlePointerUp = () => {
+      setIsConnecting(false)
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('pointerup', handlePointerUp)
+    }
+  }, [])
   
   // Load story config and suspect metadata
   useEffect(() => {
@@ -930,6 +991,8 @@ function InvestigationBoardContent({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onConnectStart={handleConnectStart}
+        onConnectEnd={handleConnectEnd}
         onReconnect={handleReconnect}
         onNodeDragStart={() => setIsDraggingNode(true)}
         onNodeDragStop={() => setIsDraggingNode(false)}
