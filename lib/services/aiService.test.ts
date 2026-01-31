@@ -104,11 +104,13 @@ describe('aiService', () => {
       expect(sanitized).toBe(response)
     })
 
-    it('trims whitespace', () => {
-      const response = '  Hello detective  '
+    it('preserves whitespace (important for streaming chunks)', () => {
+      // Do NOT trim - this function is called on each streaming chunk
+      // Trimming would cause "on the" + " lawn" to become "on thelawn"
+      const response = ' lawn, despite'
       const sanitized = sanitizeResponseForClient(response)
       
-      expect(sanitized).toBe('Hello detective')
+      expect(sanitized).toBe(' lawn, despite')
     })
   })
 })

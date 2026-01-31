@@ -107,7 +107,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
         }
         
         .ink-text {
-          font-size: 1.4rem;
+          font-size: 1.7rem;
           line-height: 1.35;
           text-shadow: 0 0 1px rgba(44, 42, 41, 0.2);
           opacity: 0.9;
@@ -208,7 +208,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
             font-size: 2rem;
           }
           .ink-text {
-            font-size: 1rem;
+            font-size: 1.3rem;
           }
           .ink-text p {
             margin-bottom: 0.75rem;

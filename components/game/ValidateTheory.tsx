@@ -118,7 +118,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             // Gala photos
             const galaPhotos = galaImages.map((imageUrl: string, idx: number) => ({
               id: `${scene.id}_gala_img_${idx}`,
-              title: `${scene.name} - May 10th, 1986${galaImages.length > 1 ? ` (${idx + 1})` : ''}`,
+              title: `${scene.name}${galaImages.length > 1 ? ` - Image ${idx + 1}` : ''}`,
               type: 'photo' as const,
               desc: scene.galaAnnotations?.[imageUrl.split('/').pop() || ''] || scene.description,
               imageUrl: imageUrl,
@@ -148,6 +148,10 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         
         const photos = [...scenePhotos, ...documentPhotos]
         
+        // Debug: Log staircase photos
+        const staircasePhotos = photos.filter(p => p.id && p.id.includes('staircase'))
+        console.log('[VALIDATE-THEORY] Staircase photos loaded:', staircasePhotos.map(p => ({ id: p.id, title: p.title })))
+        
         setEvidenceData({ documents: docs, photos })
       } catch (error) {
         console.error('Error loading evidence:', error)
@@ -158,9 +162,11 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   }, [isOpen, unlockedContent])
 
   const toggleEvidence = (id: string) => {
-    setSelectedEvidence(prev => 
-      prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
-    )
+    setSelectedEvidence(prev => {
+      const newSelection = prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
+      console.log('[VALIDATE-THEORY] Evidence toggled:', id, 'New selection:', newSelection)
+      return newSelection
+    })
   }
 
   const getArtifactName = (artifactId: string): string => {
@@ -213,6 +219,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
       const data = await response.json()
 
+      console.log('[VALIDATE-THEORY-UI] Submitted artifact IDs:', selectedEvidence)
       console.log('[VALIDATE-THEORY-UI] Response received:', data)
 
       // Add theory to history

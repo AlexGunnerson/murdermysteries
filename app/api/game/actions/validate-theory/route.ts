@@ -61,16 +61,27 @@ export async function POST(request: NextRequest) {
     // Evaluate unlocks FIRST (before saving theory)
     // This is the authoritative source for determining correctness
 
+    const currentStage = (session.current_stage || 'start') as GameStage
+    
     console.log('[VALIDATE-THEORY] Evaluating unlocks:', {
       sessionId,
       evidenceIds: artifactIds,
-      currentStage: session.current_stage || 'start',
+      currentStage,
+      artifactCount: artifactIds.length,
     })
+    
+    // Debug: Check if this is the Act II unlock attempt
+    if (artifactIds.includes('record_vale_notes') || artifactIds.includes('scene_staircase_gala_img_0')) {
+      console.log('[VALIDATE-THEORY] Act II unlock attempt detected!')
+      console.log('[VALIDATE-THEORY] Has record_vale_notes:', artifactIds.includes('record_vale_notes'))
+      console.log('[VALIDATE-THEORY] Has scene_staircase_gala_img_0:', artifactIds.includes('scene_staircase_gala_img_0'))
+      console.log('[VALIDATE-THEORY] Current stage:', currentStage, '(must be "start" for Act II unlock)')
+    }
     
     const unlockResult = await evaluateUnlocks({
       sessionId,
       evidenceIds: artifactIds,
-      currentStage: (session.current_stage || 'start') as GameStage,
+      currentStage,
       trigger: 'theory'
     })
 

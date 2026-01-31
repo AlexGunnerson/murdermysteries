@@ -227,6 +227,10 @@ export function extractFactsFromResponse(
 
 /**
  * Validate that system prompts are never exposed to frontend
+ * 
+ * NOTE: Do NOT trim the response - this function is called on each streaming
+ * chunk, and trimming would remove necessary whitespace between words
+ * (e.g., " lawn" becomes "lawn", causing "on thelawn" instead of "on the lawn")
  */
 export function sanitizeResponseForClient(response: string): string {
   // Remove any potential system prompt leakage
@@ -246,7 +250,7 @@ export function sanitizeResponseForClient(response: string): string {
     }
   }
 
-  return sanitized.trim()
+  return sanitized
 }
 
 /**
