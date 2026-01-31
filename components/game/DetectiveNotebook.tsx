@@ -32,6 +32,7 @@ import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from "./documents/CoronerReportDocs"
 import { ValidateTheory } from "./ValidateTheory"
 import { QuickNoteButton } from "./QuickNoteButton"
+import { GetClueModal } from "./GetClueModal"
 
 interface Suspect {
   id: string
@@ -108,6 +109,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showCallLog, setShowCallLog] = useState(false)
   const [showSpeechNotes, setShowSpeechNotes] = useState(false)
   const [showValidateTheory, setShowValidateTheory] = useState(false)
+  const [showClueModal, setShowClueModal] = useState(false)
   const [onPreviewClose, setOnPreviewClose] = useState<(() => void) | null>(null)
   const [showPaintingBack, setShowPaintingBack] = useState(false)
   const [storyConfig, setStoryConfig] = useState<StoryConfig | null>(null)
@@ -340,7 +342,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         onOpenMenu={onOpenMenu}
         onOpenHelp={() => onAction('help')}
         onOpenInvestigationBoard={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
-        onGetClue={() => onAction('clue')}
+        onGetClue={() => setShowClueModal(true)}
         onQuestionSuspects={() => onAction('question')}
         onSolveMurder={() => setShowValidateTheory(true)}
       />
@@ -1068,6 +1070,14 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           </div>
         </>
       )}
+
+      {/* Get Clue Modal */}
+      <GetClueModal
+        isOpen={showClueModal}
+        onClose={() => setShowClueModal(false)}
+        currentStage={currentStage}
+        sessionId={sessionId}
+      />
 
       {/* Quick Note Button */}
       <QuickNoteButton />
