@@ -35,7 +35,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -45,7 +45,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -57,7 +57,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -67,7 +67,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -79,7 +79,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -89,7 +89,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -101,7 +101,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -111,7 +111,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-3 !h-3 !bg-transparent !border-0 !rounded-full"
+        className="!w-8 !h-8 !bg-transparent !border-0 !rounded-full"
         style={{ 
           opacity: 0,
           pointerEvents: 'auto'
@@ -125,7 +125,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
           <div
             className="absolute pointer-events-none"
             style={{
-              top: '-4px',
+              top: '-10px',
               left: '50%',
               transform: 'translateX(-50%)',
               width: '8px',
@@ -140,7 +140,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
           <div
             className="absolute pointer-events-none"
             style={{
-              bottom: '-4px',
+              bottom: '-10px',
               left: '50%',
               transform: 'translateX(-50%)',
               width: '8px',
@@ -155,7 +155,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
           <div
             className="absolute pointer-events-none"
             style={{
-              left: '-4px',
+              left: '-10px',
               top: '50%',
               transform: 'translateY(-50%)',
               width: '8px',
@@ -170,7 +170,7 @@ function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {
           <div
             className="absolute pointer-events-none"
             style={{
-              right: '-4px',
+              right: '-10px',
               top: '50%',
               transform: 'translateY(-50%)',
               width: '8px',

@@ -355,7 +355,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           backgroundImage: `
             radial-gradient(circle at 20% 50%, rgba(0,0,0,0.05) 0%, transparent 50%),
             radial-gradient(circle at 80% 20%, rgba(0,0,0,0.03) 0%, transparent 50%),
-            url("/cases/case01/images/ui/corkboard.jpg")
+            url("/cases/case01/images/ui/corkboard-optimized.jpg")
           `,
           backgroundSize: '512px 512px',
           backgroundRepeat: 'repeat'
@@ -450,6 +450,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                       isRevealed={revealedContent.suspects.has(suspect.id)}
                       onClick={() => handleSuspectClick(suspect)}
                       pushpinColor="red"
+                      priority={idx === 0}
                     />
                   )
                 })}

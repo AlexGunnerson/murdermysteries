@@ -9,9 +9,10 @@ interface PortraitFrameProps {
   onClick?: () => void
   rotating?: number
   isRevealed?: boolean
+  priority?: boolean
 }
 
-export function PortraitFrame({ imageUrl, name, role, onClick, rotating = 0, isRevealed = true }: PortraitFrameProps) {
+export function PortraitFrame({ imageUrl, name, role, onClick, rotating = 0, isRevealed = true, priority = false }: PortraitFrameProps) {
   return (
     <button
       onClick={onClick}
@@ -35,6 +36,7 @@ export function PortraitFrame({ imageUrl, name, role, onClick, rotating = 0, isR
           src={imageUrl}
           alt={name}
           fill
+          priority={priority}
           className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 50vw, 200px"
         />

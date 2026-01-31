@@ -316,7 +316,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                         backfaceVisibility: 'hidden',
                         cursor: isCenter 
                           ? hasAnnotations
-                            ? 'default'
+                            ? 'pointer'
                             : isDragging 
                               ? 'grabbing' 
                               : isZoomed 
@@ -324,7 +324,7 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                                 : 'zoom-in'
                           : 'default'
                       }}
-                      onClick={isCenter && !hasAnnotations ? toggleZoom : undefined}
+                      onClick={isCenter ? (hasAnnotations ? toggleFlip : toggleZoom) : undefined}
                       onMouseDown={isCenter && !hasAnnotations ? handleMouseDown : undefined}
                       onMouseMove={isCenter && !hasAnnotations ? handleMouseMove : undefined}
                       onMouseUp={isCenter && !hasAnnotations ? handleMouseUp : undefined}
@@ -343,14 +343,17 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                           fill
                           className="object-cover object-bottom"
                           sizes="950px"
-                          priority={isCenter}
+                          priority={true}
                         />
                       </div>
                       
                       {/* Flip button for annotations - overlayed on photo */}
                       {hasAnnotations && isCenter && (
                         <button
-                          onClick={toggleFlip}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleFlip(e)
+                          }}
                           className="flip-hint"
                           title={isFlipped ? 'Flip back' : 'Flip photo'}
                         >
@@ -365,8 +368,10 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                         className="absolute inset-0 aspect-[3/2] bg-white overflow-hidden flex items-center justify-center p-8"
                         style={{
                           backfaceVisibility: 'hidden',
-                          transform: 'rotateY(180deg)'
+                          transform: 'rotateY(180deg)',
+                          cursor: 'pointer'
                         }}
+                        onClick={toggleFlip}
                       >
                         <div className="max-w-full max-h-full overflow-auto">
                           <p 
@@ -382,7 +387,10 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
                         
                         {/* Flip button for annotations - overlayed on annotation */}
                         <button
-                          onClick={toggleFlip}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleFlip(e)
+                          }}
                           className="flip-hint"
                           title="Flip back (Spacebar)"
                         >

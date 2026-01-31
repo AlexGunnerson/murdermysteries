@@ -314,7 +314,7 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
                             fill
                             className="object-cover object-bottom"
                             sizes="950px"
-                            priority={isCenter}
+                            priority={true}
                           />
                         </div>
                         

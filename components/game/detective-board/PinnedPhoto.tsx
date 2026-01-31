@@ -10,9 +10,10 @@ interface PinnedPhotoProps {
   rotating?: number
   isRevealed?: boolean
   pushpinColor?: 'red' | 'black' | 'blue' | 'green'
+  priority?: boolean
 }
 
-export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, isRevealed = true, pushpinColor = 'red' }: PinnedPhotoProps) {
+export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, isRevealed = true, pushpinColor = 'red', priority = false }: PinnedPhotoProps) {
   const pushpinColors = {
     red: 'radial-gradient(circle at 30% 30%, #ff6b6b, #cc4545)',
     black: 'radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a)',
@@ -181,6 +182,7 @@ export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, i
             src={imageUrl}
             alt={name}
             fill
+            priority={priority}
             className="object-cover"
             sizes="(max-width: 768px) 50vw, 200px"
           />

@@ -36,6 +36,7 @@ export function PolaroidPhoto({ imageUrl, title, onClick, rotating = 0, isViewed
           fill
           className={`object-cover group-hover:opacity-90 transition-opacity ${!isViewed ? 'brightness-50' : ''}`}
           sizes="320px"
+          loading="lazy"
         />
         
         {/* Unviewed overlay with question mark */}
