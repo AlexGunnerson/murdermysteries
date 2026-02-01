@@ -144,18 +144,7 @@ function InvestigationBoardContent({
   
   // Handle edge context menu
   const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edgeId: string, connectionType?: ConnectionType) => {
-    console.log('🔧 InvestigationBoard handleEdgeContextMenu called', {
-      edgeId,
-      connectionType,
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
     event.preventDefault()
-    
-    console.log('📝 Setting context menu state', {
-      edgeId,
-      connectionType: connectionType || 'connection',
-    })
     
     setContextMenu({
       isOpen: true,
@@ -974,12 +963,6 @@ function InvestigationBoardContent({
         onConnectEnd={handleConnectEnd}
         onReconnect={handleReconnect}
         onEdgeContextMenu={(event, edge) => {
-          console.log('⚛️ ReactFlow onEdgeContextMenu triggered', {
-            edgeId: edge.id,
-            connectionType: (edge.data as any)?.connectionType,
-            clientX: event.clientX,
-            clientY: event.clientY,
-          })
           event.preventDefault()
           handleEdgeContextMenu(event, edge.id, (edge.data as any)?.connectionType)
         }}

@@ -6,8 +6,6 @@ const nextConfig = {
     imageSizes: [64, 128, 256, 384],
     // Enable modern formats (WebP/AVIF) - already default in Next.js 13+
     formats: ['image/webp', 'image/avif'],
-    // Optimize image quality for faster loading (80 is a good balance)
-    quality: 80,
   },
 }
 

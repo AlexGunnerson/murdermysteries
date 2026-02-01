@@ -49,21 +49,10 @@ function RedStringEdge({
   })
 
   const handleContextMenu = (event: React.MouseEvent) => {
-    console.log('🎯 RedStringEdge handleContextMenu called', {
-      edgeId: id,
-      connectionType,
-      eventTarget: event.target,
-      currentTarget: event.currentTarget,
-      clientX: event.clientX,
-      clientY: event.clientY,
-    })
     event.preventDefault()
     event.stopPropagation()
     if (data?.onContextMenu) {
-      console.log('✅ Calling data.onContextMenu with connectionType:', connectionType)
       data.onContextMenu(event, id, connectionType)
-    } else {
-      console.log('❌ No onContextMenu handler in data')
     }
   }
 
@@ -226,17 +215,14 @@ function RedStringEdge({
         </EdgeLabelRenderer>
       )}
 
-      {/* DEBUG: Visible hit area for testing */}
+      {/* Invisible wider path for easier right-clicking (on top) */}
       <path
         d={edgePath}
         fill="none"
-        stroke="rgba(255,0,0,0.3)"
+        stroke="rgba(255,255,255,0.01)"
         strokeWidth={32}
         style={{ cursor: 'context-menu', pointerEvents: 'stroke' }}
         onContextMenu={handleContextMenu}
-        onClick={(e) => console.log('👆 Click on hit area', e)}
-        onMouseEnter={() => console.log('🐭 Mouse enter hit area')}
-        onMouseLeave={() => console.log('🐭 Mouse leave hit area')}
       />
     </>
   )
