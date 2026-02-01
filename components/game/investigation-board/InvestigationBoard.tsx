@@ -660,8 +660,18 @@ function InvestigationBoardContent({
   const handleOpenChat = useCallback((suspectId: string) => {
     if (!storyConfig) return
     
-    // Skip if it's the victim (Reginald) - no chat for the victim
+    // Handle victim (Reginald) - show dossier but with different info
     if (suspectId === 'victim_reginald') {
+      setChatSuspect({
+        id: 'victim_reginald',
+        name: 'Reginald Ashcombe',
+        role: 'The Victim',
+        bio: 'Patriarch of the Ashcombe Estate and host of the annual charity gala. Found dead at the bottom of the grand staircase on the night of May 10th, 1986. The official ruling was accidental death, but his widow suspects murder.',
+        portraitUrl: '/cases/case01/images/portraits/reginald.jpg',
+        avatarUrl: '/cases/case01/images/portraits/reginald.jpg',
+        veronicaNote: 'My husband. A man of high standards and unwavering principles. He believed in accountability and legacy above all else. His death was no accident—I know it in my bones.',
+        age: 0,
+      })
       return
     }
     
@@ -937,8 +947,8 @@ function InvestigationBoardContent({
         const { x: viewportX, y: viewportY, zoom } = viewport
         const nodeWidth = 170 // Suspect card width is approximately 170px (150px + padding)
         const toolbarWidth = 40 // Approximate width of the compact toolbar
-        const screenX = selectedSuspect.position.x * zoom + viewportX + (nodeWidth * zoom) - toolbarWidth - 8 // Position at right edge with padding
-        const screenY = selectedSuspect.position.y * zoom + viewportY + 8 // Position at top with small padding
+        const screenX = selectedSuspect.position.x * zoom + viewportX + (nodeWidth * zoom) - toolbarWidth - 4  // Position at right edge, moved further right
+        const screenY = selectedSuspect.position.y * zoom + viewportY + 12 // Position at top with small padding
         // Keep toolbar within viewport bounds
         return { 
           x: Math.max(10, Math.min(screenX, window.innerWidth - toolbarWidth - 10)),
@@ -1068,6 +1078,7 @@ function InvestigationBoardContent({
           position={suspectToolbarPosition}
           onChat={() => handleOpenChat((selectedSuspect.data as any).suspectId)}
           suspectName={(selectedSuspect.data as any).name}
+          isVictim={(selectedSuspect.data as any).isVictim || selectedSuspect.type === 'victim'}
         />
       )}
       

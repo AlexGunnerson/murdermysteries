@@ -1,14 +1,15 @@
 "use client"
 
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, FileText } from 'lucide-react'
 
 interface SuspectToolbarProps {
   position: { x: number; y: number }
   onChat: () => void
   suspectName?: string
+  isVictim?: boolean
 }
 
-export function SuspectToolbar({ position, onChat, suspectName }: SuspectToolbarProps) {
+export function SuspectToolbar({ position, onChat, suspectName, isVictim }: SuspectToolbarProps) {
   return (
     <div
       onClick={onChat}
@@ -19,9 +20,13 @@ export function SuspectToolbar({ position, onChat, suspectName }: SuspectToolbar
         background: 'linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%)',
         border: '1px solid rgba(107, 114, 128, 0.5)',
       }}
-      title={`Chat with ${suspectName || 'suspect'}`}
+      title={isVictim ? `View ${suspectName || 'victim'} information` : `Chat with ${suspectName || 'suspect'}`}
     >
-      <MessageCircle className="w-4 h-4 text-green-400" />
+      {isVictim ? (
+        <FileText className="w-4 h-4 text-blue-400" />
+      ) : (
+        <MessageCircle className="w-4 h-4 text-green-400" />
+      )}
     </div>
   )
 }
