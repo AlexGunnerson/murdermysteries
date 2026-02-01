@@ -191,16 +191,16 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         }}
       />
       
-      {/* Connection handles - VISIBLE FOR DEVELOPMENT, same size for easier snapping */}
+      {/* Connection handles - invisible but functionally active */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -211,9 +211,9 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         id="top-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -222,11 +222,11 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -237,9 +237,9 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         id="bottom-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -248,11 +248,11 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -263,9 +263,9 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         id="left-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -274,11 +274,11 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -289,9 +289,9 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         id="right-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}

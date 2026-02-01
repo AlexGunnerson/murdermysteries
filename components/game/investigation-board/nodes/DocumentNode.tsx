@@ -54,17 +54,17 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         />
       )}
       
-      {/* Connection handles - VISIBLE FOR DEVELOPMENT, same size for easier snapping */}
+      {/* Connection handles - invisible but functionally active */}
       {/* Top */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -75,9 +75,9 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         id="top-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -88,11 +88,11 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -103,9 +103,9 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         id="bottom-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -116,11 +116,11 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -131,9 +131,9 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         id="left-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}
@@ -144,11 +144,11 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-8 !h-8 !rounded-full"
+        className="!w-2 !h-2 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
-          border: '2px solid rgba(59, 130, 246, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 1
         }}
@@ -159,9 +159,9 @@ function DocumentNodeComponent({ data, selected }: NodeProps) {
         id="right-target"
         className="!w-8 !h-8 !rounded-full"
         style={{ 
-          opacity: 0.3,
+          opacity: 0,
           backgroundColor: 'rgba(239, 68, 68, 0.5)',
-          border: '2px solid rgba(239, 68, 68, 0.8)',
+          border: 'none',
           pointerEvents: docData.isConnecting ? 'none' : 'auto',
           zIndex: 10
         }}

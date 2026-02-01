@@ -81,7 +81,7 @@ function RedStringEdge({
         <marker
           id={`arrow-${id}`}
           viewBox="0 0 10 10"
-          refX="11"
+          refX="3"
           refY="5"
           markerWidth="6"
           markerHeight="6"
@@ -94,20 +94,20 @@ function RedStringEdge({
           />
         </marker>
         
-        {/* Small dot marker for line source end */}
+        {/* Zero-offset invisible marker for line start (to position line close to node) */}
         <marker
-          id={`dot-${id}`}
+          id={`start-${id}`}
           viewBox="0 0 10 10"
-          refX="5"
+          refX="0"
           refY="5"
-          markerWidth="3"
-          markerHeight="3"
+          markerWidth="0"
+          markerHeight="0"
         >
           <circle
             cx="5"
             cy="5"
-            r="3"
-            fill={typeConfig.color}
+            r="0"
+            fill="transparent"
           />
         </marker>
       </defs>
@@ -135,7 +135,6 @@ function RedStringEdge({
           cursor: 'pointer',
         }}
         markerStart={`url(#arrow-${id})`}
-        markerEnd={`url(#dot-${id})`}
       />
       
       {/* Highlight when selected */}
@@ -149,7 +148,7 @@ function RedStringEdge({
         />
       )}
       
-      {/* Endpoint dots when selected - for reconnection */}
+      {/* Endpoint dots when selected - for reconnection (invisible) */}
       {selected && (
         <>
           {/* Source endpoint dot */}
@@ -157,8 +156,8 @@ function RedStringEdge({
             cx={sourceX}
             cy={sourceY}
             r={3}
-            fill={typeConfig.color}
-            stroke={typeConfig.color}
+            fill="transparent"
+            stroke="transparent"
             strokeWidth={1}
             style={{
               cursor: 'pointer',
@@ -171,8 +170,8 @@ function RedStringEdge({
             cx={targetX}
             cy={targetY}
             r={3}
-            fill={typeConfig.color}
-            stroke={typeConfig.color}
+            fill="transparent"
+            stroke="transparent"
             strokeWidth={1}
             style={{
               cursor: 'pointer',
