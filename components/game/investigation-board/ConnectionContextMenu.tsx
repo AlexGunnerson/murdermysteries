@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from 'react'
-import { Trash2, RefreshCw } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { ConnectionType, CONNECTION_TYPES } from './types'
 
 interface ConnectionContextMenuProps {
@@ -115,7 +115,7 @@ export function ConnectionContextMenu({
                 className="text-sm"
                 style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
               >
-                {config.label}
+                {config.label || 'Unlabeled'}
               </span>
               
               {type === currentType && (

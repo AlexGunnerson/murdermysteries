@@ -1,6 +1,6 @@
 // Types for the Investigation Board
 
-export type ConnectionType = 'contradicts' | 'supports' | 'alibi_for' | 'motive'
+export type ConnectionType = 'connection' | 'contradicts' | 'supports' | 'alibi_for' | 'motive'
 
 export interface ConnectionTypeConfig {
   label: string
@@ -9,6 +9,11 @@ export interface ConnectionTypeConfig {
 }
 
 export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
+  connection: {
+    label: '', // No label - default unlabeled connection
+    color: '#94a3b8', // Muted blue-gray (former alibi color)
+    bgColor: '#1a1a1a', // Dark background
+  },
   contradicts: {
     label: 'Contradicts',
     color: '#f59e0b', // Amber/bronze
@@ -21,7 +26,7 @@ export const CONNECTION_TYPES: Record<ConnectionType, ConnectionTypeConfig> = {
   },
   alibi_for: {
     label: 'Alibi',
-    color: '#94a3b8', // Muted blue-gray
+    color: '#60a5fa', // Bright blue that complements amber theme
     bgColor: '#1a1a1a', // Dark background
   },
   motive: {

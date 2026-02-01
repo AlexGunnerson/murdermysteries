@@ -7,6 +7,7 @@ import { ConnectionType, CONNECTION_TYPES } from './types'
 interface ConnectionTypePopupProps {
   isOpen: boolean
   position: { x: number; y: number }
+  currentType?: ConnectionType
   onSelect: (type: ConnectionType) => void
   onCancel: () => void
 }
@@ -14,6 +15,7 @@ interface ConnectionTypePopupProps {
 export function ConnectionTypePopup({
   isOpen,
   position,
+  currentType,
   onSelect,
   onCancel,
 }: ConnectionTypePopupProps) {
@@ -85,7 +87,7 @@ export function ConnectionTypePopup({
           className="text-sm font-bold text-amber-400 uppercase tracking-wider"
           style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
         >
-          Connection Type
+          {currentType ? 'Change Type' : 'Connection Type'}
         </h3>
         <button
           onClick={onCancel}
@@ -102,7 +104,13 @@ export function ConnectionTypePopup({
             <button
               key={type}
               onClick={() => onSelect(type)}
-              className="flex items-center gap-3 px-3 py-2 rounded transition-all duration-200 hover:bg-gray-700/50 group"
+              className={`
+                flex items-center gap-3 px-3 py-2 rounded transition-all duration-200 group
+                ${type === currentType 
+                  ? 'bg-amber-600/20 text-amber-400' 
+                  : 'hover:bg-gray-700/50'
+                }
+              `}
             >
               {/* Color indicator */}
               <div
@@ -115,10 +123,16 @@ export function ConnectionTypePopup({
               
               {/* Label */}
               <span
-                className="text-sm text-gray-300 group-hover:text-amber-400 transition-colors"
+                className={`
+                  text-sm transition-colors
+                  ${type === currentType 
+                    ? 'text-amber-400' 
+                    : 'text-gray-300 group-hover:text-amber-400'
+                  }
+                `}
                 style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
               >
-                {config.label}
+                {config.label || 'Unlabeled'}
               </span>
               
               {/* Connection line preview */}
@@ -135,6 +149,11 @@ export function ConnectionTypePopup({
                   style={{ borderLeftColor: config.color }}
                 />
               </div>
+              
+              {/* Check mark for current type */}
+              {type === currentType && (
+                <span className="text-xs text-amber-500 ml-1">✓</span>
+              )}
             </button>
           )
         )}
@@ -145,7 +164,7 @@ export function ConnectionTypePopup({
         className="mt-3 pt-2 border-t border-gray-700 text-xs text-gray-500 text-center"
         style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
       >
-        Select the type of connection
+        {currentType ? 'Change the connection type' : 'Select the type of connection'}
       </p>
       </div>
     </>

@@ -99,7 +99,7 @@ export function useInvestigationBoardStore(caseId: string) {
           sourceHandle: edge.sourceHandle || undefined,
           targetHandle: edge.targetHandle || undefined,
           data: {
-            connectionType: (edge.data as any)?.connectionType || 'supports',
+            connectionType: (edge.data as any)?.connectionType || 'connection',
           },
         })),
         viewport,

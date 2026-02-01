@@ -2,7 +2,6 @@
 
 import { memo } from 'react'
 import {
-  BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
   Position,
@@ -11,7 +10,7 @@ import { ConnectionType, CONNECTION_TYPES } from '../types'
 
 interface RedStringEdgeData {
   connectionType: ConnectionType
-  onContextMenu?: (event: React.MouseEvent, edgeId: string) => void
+  onContextMenu?: (event: React.MouseEvent, edgeId: string, connectionType?: ConnectionType) => void
 }
 
 interface RedStringEdgeProps {
@@ -37,7 +36,7 @@ function RedStringEdge({
   data,
   selected,
 }: RedStringEdgeProps) {
-  const connectionType = data?.connectionType || 'supports'
+  const connectionType = data?.connectionType || 'connection'
   const typeConfig = CONNECTION_TYPES[connectionType]
   
   const [edgePath, labelX, labelY] = getBezierPath({
@@ -50,10 +49,21 @@ function RedStringEdge({
   })
 
   const handleContextMenu = (event: React.MouseEvent) => {
+    console.log('🎯 RedStringEdge handleContextMenu called', {
+      edgeId: id,
+      connectionType,
+      eventTarget: event.target,
+      currentTarget: event.currentTarget,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    })
     event.preventDefault()
     event.stopPropagation()
     if (data?.onContextMenu) {
-      data.onContextMenu(event, id)
+      console.log('✅ Calling data.onContextMenu with connectionType:', connectionType)
+      data.onContextMenu(event, id, connectionType)
+    } else {
+      console.log('❌ No onContextMenu handler in data')
     }
   }
 
@@ -121,18 +131,19 @@ function RedStringEdge({
         opacity={0.2}
         style={{
           filter: 'blur(4px)',
+          pointerEvents: 'none',
         }}
       />
       
       {/* Main line - colored by connection type */}
-      <BaseEdge
-        id={id}
-        path={edgePath}
+      <path
+        d={edgePath}
+        fill="none"
+        stroke={typeConfig.color}
+        strokeWidth={selected ? 3 : 2}
+        strokeLinecap="round"
         style={{
-          stroke: typeConfig.color,
-          strokeWidth: selected ? 3 : 2,
-          strokeLinecap: 'round',
-          cursor: 'pointer',
+          pointerEvents: 'none',
         }}
         markerStart={`url(#arrow-${id})`}
       />
@@ -145,22 +156,24 @@ function RedStringEdge({
           stroke="#9CA3AF"
           strokeWidth={6}
           opacity={0.4}
+          style={{
+            pointerEvents: 'none',
+          }}
         />
       )}
       
-      {/* Endpoint dots when selected - for reconnection (invisible) */}
+      {/* Endpoint dots when selected - for reconnection */}
       {selected && (
         <>
           {/* Source endpoint dot */}
           <circle
             cx={sourceX}
             cy={sourceY}
-            r={3}
+            r={8}
             fill="transparent"
             stroke="transparent"
-            strokeWidth={1}
             style={{
-              cursor: 'pointer',
+              cursor: 'grab',
               pointerEvents: 'all',
             }}
           />
@@ -169,59 +182,62 @@ function RedStringEdge({
           <circle
             cx={targetX}
             cy={targetY}
-            r={3}
+            r={8}
             fill="transparent"
             stroke="transparent"
-            strokeWidth={1}
             style={{
-              cursor: 'pointer',
+              cursor: 'grab',
               pointerEvents: 'all',
             }}
           />
         </>
       )}
       
-      {/* Invisible wider path for easier clicking */}
+      {/* Connection type label - only show if label is not empty */}
+      {typeConfig.label && (
+        <EdgeLabelRenderer>
+          <div
+            className="nodrag nopan"
+            style={{
+              position: 'absolute',
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+              pointerEvents: 'all',
+            }}
+            onContextMenu={handleContextMenu}
+          >
+            {/* Label card */}
+            <div
+              className={`
+                px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide
+                transition-all duration-200
+                ${selected ? 'ring-2 ring-gray-400' : ''}
+              `}
+              style={{
+                backgroundColor: typeConfig.bgColor,
+                color: typeConfig.color,
+                fontFamily: "'Courier Prime', 'Courier New', monospace",
+                border: `1px solid ${typeConfig.color}`,
+                boxShadow: `0 4px 12px rgba(0,0,0,0.6), 0 0 20px ${typeConfig.color}40`,
+              }}
+            >
+              {typeConfig.label}
+            </div>
+          </div>
+        </EdgeLabelRenderer>
+      )}
+
+      {/* DEBUG: Visible hit area for testing */}
       <path
         d={edgePath}
         fill="none"
-        stroke="transparent"
-        strokeWidth={20}
-        style={{ cursor: 'pointer' }}
+        stroke="rgba(255,0,0,0.3)"
+        strokeWidth={32}
+        style={{ cursor: 'context-menu', pointerEvents: 'stroke' }}
         onContextMenu={handleContextMenu}
+        onClick={(e) => console.log('👆 Click on hit area', e)}
+        onMouseEnter={() => console.log('🐭 Mouse enter hit area')}
+        onMouseLeave={() => console.log('🐭 Mouse leave hit area')}
       />
-      
-      {/* Connection type label */}
-      <EdgeLabelRenderer>
-        <div
-          className="nodrag nopan"
-          style={{
-            position: 'absolute',
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            pointerEvents: 'all',
-          }}
-          onContextMenu={handleContextMenu}
-        >
-          {/* Label card */}
-          <div
-            className={`
-              px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wide
-              cursor-context-menu
-              transition-all duration-200
-              ${selected ? 'ring-2 ring-gray-400' : ''}
-            `}
-            style={{
-              backgroundColor: typeConfig.bgColor,
-              color: typeConfig.color,
-              fontFamily: "'Courier Prime', 'Courier New', monospace",
-              border: `1px solid ${typeConfig.color}`,
-              boxShadow: `0 4px 12px rgba(0,0,0,0.6), 0 0 20px ${typeConfig.color}40`,
-            }}
-          >
-            {typeConfig.label}
-          </div>
-        </div>
-      </EdgeLabelRenderer>
     </>
   )
 }

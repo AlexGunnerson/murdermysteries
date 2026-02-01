@@ -125,9 +125,6 @@ function InvestigationBoardContent({
   }, [onNodesChangeBase, nodes])
   const onEdgesChange = onEdgesChangeBase
   
-  // Connection popup state
-  const [pendingConnection, setPendingConnection] = useState<Connection | null>(null)
-  const [connectionPopupPosition, setConnectionPopupPosition] = useState({ x: 0, y: 0 })
   
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
@@ -139,26 +136,34 @@ function InvestigationBoardContent({
     isOpen: false,
     position: { x: 0, y: 0 },
     edgeId: '',
-    connectionType: 'supports',
+    connectionType: 'connection',
   })
   
   // Ref to track if we've done initial save
   const hasInitializedRef = useRef(false)
   
   // Handle edge context menu
-  const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edgeId: string) => {
+  const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edgeId: string, connectionType?: ConnectionType) => {
+    console.log('🔧 InvestigationBoard handleEdgeContextMenu called', {
+      edgeId,
+      connectionType,
+      clientX: event.clientX,
+      clientY: event.clientY,
+    })
     event.preventDefault()
     
-    const edge = edges.find(e => e.id === edgeId)
-    if (!edge) return
+    console.log('📝 Setting context menu state', {
+      edgeId,
+      connectionType: connectionType || 'connection',
+    })
     
     setContextMenu({
       isOpen: true,
       position: { x: event.clientX, y: event.clientY },
       edgeId,
-      connectionType: (edge.data as any)?.connectionType || 'supports',
+      connectionType: connectionType || 'connection',
     })
-  }, [edges])
+  }, [])
   
   // Note handlers
   const handleUpdateNote = useCallback((noteId: string, content: string) => {
@@ -537,52 +542,25 @@ function InvestigationBoardContent({
     saveState(nodesToSave, edges, currentViewport)
   }, [nodes, edges, reactFlowInstance, saveState])
   
-  // Handle connection creation
+  // Handle connection creation - create immediately with default 'connection' type
   const onConnect: OnConnect = useCallback((connection) => {
     if (!connection.source || !connection.target) return
     
-    // Show connection type popup
-    const sourceNode = nodes.find(n => n.id === connection.source)
-    const targetNode = nodes.find(n => n.id === connection.target)
-    
-    if (sourceNode && targetNode) {
-      // Calculate popup position (25% of the way from source to target)
-      const posX = sourceNode.position.x + (targetNode.position.x - sourceNode.position.x) * 0.25
-      const posY = sourceNode.position.y + (targetNode.position.y - sourceNode.position.y) * 0.25
-      
-      // Convert to screen coordinates
-      const { x, y, zoom } = reactFlowInstance.getViewport()
-      const screenX = posX * zoom + x
-      const screenY = posY * zoom + y
-      
-      setPendingConnection(connection)
-      setConnectionPopupPosition({
-        x: Math.max(10, Math.min(screenX, window.innerWidth - 220)),
-        y: Math.max(10, Math.min(screenY, window.innerHeight - 250)),
-      })
-    }
-  }, [nodes, reactFlowInstance])
-  
-  // Handle connection type selection
-  const handleConnectionTypeSelect = useCallback((type: ConnectionType) => {
-    if (!pendingConnection) return
-    
     const newEdge: Edge = {
       id: generateConnectionId(),
-      source: pendingConnection.source!,
-      target: pendingConnection.target!,
-      sourceHandle: pendingConnection.sourceHandle || undefined,
-      targetHandle: pendingConnection.targetHandle || undefined,
+      source: connection.source,
+      target: connection.target,
+      sourceHandle: connection.sourceHandle || undefined,
+      targetHandle: connection.targetHandle || undefined,
       type: 'redString',
       data: {
-        connectionType: type,
+        connectionType: 'connection',
         onContextMenu: handleEdgeContextMenu,
       },
     }
     
     setEdges(prev => addEdge(newEdge, prev))
-    setPendingConnection(null)
-  }, [pendingConnection, setEdges, handleEdgeContextMenu])
+  }, [setEdges, handleEdgeContextMenu])
   
   // Handle connection type change from context menu
   const handleChangeConnectionType = useCallback((type: ConnectionType) => {
@@ -601,6 +579,7 @@ function InvestigationBoardContent({
     )
   }, [contextMenu.edgeId, setEdges])
   
+  
   // Handle edge reconnection - preserve edge data
   const handleReconnect: OnReconnect = useCallback((oldEdge: Edge, newConnection: Connection) => {
     setEdges(edges => {
@@ -615,7 +594,7 @@ function InvestigationBoardContent({
             targetHandle: newConnection.targetHandle || undefined,
             type: 'redString',
             data: {
-              connectionType: (oldEdge.data as any)?.connectionType || 'supports',
+              connectionType: (oldEdge.data as any)?.connectionType || 'connection',
               onContextMenu: handleEdgeContextMenu,
             },
           }
@@ -994,6 +973,16 @@ function InvestigationBoardContent({
         onConnectStart={handleConnectStart}
         onConnectEnd={handleConnectEnd}
         onReconnect={handleReconnect}
+        onEdgeContextMenu={(event, edge) => {
+          console.log('⚛️ ReactFlow onEdgeContextMenu triggered', {
+            edgeId: edge.id,
+            connectionType: (edge.data as any)?.connectionType,
+            clientX: event.clientX,
+            clientY: event.clientY,
+          })
+          event.preventDefault()
+          handleEdgeContextMenu(event, edge.id, (edge.data as any)?.connectionType)
+        }}
         onNodeDragStart={() => setIsDraggingNode(true)}
         onNodeDragStop={() => setIsDraggingNode(false)}
         onMove={(event, newViewport) => {
@@ -1056,14 +1045,6 @@ function InvestigationBoardContent({
         initialTab={evidenceSelectorInitialTab}
         unlockedContent={unlockedContent}
         caseId={caseId}
-      />
-      
-      {/* Connection Type Popup */}
-      <ConnectionTypePopup
-        isOpen={pendingConnection !== null}
-        position={connectionPopupPosition}
-        onSelect={handleConnectionTypeSelect}
-        onCancel={() => setPendingConnection(null)}
       />
       
       {/* Connection Context Menu */}
