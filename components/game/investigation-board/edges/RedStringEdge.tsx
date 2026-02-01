@@ -81,16 +81,33 @@ function RedStringEdge({
         <marker
           id={`arrow-${id}`}
           viewBox="0 0 10 10"
-          refX="1"
+          refX="11"
           refY="5"
-          markerWidth="5"
-          markerHeight="5"
+          markerWidth="6"
+          markerHeight="6"
           orient="auto"
         >
           <path
             d="M 10 0 L 0 5 L 10 10 z"
             fill={typeConfig.color}
             stroke="none"
+          />
+        </marker>
+        
+        {/* Small dot marker for line source end */}
+        <marker
+          id={`dot-${id}`}
+          viewBox="0 0 10 10"
+          refX="5"
+          refY="5"
+          markerWidth="3"
+          markerHeight="3"
+        >
+          <circle
+            cx="5"
+            cy="5"
+            r="3"
+            fill={typeConfig.color}
           />
         </marker>
       </defs>
@@ -114,9 +131,11 @@ function RedStringEdge({
         style={{
           stroke: typeConfig.color,
           strokeWidth: selected ? 3 : 2,
+          strokeLinecap: 'round',
           cursor: 'pointer',
         }}
         markerStart={`url(#arrow-${id})`}
+        markerEnd={`url(#dot-${id})`}
       />
       
       {/* Highlight when selected */}
