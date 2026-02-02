@@ -39,7 +39,7 @@ export const UNLOCK_RULES: UnlockRule[] = [
       records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes'],
       statusUpdate: 'Murder Confirmed'
     },
-    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident. Veronica now trusts you with the truth. Reginald\'s inner circle is now available for questioning.',
+    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident.',
     description: 'Player notices red wine in crime scene photo and cross-references with Dr. Vale\'s Medical Notes showing Reginald is allergic to red wine'
   },
 

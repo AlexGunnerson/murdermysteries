@@ -13,6 +13,7 @@ interface ValidateTheoryProps {
   onClose: () => void
   onPreviewDocument?: (docId: string, onClosePreview: () => void, imageIndex?: number) => void
   onPreviewScene?: (sceneId: string, onClosePreview: () => void, imageIndex?: number) => void
+  onActISuccess?: (unlockedContent: any) => void
 }
 
 interface EvidenceItem {
@@ -27,7 +28,7 @@ interface EvidenceItem {
   category?: 'scene' | 'document'
 }
 
-export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewScene }: ValidateTheoryProps) {
+export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewScene, onActISuccess }: ValidateTheoryProps) {
   const [activeTab, setActiveTab] = useState<'documents' | 'photos'>('documents')
   const [selectedEvidence, setSelectedEvidence] = useState<string[]>([])
   const [theoryText, setTheoryText] = useState('')
@@ -36,8 +37,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [photoFilter, setPhotoFilter] = useState<string>('all')
   const [showAllFilters, setShowAllFilters] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
-  const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string} | null>(null)
+  const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string, unlockedContent?: any} | null>(null)
   const [errorModal, setErrorModal] = useState<string | null>(null)
   const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, currentStage } = useGameState()
   
@@ -195,9 +195,25 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         return
       }
     } else {
-      // Act II requires at least 1 artifact
-      if (selectedEvidence.length === 0) {
-        setErrorModal('Please select at least one document or photo as evidence for your theory.')
+      // Act II: Must submit 4 or more pieces of evidence to prove who committed the crime
+      // Required artifacts that prove Colin is the murderer
+      const requiredArtifacts = [
+        'study_4',              // Reginald's pocket square in study
+        'study_5',              // Torn glove near safe
+        'colin_champagne',      // Colin wearing white torn glove
+        'record_blackmail_portrait'  // Blackmail set behind portrait (Colin's real blackmail)
+      ]
+      
+      // Check minimum count
+      if (selectedEvidence.length < 4) {
+        setErrorModal('Please select at least four artifacts as evidence for your theory.')
+        return
+      }
+      
+      // Check if all required artifacts are present
+      const missingRequired = requiredArtifacts.filter(id => !selectedEvidence.includes(id))
+      if (missingRequired.length > 0) {
+        setErrorModal('Not all the pieces fit. Keep digging.')
         return
       }
     }
@@ -245,42 +261,14 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       setResultModal({
         result: data.result,
         feedback: data.feedback,
+        unlockedContent: data.unlockedContent,
       })
 
       console.log('[VALIDATE-THEORY-UI] Checking unlocked content:', data.unlockedContent)
 
-      // Check if content was unlocked
-      if (data.unlockedContent) {
-        const unlocks = data.unlockedContent
-        const unlockedItems: string[] = []
-        
-        if (unlocks.suspects && unlocks.suspects.length > 0) {
-          unlockedItems.push(`${unlocks.suspects.length} suspect(s)`)
-        }
-        if (unlocks.scenes && unlocks.scenes.length > 0) {
-          unlockedItems.push(`${unlocks.scenes.length} scene(s)`)
-        }
-        if (unlocks.records && unlocks.records.length > 0) {
-          unlockedItems.push(`${unlocks.records.length} record(s)`)
-        }
-        if (unlocks.stage) {
-          unlockedItems.push(`Advanced to ${unlocks.stage.replace('_', ' ').toUpperCase()}`)
-        }
-
-        if (unlockedItems.length > 0) {
-          const message = `🔓 Unlocked: ${unlockedItems.join(', ')}`
-          setUnlockNotification(message)
-          
-          // Hide notification after 5 seconds
-          setTimeout(() => {
-            setUnlockNotification(null)
-          }, 5000)
-          
-          // Refresh game state to get new unlocked content
-          if (fetchGameState) {
-            await fetchGameState()
-          }
-        }
+      // Refresh game state to get new unlocked content if anything was unlocked
+      if (data.unlockedContent && fetchGameState) {
+        await fetchGameState()
       }
 
       // Clear the form
@@ -303,7 +291,22 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         <TheoryResultModal
           result={resultModal.result}
           feedback={resultModal.feedback}
-          onClose={() => setResultModal(null)}
+          onClose={() => {
+            const isActISuccess = resultModal.result === 'correct' && 
+                                  resultModal.unlockedContent?.stage === 'act_ii' &&
+                                  currentStage !== 'act_ii'
+            
+            setResultModal(null)
+            
+            // If Act I success (proving contradiction), trigger the special sequence
+            if (isActISuccess && onActISuccess) {
+              onClose() // Close ValidateTheory modal
+              onActISuccess(resultModal.unlockedContent) // Trigger sequence in parent
+            } else if (resultModal.result === 'correct') {
+              // For any other correct result, close the ValidateTheory modal
+              onClose()
+            }
+          }}
         />
       )}
 
@@ -325,19 +328,6 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           `,
         }}
       >
-        {/* Unlock Notification */}
-      {unlockNotification && (
-        <div 
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[60] max-w-md px-6 py-4 bg-[#d4af37] text-black rounded-sm shadow-2xl animate-fade-in"
-          style={{
-            boxShadow: '0 0 20px rgba(212, 175, 55, 0.6)',
-            fontFamily: "'Playfair Display', serif"
-          }}
-        >
-          <p className="font-semibold text-center">{unlockNotification}</p>
-        </div>
-      )}
-    
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap');
         
