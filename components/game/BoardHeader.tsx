@@ -3,10 +3,7 @@
 import Image from 'next/image'
 
 interface BoardHeaderProps {
-  hasUnreadMessage?: boolean
-  onOpenMessage?: () => void
   onOpenMenu: () => void
-  onOpenHelp: () => void
   onOpenInvestigationBoard: () => void
   // Actions
   onGetClue: () => void
@@ -15,10 +12,7 @@ interface BoardHeaderProps {
 }
 
 export function BoardHeader({ 
-  hasUnreadMessage, 
-  onOpenMessage,
   onOpenMenu,
-  onOpenHelp,
   onOpenInvestigationBoard,
   onGetClue,
   onQuestionSuspects,
@@ -451,28 +445,6 @@ export function BoardHeader({
         >
           Validate Theory
         </button>
-
-        {/* Message Notification Icon (combined with Help) */}
-        {hasUnreadMessage && onOpenMessage && (
-          <button 
-            className={`icon-btn has-notification`}
-            onClick={onOpenMessage}
-            title="New Message"
-          >
-            <span className="help-icon">✉</span>
-          </button>
-        )}
-
-        {/* Help Icon */}
-        {!hasUnreadMessage && (
-          <button 
-            className="icon-btn" 
-            onClick={onOpenHelp}
-            title="Help"
-          >
-            <span className="help-icon">?</span>
-          </button>
-        )}
 
         {/* Menu Icon */}
         <button 

@@ -39,7 +39,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [unlockNotification, setUnlockNotification] = useState<string | null>(null)
   const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string} | null>(null)
   const [errorModal, setErrorModal] = useState<string | null>(null)
-  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState } = useGameState()
+  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, currentStage } = useGameState()
   
   // Evidence data - this will be populated from the game state
   const [evidenceData, setEvidenceData] = useState<{
@@ -187,9 +187,19 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       return
     }
     
-    if (selectedEvidence.length === 0) {
-      setErrorModal('Please select at least one document or photo as evidence for your theory.')
-      return
+    // During Act I (or before Act II), require exactly 2 artifacts
+    // Act I is the default state before reaching Act II
+    if (currentStage !== 'act_ii') {
+      if (selectedEvidence.length !== 2) {
+        setErrorModal('Please select exactly two artifacts as evidence for your theory.')
+        return
+      }
+    } else {
+      // Act II requires at least 1 artifact
+      if (selectedEvidence.length === 0) {
+        setErrorModal('Please select at least one document or photo as evidence for your theory.')
+        return
+      }
     }
 
     if (!sessionId) {
@@ -306,8 +316,14 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       )}
 
       <div 
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
         onClick={onClose}
+        style={{
+          backgroundImage: `
+            radial-gradient(circle at 50% 50%, rgba(10,10,10,0.85) 0%, rgba(0,0,0,0.98) 100%),
+            url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")
+          `,
+        }}
       >
         {/* Unlock Notification */}
       {unlockNotification && (
@@ -323,57 +339,139 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
       )}
     
       <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Courier+Prime:wght@400;700&display=swap');
-        
-        .font-handwriting {
-          font-family: 'Patrick Hand', cursive;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap');
         
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(0,0,0,0.05);
+          background: #1a1a1a;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #d1ccc0;
+          background: #2a2a2a;
           border-radius: 3px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #a0aec0;
-        }
-        
-        .bg-noise {
-           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+          background: #3a3a3a;
         }
       `}</style>
 
       {/* Main Container */}
       <div 
-        className="max-w-6xl w-full bg-[#f4f1ea] rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row h-[95vh] border border-[#d1ccc0]"
+        className="max-w-6xl w-full rounded-sm overflow-hidden flex flex-col md:flex-row h-[95vh] relative"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          boxShadow: `
+            0 20px 60px rgba(0, 0, 0, 0.9),
+            0 0 40px rgba(212, 175, 55, 0.15),
+            inset 0 0 1px rgba(212, 175, 55, 0.3),
+            inset 0 1px 2px rgba(255, 255, 255, 0.03)
+          `,
+          border: '1px solid rgba(212, 175, 55, 0.2)',
+        }}
       >
+        {/* Film grain overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-50 mix-blend-overlay opacity-35"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+            backgroundSize: '120px 120px',
+          }}
+        />
         
         {/* LEFT SIDE: Evidence Selector (40%) */}
-        <div className="w-full md:w-[40%] bg-[#e8e4da] border-r border-[#d1ccc0] flex flex-col h-full">
+        <div 
+          className="w-full md:w-[40%] bg-[#1a1a1a] flex flex-col h-full relative"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 1) 100%),
+              repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 12px,
+                rgba(0, 0, 0, 0.15) 12px,
+                rgba(0, 0, 0, 0.15) 13px
+              )
+            `,
+            boxShadow: 'inset -3px 0 12px rgba(0, 0, 0, 0.7)',
+          }}
+        >
+          {/* Gold divider line */}
+          <div 
+            className="absolute top-0 right-0 bottom-0 w-[2px] z-10"
+            style={{
+              background: `
+                linear-gradient(
+                  to bottom,
+                  transparent 0%,
+                  rgba(197, 160, 101, 0.3) 5%,
+                  rgba(197, 160, 101, 0.8) 20%,
+                  rgba(197, 160, 101, 1) 50%,
+                  rgba(197, 160, 101, 0.8) 80%,
+                  rgba(197, 160, 101, 0.3) 95%,
+                  transparent 100%
+                )
+              `,
+              boxShadow: `0 0 8px rgba(197, 160, 101, 0.6), 0 0 16px rgba(197, 160, 101, 0.4)`,
+            }}
+          />
           
           {/* Header */}
-          <div className="p-6 bg-[#2c3e50] text-[#f4f1ea] flex justify-between items-center shadow-md z-10">
+          <div 
+            className="p-6 bg-[#121212] flex justify-between items-center z-10 relative"
+            style={{
+              borderBottom: '1px solid rgba(197, 160, 101, 0.3)',
+              boxShadow: '0 2px 12px rgba(197, 160, 101, 0.15)',
+            }}
+          >
             <div>
-              <h2 className="text-xl font-bold tracking-wider font-mono">CASE FILE: ASHCOMBE</h2>
-              <p className="text-xs text-gray-400 mt-1 font-mono">HER-1886-0510-RA</p>
+              <h2 
+                className="text-xl font-bold tracking-wider text-[#d4af37]"
+                style={{ 
+                  fontFamily: "'Courier Prime', monospace",
+                  textShadow: '0 0 12px rgba(212, 175, 55, 0.4)',
+                }}
+              >
+                CASE FILE: ASHCOMBE
+              </h2>
+              <p 
+                className="text-xs text-[#c5a065] mt-1"
+                style={{ 
+                  fontFamily: "'Courier Prime', monospace",
+                  textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                }}
+              >
+                HER-1886-0510-RA
+              </p>
             </div>
             <button 
               onClick={onClose}
-              className="text-white hover:text-gray-300 transition-colors"
+              className="p-2 bg-[#0a0a0a]/95 hover:bg-[#d4af37]/20 text-[#d4af37] rounded-sm transition-all duration-200 border border-[#d4af37]/40"
               title="Close"
+              style={{
+                boxShadow: `
+                  0 2px 10px rgba(0, 0, 0, 0.8),
+                  0 0 12px rgba(212, 175, 55, 0.3),
+                  inset 0 0 8px rgba(212, 175, 55, 0.1)
+                `,
+              }}
             >
-              <X className="w-6 h-6" />
+              <X 
+                className="w-5 h-5"
+                style={{
+                  filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
+                }}
+              />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="flex bg-[#dcd8ce] border-b border-[#d1ccc0]">
+          <div 
+            className="flex bg-[#121212]"
+            style={{
+              borderBottom: '1px solid rgba(197, 160, 101, 0.2)',
+            }}
+          >
             {(['documents', 'photos'] as const).map(tab => (
               <button
                 key={tab}
@@ -384,10 +482,17 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                     setShowAllFilters(false)
                   }
                 }}
-                className={`flex-1 py-4 text-sm font-bold uppercase tracking-wider transition-colors duration-200
+                className={`flex-1 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-200
                   ${activeTab === tab 
-                    ? 'bg-[#e8e4da] text-[#d97706] border-b-2 border-[#d97706]' 
-                    : 'text-[#5a6b7c] hover:bg-[#e0dcd4]'}`}
+                    ? 'bg-[#1a1a1a] text-[#d4af37]' 
+                    : 'text-gray-500 hover:bg-[#0f0f0f] hover:text-[#c5a065]'}`}
+                style={{
+                  fontFamily: "'Courier Prime', monospace",
+                  ...(activeTab === tab ? {
+                    borderBottom: '2px solid #d4af37',
+                    textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                  } : {}),
+                }}
               >
                 {tab}
               </button>
@@ -396,15 +501,27 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
           {/* Photo Filters (only show on photos tab) */}
           {activeTab === 'photos' && photoLocations.length > 0 && (
-            <div className="p-3 bg-[#e8e4da] border-b border-[#d1ccc0]">
+            <div 
+              className="p-3 bg-[#0f0f0f]"
+              style={{
+                borderBottom: '1px solid rgba(197, 160, 101, 0.2)',
+              }}
+            >
               <div className="flex flex-wrap gap-2">
                 {/* All button - always visible */}
                 <button
                   onClick={() => setPhotoFilter('all')}
-                  className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors
+                  className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all duration-200
                     ${photoFilter === 'all'
-                      ? 'bg-[#d97706] text-white'
-                      : 'bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]'}`}
+                      ? 'bg-[#d4af37]/20 text-[#d4af37] border-2 border-[#d4af37]'
+                      : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2520] hover:text-[#c5a065] border border-[#d4af37]/30'}`}
+                  style={{
+                    fontFamily: "'Courier Prime', monospace",
+                    ...(photoFilter === 'all' ? {
+                      boxShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
+                      textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
+                    } : {}),
+                  }}
                 >
                   All ({evidenceData.photos.length})
                 </button>
@@ -420,10 +537,17 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                     <button
                       key={location}
                       onClick={() => setPhotoFilter(location)}
-                      className={`px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors
+                      className={`px-3 py-1.5 rounded-sm text-xs font-bold transition-all duration-200
                         ${photoFilter === location
-                          ? 'bg-[#d97706] text-white'
-                          : 'bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]'}`}
+                          ? 'bg-[#d4af37]/20 text-[#d4af37] border-2 border-[#d4af37]'
+                          : 'bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2520] hover:text-[#c5a065] border border-[#d4af37]/30'}`}
+                      style={{
+                        fontFamily: "'Courier Prime', monospace",
+                        ...(photoFilter === location ? {
+                          boxShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
+                          textShadow: '0 0 6px rgba(212, 175, 55, 0.4)',
+                        } : {}),
+                      }}
                     >
                       {location} ({count})
                     </button>
@@ -434,7 +558,10 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                 {photoLocations.length > 3 && (
                   <button
                     onClick={() => setShowAllFilters(!showAllFilters)}
-                    className="px-3 py-1.5 rounded text-xs font-mono font-bold transition-colors bg-[#f4f1ea] text-[#5a6b7c] hover:bg-[#e0dcd4] border border-[#d1ccc0]"
+                    className="px-3 py-1.5 rounded-sm text-xs font-bold transition-all duration-200 bg-[#1a1a1a] text-gray-400 hover:bg-[#2a2520] hover:text-[#c5a065] border border-[#d4af37]/30"
+                    style={{
+                      fontFamily: "'Courier Prime', monospace",
+                    }}
                   >
                     {showAllFilters ? '▲ Less Filters' : `▼ More Filters (${photoLocations.length - 3})`}
                   </button>
@@ -444,13 +571,23 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           )}
 
           {/* Evidence List */}
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar min-h-0">
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar min-h-0 relative z-10">
             {evidenceData[activeTab].length === 0 ? (
-              <p className="text-center text-[#5a6b7c] py-8 italic">No {activeTab} available yet</p>
+              <p 
+                className="text-center text-gray-500 py-8 italic"
+                style={{ fontFamily: "'Courier Prime', monospace" }}
+              >
+                No {activeTab} available yet
+              </p>
             ) : activeTab === 'photos' ? (
               // Single column layout for photos with larger thumbnails
               filteredPhotos.length === 0 ? (
-                <p className="text-center text-[#5a6b7c] py-8 italic">No photos match this filter</p>
+                <p 
+                  className="text-center text-gray-500 py-8 italic"
+                  style={{ fontFamily: "'Courier Prime', monospace" }}
+                >
+                  No photos match this filter
+                </p>
               ) : (
                 <div className="space-y-3">
                   {filteredPhotos.map((item) => (
@@ -472,10 +609,18 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                         onPreviewDocument(itemData.docId, onClosePreview, imageIndex)
                       }
                     }}
-                    className={`group relative rounded border-2 transition-all duration-200 cursor-pointer overflow-hidden
+                    className={`group relative rounded-sm transition-all duration-200 cursor-pointer overflow-hidden
                       ${selectedEvidence.includes(item.id) 
-                        ? 'border-[#d97706] shadow-md ring-2 ring-[#d97706]/30' 
-                        : 'border-[#d1ccc0] hover:border-[#a0aec0]'}`}
+                        ? 'ring-2 ring-[#d4af37]' 
+                        : 'hover:ring-1 hover:ring-[#d4af37]/50'}`}
+                    style={{
+                      border: selectedEvidence.includes(item.id) 
+                        ? '2px solid #d4af37' 
+                        : '1px solid rgba(212, 175, 55, 0.3)',
+                      boxShadow: selectedEvidence.includes(item.id)
+                        ? '0 0 20px rgba(212, 175, 55, 0.4)'
+                        : '0 2px 8px rgba(0, 0, 0, 0.5)',
+                    }}
                   >
                     {/* Checkbox overlay */}
                     <div 
@@ -485,14 +630,23 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                       }}
                       className="absolute top-3 left-3 z-10"
                     >
-                      <div className={`w-7 h-7 rounded border-2 flex items-center justify-center transition-colors cursor-pointer shadow-md
-                        ${selectedEvidence.includes(item.id) ? 'bg-[#d97706] border-[#d97706]' : 'border-white bg-black/40 backdrop-blur-sm'}`}>
-                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-5 h-5 text-white" />}
+                      <div 
+                        className={`w-7 h-7 rounded-sm flex items-center justify-center transition-all cursor-pointer
+                          ${selectedEvidence.includes(item.id) 
+                            ? 'bg-[#d4af37] border-2 border-[#d4af37]' 
+                            : 'border-2 border-white/80 bg-black/60 backdrop-blur-sm'}`}
+                        style={{
+                          boxShadow: selectedEvidence.includes(item.id)
+                            ? '0 0 12px rgba(212, 175, 55, 0.6)'
+                            : '0 2px 8px rgba(0, 0, 0, 0.5)',
+                        }}
+                      >
+                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-5 h-5 text-black" />}
                       </div>
                     </div>
 
                     {/* Photo thumbnail */}
-                    <div className="relative w-full aspect-[3/2] bg-gray-200">
+                    <div className="relative w-full aspect-[3/2] bg-[#0f0f0f]">
                       <Image
                         src={item.imageUrl || '/placeholder.jpg'}
                         alt={item.title}
@@ -501,25 +655,44 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                         sizes="400px"
                       />
                       {/* Hover overlay */}
-                      <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-20 transition-opacity" />
+                      <div 
+                        className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity"
+                        style={{
+                          background: 'radial-gradient(circle, rgba(212,175,55,0.2) 0%, rgba(0,0,0,0.4) 100%)',
+                        }}
+                      />
                     </div>
 
                     {/* Title below */}
-                    <div className={`p-3 transition-colors ${selectedEvidence.includes(item.id) ? 'bg-[#fffdf5]' : 'bg-[#f4f1ea]'}`}>
+                    <div 
+                      className={`p-3 transition-colors ${selectedEvidence.includes(item.id) ? 'bg-[#2a2520]' : 'bg-[#0f0f0f]'}`}
+                    >
                       <div className="flex items-center gap-2">
-                        <ImageIcon className="w-4 h-4 text-[#5a6b7c] flex-shrink-0" />
-                        <span className="font-bold text-[#2c3e50] font-mono text-sm">{item.title}</span>
+                        <ImageIcon 
+                          className={`w-4 h-4 flex-shrink-0 ${selectedEvidence.includes(item.id) ? 'text-[#d4af37]' : 'text-gray-500'}`}
+                          style={{
+                            filter: selectedEvidence.includes(item.id) ? 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))' : 'none',
+                          }}
+                        />
+                        <span 
+                          className={`font-bold text-sm ${selectedEvidence.includes(item.id) ? 'text-[#d4af37]' : 'text-gray-300'}`}
+                          style={{ 
+                            fontFamily: "'Courier Prime', monospace",
+                            ...(selectedEvidence.includes(item.id) ? {
+                              textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                            } : {}),
+                          }}
+                        >
+                          {item.title}
+                        </span>
                       </div>
                     </div>
-                    
-                    {/* Vintage texture overlay effect */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
                   </div>
                   ))}
                 </div>
               )
             ) : (
-              // List layout for documents (keep original)
+              // List layout for documents
               <div className="space-y-3">
                 {evidenceData.documents.map((item) => (
                   <div 
@@ -531,10 +704,18 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                         onPreviewDocument(item.id, onClosePreview)
                       }
                     }}
-                    className={`group relative p-4 rounded border-2 transition-all duration-200 cursor-pointer
+                    className={`group relative p-4 rounded-sm transition-all duration-200 cursor-pointer
                       ${selectedEvidence.includes(item.id) 
-                        ? 'bg-[#fffdf5] border-[#d97706] shadow-md' 
-                        : 'bg-[#f4f1ea] border-[#d1ccc0] hover:border-[#a0aec0]'}`}
+                        ? 'bg-[#2a2520] ring-2 ring-[#d4af37]' 
+                        : 'bg-[#0f0f0f] hover:bg-[#1a1a1a] hover:ring-1 hover:ring-[#d4af37]/50'}`}
+                    style={{
+                      border: selectedEvidence.includes(item.id) 
+                        ? '2px solid #d4af37' 
+                        : '1px solid rgba(212, 175, 55, 0.3)',
+                      boxShadow: selectedEvidence.includes(item.id)
+                        ? '0 0 20px rgba(212, 175, 55, 0.4)'
+                        : '0 2px 8px rgba(0, 0, 0, 0.5)',
+                    }}
                   >
                     <div className="flex items-start gap-3">
                       <div 
@@ -542,126 +723,240 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                           e.stopPropagation()
                           toggleEvidence(item.id)
                         }}
-                        className={`mt-1 w-5 h-5 rounded border flex items-center justify-center transition-colors cursor-pointer
-                        ${selectedEvidence.includes(item.id) ? 'bg-[#d97706] border-[#d97706]' : 'border-[#a0aec0] bg-white'}`}>
-                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-3 h-3 text-white" />}
+                        className={`mt-1 w-5 h-5 rounded-sm flex items-center justify-center transition-all cursor-pointer
+                        ${selectedEvidence.includes(item.id) 
+                          ? 'bg-[#d4af37] border-2 border-[#d4af37]' 
+                          : 'border-2 border-[#d4af37]/40 bg-[#1a1a1a]'}`}
+                        style={{
+                          boxShadow: selectedEvidence.includes(item.id)
+                            ? '0 0 12px rgba(212, 175, 55, 0.6)'
+                            : 'none',
+                        }}
+                      >
+                        {selectedEvidence.includes(item.id) && <CheckCircle className="w-3 h-3 text-black" />}
                       </div>
                       
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <FileText className="w-4 h-4 text-[#5a6b7c]" />
-                          <span className="font-bold text-[#2c3e50] font-mono text-sm flex-1">{item.title}</span>
+                          <FileText 
+                            className={`w-4 h-4 ${selectedEvidence.includes(item.id) ? 'text-[#d4af37]' : 'text-gray-500'}`}
+                            style={{
+                              filter: selectedEvidence.includes(item.id) ? 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))' : 'none',
+                            }}
+                          />
+                          <span 
+                            className={`font-bold text-sm flex-1 ${selectedEvidence.includes(item.id) ? 'text-[#d4af37]' : 'text-gray-300'}`}
+                            style={{ 
+                              fontFamily: "'Courier Prime', monospace",
+                              ...(selectedEvidence.includes(item.id) ? {
+                                textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                              } : {}),
+                            }}
+                          >
+                            {item.title}
+                          </span>
                         </div>
-                        <p className="text-xs text-[#5a6b7c] leading-relaxed">{item.desc}</p>
+                        <p 
+                          className={`text-xs leading-relaxed ${selectedEvidence.includes(item.id) ? 'text-[#c5a065]' : 'text-gray-500'}`}
+                          style={{ fontFamily: "'Courier Prime', monospace" }}
+                        >
+                          {item.desc}
+                        </p>
                       </div>
                     </div>
-                    
-                    {/* Vintage texture overlay effect */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-noise"></div>
                   </div>
                 ))}
               </div>
             )}
           </div>
           
-          <div className="p-4 border-t border-[#d1ccc0] bg-[#e0dcd4] text-xs text-[#5a6b7c] font-mono flex justify-between">
+          <div 
+            className="p-4 bg-[#0f0f0f] text-xs text-[#c5a065] flex justify-between relative z-10"
+            style={{
+              fontFamily: "'Courier Prime', monospace",
+              borderTop: '1px solid rgba(197, 160, 101, 0.3)',
+              textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+            }}
+          >
             <span>EVIDENCE SELECTED: {selectedEvidence.length}</span>
             <span>STATUS: OPEN</span>
           </div>
         </div>
 
         {/* RIGHT SIDE: Theory & Submissions (60%) */}
-        <div className="w-full md:w-[60%] flex flex-col bg-[#f4f1ea] relative h-full">
-          
-          {/* Background Texture */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none" 
-               style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`}}>
-          </div>
+        <div 
+          className="w-full md:w-[60%] flex flex-col bg-[#1a1a1a] relative h-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(18, 18, 18, 1) 100%),
+              repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 12px,
+                rgba(0, 0, 0, 0.15) 12px,
+                rgba(0, 0, 0, 0.15) 13px
+              )
+            `,
+          }}
+        >
 
           {/* Scrollable Content Area */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
             {/* Theory Input Section */}
             <div className="p-8 relative z-10">
-              <h2 className="text-2xl font-bold text-[#2c3e50] mb-4 flex items-center gap-2 font-mono">
-                <FileText className="w-5 h-5 text-[#d97706]" />
+              <h2 
+                className="text-3xl font-bold text-[#d4af37] mb-6 flex items-center gap-3"
+                style={{ 
+                  fontFamily: "'Playfair Display', serif",
+                  textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                <FileText 
+                  className="w-7 h-7 text-[#d4af37]" 
+                  style={{
+                    filter: 'drop-shadow(0 0 6px rgba(212, 175, 55, 0.5))',
+                  }}
+                />
                 DETECTIVE&apos;S LOG
               </h2>
               
-              <div className="relative w-full transform -rotate-1 transition-transform hover:rotate-0 duration-300" style={{ minHeight: '450px' }}>
-              {/* Paper Shadow */}
-              <div className="absolute inset-0 bg-black/10 rounded-sm translate-y-2 translate-x-2 blur-sm"></div>
+              <p 
+                className="text-sm text-[#c5a065] mb-6 leading-relaxed"
+                style={{ 
+                  fontFamily: "'Courier Prime', monospace",
+                  textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
+                }}
+              >
+                Submit two artifacts that validate your theory proving Reginald&apos;s death was not an accident.
+              </p>
               
-              {/* The Paper */}
-              <div className="relative bg-[#fffdf5] border border-[#e2e8f0] shadow-sm p-8 rounded-sm overflow-hidden flex flex-col" style={{ minHeight: '450px' }}>
-                {/* Paper Lines */}
-                <div className="absolute inset-0 pointer-events-none" 
-                     style={{
-                       backgroundImage: 'linear-gradient(#e5e7eb 1px, transparent 1px)',
-                       backgroundSize: '100% 2rem',
-                       marginTop: '2.5rem'
-                     }}>
-                </div>
-                
-                {/* Red Margin Line */}
-                <div className="absolute left-12 top-0 bottom-0 w-px bg-red-200 pointer-events-none"></div>
+              <div className="relative w-full" style={{ minHeight: '450px' }}>
+                {/* The Input Container */}
+                <div 
+                  className="relative bg-[#0f0f0f] border-2 rounded-sm overflow-hidden flex flex-col p-6"
+                  style={{ 
+                    minHeight: '450px',
+                    borderColor: 'rgba(212, 175, 55, 0.3)',
+                    boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.6), 0 2px 12px rgba(0, 0, 0, 0.5)',
+                  }}
+                >
+                  <textarea
+                    value={theoryText}
+                    onChange={(e) => setTheoryText(e.target.value)}
+                    placeholder="Enter your theory here... Who had the means, motive, and opportunity?"
+                    className="flex-1 bg-transparent resize-none border-none focus:ring-0 text-[#e8e4da] text-base leading-7 placeholder:text-gray-600 relative z-10 outline-none"
+                    style={{ 
+                      minHeight: '300px',
+                      fontFamily: "'Courier Prime', monospace",
+                    }}
+                  />
 
-                <textarea
-                  value={theoryText}
-                  onChange={(e) => setTheoryText(e.target.value)}
-                  placeholder="Enter your theory here... Who had the means, motive, and opportunity?"
-                  className="flex-1 bg-transparent resize-none border-none focus:ring-0 text-[#2c3e50] text-xl leading-8 pl-6 font-handwriting placeholder:text-gray-300 relative z-10 outline-none"
-                  style={{ minHeight: '300px' }}
-                />
-
-                {/* Selected Artifacts Section - Same Paper */}
-                {selectedEvidence.length > 0 && (
-                  <div className="relative z-10 pl-6 mt-4 pt-4">
-                    <h4 className="text-sm font-bold text-[#2c3e50] uppercase tracking-wider mb-3 font-mono">
-                      Evidence Selected ({selectedEvidence.length})
-                    </h4>
-                    <div className="space-y-2">
-                      {selectedEvidence.map((artifactId, idx) => (
-                        <div key={idx} className="flex items-start gap-3 text-sm">
-                          <span className="text-[#d97706] font-bold">•</span>
-                          <span className="text-[#2c3e50] font-mono">{getArtifactName(artifactId)}</span>
-                        </div>
-                      ))}
+                  {/* Selected Artifacts Section */}
+                  {selectedEvidence.length > 0 && (
+                    <div className="relative z-10 mt-4 pt-4 border-t border-[#d4af37]/20">
+                      <h4 
+                        className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-3"
+                        style={{ 
+                          fontFamily: "'Courier Prime', monospace",
+                          textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                        }}
+                      >
+                        Evidence Selected ({selectedEvidence.length})
+                      </h4>
+                      <div className="space-y-2">
+                        {selectedEvidence.map((artifactId, idx) => (
+                          <div key={idx} className="flex items-start gap-3 text-sm">
+                            <span className="text-[#d4af37] font-bold">•</span>
+                            <span 
+                              className="text-[#c5a065]"
+                              style={{ fontFamily: "'Courier Prime', monospace" }}
+                            >
+                              {getArtifactName(artifactId)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
           {/* Previous Submissions */}
           {theoryHistory.length > 0 && (
-            <div className="min-h-[450px] bg-[#e8e4da] border-t border-[#d1ccc0] p-6 flex flex-col relative z-10">
-              <h3 className="text-sm font-bold text-[#5a6b7c] uppercase tracking-widest mb-4 font-mono">Previous Theories</h3>
+            <div 
+              className="min-h-[450px] bg-[#121212] p-6 flex flex-col relative z-10"
+              style={{
+                borderTop: '1px solid rgba(197, 160, 101, 0.3)',
+                boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5)',
+              }}
+            >
+              <h3 
+                className="text-sm font-bold text-[#d4af37] uppercase tracking-widest mb-4"
+                style={{ 
+                  fontFamily: "'Courier Prime', monospace",
+                  textShadow: '0 0 8px rgba(212, 175, 55, 0.4)',
+                }}
+              >
+                Previous Theories
+              </h3>
               
               <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar max-h-[375px]">
                 {theoryHistory.slice().reverse().map((sub, idx) => (
-                  <div key={idx} className="bg-white p-4 rounded-sm border border-[#d1ccc0] shadow-sm relative overflow-hidden group">
+                  <div 
+                    key={idx} 
+                    className="bg-[#0f0f0f] p-4 rounded-sm border-2 relative overflow-hidden group"
+                    style={{
+                      borderColor: 'rgba(212, 175, 55, 0.3)',
+                      boxShadow: '0 2px 12px rgba(0, 0, 0, 0.6)',
+                    }}
+                  >
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-mono text-gray-400">
+                      <span 
+                        className="text-xs text-gray-500"
+                        style={{ fontFamily: "'Courier Prime', monospace" }}
+                      >
                         {new Date(sub.submittedAt).toLocaleString()}
                       </span>
-                      <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border
-                        ${sub.result === 'incorrect' ? 'bg-red-50 text-red-700 border-red-200' : 
-                          sub.result === 'partial' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' : 
-                          'bg-green-50 text-green-700 border-green-200'}`}>
+                      <div 
+                        className={`px-2 py-1 rounded-sm text-[10px] font-bold uppercase tracking-wider border-2
+                          ${sub.result === 'incorrect' ? 'bg-red-900/20 text-red-400 border-red-400' : 
+                            sub.result === 'partial' ? 'bg-yellow-900/20 text-yellow-400 border-yellow-400' : 
+                            'bg-green-900/20 text-[#d4af37] border-[#d4af37]'}`}
+                        style={{
+                          fontFamily: "'Courier Prime', monospace",
+                          boxShadow: sub.result === 'incorrect' 
+                            ? '0 0 8px rgba(220, 38, 38, 0.3)'
+                            : sub.result === 'partial'
+                            ? '0 0 8px rgba(202, 138, 4, 0.3)'
+                            : '0 0 8px rgba(212, 175, 55, 0.3)',
+                        }}
+                      >
                         {sub.result}
                       </div>
                     </div>
-                    <p className="text-[#2c3e50] font-serif italic text-sm border-l-2 border-gray-200 pl-3 mb-2">&quot;{sub.description}&quot;</p>
+                    <p 
+                      className="text-[#e8e4da] italic text-sm border-l-2 border-[#d4af37]/40 pl-3 mb-2"
+                      style={{ fontFamily: "'Courier Prime', monospace" }}
+                    >
+                      &quot;{sub.description}&quot;
+                    </p>
                     
                     {/* Artifacts Badge */}
                     {sub.artifactIds && sub.artifactIds.length > 0 && (
                       <div className="mt-3">
                         <button
                           onClick={() => setExpandedTheoryId(expandedTheoryId === sub.id ? null : sub.id)}
-                          className="flex items-center gap-2 text-xs font-mono text-[#5a6b7c] hover:text-[#d97706] transition-colors"
+                          className="flex items-center gap-2 text-xs text-gray-400 hover:text-[#d4af37] transition-colors"
+                          style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
-                          <span className="px-2 py-1 bg-[#e8e4da] border border-[#d1ccc0] rounded">
+                          <span 
+                            className="px-2 py-1 bg-[#1a1a1a] border border-[#d4af37]/30 rounded-sm"
+                            style={{
+                              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.4)',
+                            }}
+                          >
                             📎 {sub.artifactIds.length} {sub.artifactIds.length === 1 ? 'artifact' : 'artifacts'}
                           </span>
                           <span className="text-[10px]">{expandedTheoryId === sub.id ? '▼' : '▶'}</span>
@@ -671,8 +966,12 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                         {expandedTheoryId === sub.id && (
                           <div className="mt-2 pl-4 space-y-1">
                             {sub.artifactIds.map((artifactId, i) => (
-                              <div key={i} className="text-xs font-mono text-[#5a6b7c] flex items-start gap-2">
-                                <span className="text-[#d97706] mt-0.5">•</span>
+                              <div 
+                                key={i} 
+                                className="text-xs text-gray-400 flex items-start gap-2"
+                                style={{ fontFamily: "'Courier Prime', monospace" }}
+                              >
+                                <span className="text-[#d4af37] mt-0.5">•</span>
                                 <span>{getArtifactName(artifactId)}</span>
                               </div>
                             ))}
@@ -682,9 +981,12 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                     )}
                     
                     {/* Verdict Stamp Effect */}
-                    <div className={`absolute -right-4 -bottom-4 opacity-10 transform -rotate-12 font-black text-6xl uppercase pointer-events-none
-                      ${sub.result === 'incorrect' ? 'text-red-900' : 
-                        sub.result === 'partial' ? 'text-yellow-900' : 'text-green-900'}`}>
+                    <div 
+                      className={`absolute -right-4 -bottom-4 opacity-10 transform -rotate-12 font-black text-6xl uppercase pointer-events-none
+                        ${sub.result === 'incorrect' ? 'text-red-400' : 
+                          sub.result === 'partial' ? 'text-yellow-400' : 'text-[#d4af37]'}`}
+                      style={{ fontFamily: "'Courier Prime', monospace" }}
+                    >
                       {sub.result}
                     </div>
                   </div>
@@ -695,20 +997,40 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           </div>
 
           {/* Submit Button Area - Always Visible */}
-          <div className="p-6 border-t border-[#d1ccc0] bg-[#e8e4da] flex justify-between items-center relative z-10">
+          <div 
+            className="p-6 bg-[#0f0f0f] flex justify-between items-center relative z-10"
+            style={{
+              borderTop: '1px solid rgba(197, 160, 101, 0.3)',
+              boxShadow: 'inset 0 2px 8px rgba(0, 0, 0, 0.5)',
+            }}
+          >
             <button 
               onClick={onClose}
-              className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded shadow-lg font-bold tracking-wider transition-all"
+              className="bg-[#1a1a1a] hover:bg-[#2a2520] text-gray-400 hover:text-[#c5a065] px-6 py-3 rounded-sm font-bold tracking-wider transition-all duration-200 border-2 border-gray-700 hover:border-[#d4af37]/40"
+              style={{
+                fontFamily: "'Courier Prime', monospace",
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+              }}
             >
               Close
             </button>
             <button 
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="bg-[#d97706] hover:bg-[#b45309] text-white px-8 py-3 rounded shadow-lg flex items-center gap-2 font-bold tracking-wider transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border-2 border-[#d4af37] px-8 py-3 rounded-sm flex items-center gap-2 font-bold tracking-wider transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                fontFamily: "'Courier Prime', monospace",
+                boxShadow: '0 0 20px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1)',
+                textShadow: '0 0 8px rgba(212, 175, 55, 0.5)',
+              }}
             >
               <span>{isSubmitting ? 'SUBMITTING...' : 'SUBMIT THEORY'}</span>
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight 
+                className="w-5 h-5"
+                style={{
+                  filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
+                }}
+              />
             </button>
           </div>
 

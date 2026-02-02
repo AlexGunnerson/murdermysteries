@@ -251,6 +251,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     loadMetadata()
   }, [unlockedContent.records])
 
+  // Auto-open Veronica's letter for first-time players
+  useEffect(() => {
+    if (!hasReadVeronicaLetter && !loading) {
+      setShowVeronicaLetter(true)
+    }
+  }, [hasReadVeronicaLetter, loading])
+
   const handleCloseLetter = () => {
     setShowVeronicaLetter(false)
     markLetterAsRead()
@@ -337,10 +344,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     <>
       {/* Header Bar */}
       <BoardHeader 
-        hasUnreadMessage={!hasReadVeronicaLetter}
-        onOpenMessage={() => setShowVeronicaLetter(true)}
         onOpenMenu={onOpenMenu}
-        onOpenHelp={() => onAction('help')}
         onOpenInvestigationBoard={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
         onGetClue={() => setShowClueModal(true)}
         onQuestionSuspects={() => onAction('question')}

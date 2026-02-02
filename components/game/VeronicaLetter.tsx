@@ -259,7 +259,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
             {/* FRONT PAGE */}
             <div className="parchment parchment-front relative rounded-sm pt-[45px] px-[40px] pb-[70px]">
               {/* Date/Location */}
-              <div className="text-right text-gray-600 text-base mb-5 pr-4 opacity-80">
+              <div className="text-right text-gray-600 text-lg mb-5 pr-4 opacity-80">
                 Ashcombe Manor<br />
                 May 12th, 1986
               </div>
