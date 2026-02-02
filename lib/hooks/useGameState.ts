@@ -21,6 +21,7 @@ export function useGameState() {
     isCompleted: store.isCompleted,
     isSolvedCorrectly: store.isSolvedCorrectly,
     hasReadVeronicaLetter: store.hasReadVeronicaLetter,
+    actICluesUsed: store.actICluesUsed,
     isLoading: store.isLoading,
     isSyncing: store.isSyncing,
     
@@ -40,6 +41,7 @@ export function useGameState() {
     completeGame: store.completeGame,
     resetGame: store.resetGame,
     markLetterAsRead: store.markLetterAsRead,
+    incrementActIClue: store.incrementActIClue,
     setLoading: store.setLoading,
     setSyncing: store.setSyncing,
     fetchGameState: store.fetchGameState,

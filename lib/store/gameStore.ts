@@ -67,6 +67,7 @@ export interface GameState {
   isCompleted: boolean
   isSolvedCorrectly: boolean | null
   hasReadVeronicaLetter: boolean
+  actICluesUsed: number
   
   // Loading states
   isLoading: boolean
@@ -93,6 +94,7 @@ export interface GameState {
   completeGame: (isCorrect: boolean) => void
   resetGame: () => void
   markLetterAsRead: () => void
+  incrementActIClue: () => void
   
   setLoading: (loading: boolean) => void
   setSyncing: (syncing: boolean) => void
@@ -118,6 +120,7 @@ const initialState = {
   isCompleted: false,
   isSolvedCorrectly: null,
   hasReadVeronicaLetter: false,
+  actICluesUsed: 0,
   isLoading: false,
   isSyncing: false,
 }
@@ -245,7 +248,12 @@ export const useGameStore = create<GameState>()(
         },
 
         setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => {
-          set({ currentStage: stage })
+          // Reset Act I clues when moving to Act II
+          if (stage === 'act_ii') {
+            set({ currentStage: stage, actICluesUsed: 0 })
+          } else {
+            set({ currentStage: stage })
+          }
         },
 
         fetchGameState: async () => {
@@ -487,6 +495,12 @@ export const useGameStore = create<GameState>()(
           } else {
             set({ hasReadVeronicaLetter: true })
           }
+        },
+
+        incrementActIClue: () => {
+          set((state) => ({
+            actICluesUsed: state.actICluesUsed + 1
+          }))
         },
 
         setLoading: (loading: boolean) => {

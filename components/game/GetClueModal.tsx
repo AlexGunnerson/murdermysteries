@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { X, Lightbulb } from 'lucide-react'
+import { useGameState } from '@/lib/hooks/useGameState'
 
 interface GetClueModalProps {
   isOpen: boolean
@@ -9,6 +10,13 @@ interface GetClueModalProps {
   currentStage: 'start' | 'act_i' | 'act_ii'
   sessionId: string | null
 }
+
+// Static clues for Act I
+const ACT_I_CLUES = [
+  "Review each of the documents carefully — what are the facts? Do any of the photos contradict these 'facts'?",
+  "A man's habits are recorded somewhere. Do his final moments match those habits?",
+  "The family physician keeps detailed records. What do those records say about Reginald's health?"
+]
 
 // Map stages to display names
 const getPhaseDisplay = (stage: 'start' | 'act_i' | 'act_ii'): string => {
@@ -26,15 +34,15 @@ const getObjectiveText = (stage: 'start' | 'act_i' | 'act_ii'): string => {
 
 // Placeholder clue limits (will be configurable later)
 const getClueLimit = (stage: 'start' | 'act_i' | 'act_ii'): number => {
-  if (stage === 'start' || stage === 'act_i') return 2
+  if (stage === 'start' || stage === 'act_i') return 3
   return 3
 }
 
 export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetClueModalProps) {
+  const { actICluesUsed, incrementActIClue } = useGameState()
   const [isLoading, setIsLoading] = useState(false)
   const [clueText, setClueText] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [cluesUsed, setCluesUsed] = useState(0)
   const isMountedRef = useRef(isOpen)
 
   // Ensure currentStage has a valid value
@@ -42,20 +50,27 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
   const phaseDisplay = getPhaseDisplay(safeCurrentStage)
   const objectiveText = getObjectiveText(safeCurrentStage)
   const clueLimit = getClueLimit(safeCurrentStage)
+  const isActI = safeCurrentStage === 'start' || safeCurrentStage === 'act_i'
   
-  // Reset clue usage when stage changes (Act I -> Act II)
-  useEffect(() => {
-    setCluesUsed(0)
-    setClueText(null)
-    setError(null)
-  }, [safeCurrentStage])
-
   // Track if modal is open to prevent state updates after close
   useEffect(() => {
     isMountedRef.current = isOpen
   }, [isOpen])
 
   const handleGetClue = async () => {
+    // For Act I, use static clues
+    if (isActI) {
+      if (actICluesUsed >= ACT_I_CLUES.length) {
+        setError('No more clues available')
+        return
+      }
+      
+      setClueText(ACT_I_CLUES[actICluesUsed])
+      incrementActIClue()
+      return
+    }
+
+    // For Act II, use AI-generated clues (future enhancement)
     if (!sessionId) {
       setError('No active game session found')
       return
@@ -80,7 +95,6 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
       // Only update state if modal is still open
       if (isMountedRef.current) {
         setClueText(data.clue)
-        setCluesUsed(prev => prev + 1)
       }
     } catch (err) {
       // Only show error if modal is still open
@@ -152,12 +166,12 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                 <div className="flex justify-center mb-5">
                   <button
                     onClick={handleGetClue}
-                    disabled={isLoading}
+                    disabled={isLoading || (isActI && actICluesUsed >= ACT_I_CLUES.length)}
                     className="px-8 py-3 text-base uppercase tracking-wider transition-colors duration-200 border border-[#d4af37]/30 hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 text-[#d4af37]/80 hover:text-[#d4af37] disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-3"
                     style={{ fontFamily: "'Courier Prime', monospace" }}
                   >
                     <Lightbulb className="w-5 h-5" />
-                    {isLoading ? 'Thinking...' : 'Get Clue'}
+                    {isLoading ? 'Thinking...' : (isActI && actICluesUsed >= ACT_I_CLUES.length) ? 'No Clues Remaining' : 'Get Clue'}
                   </button>
                 </div>
 
@@ -176,7 +190,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                   className="text-[#d4af37]/60 text-base text-center"
                   style={{ fontFamily: "'Courier Prime', monospace" }}
                 >
-                  {cluesUsed} of {clueLimit} remaining
+                  {isActI ? `${clueLimit - actICluesUsed} of ${clueLimit} remaining` : `Clues available`}
                 </p>
               </>
             ) : (
@@ -209,7 +223,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                     className="text-[#d4af37]/60 text-base"
                     style={{ fontFamily: "'Courier Prime', monospace" }}
                   >
-                    {cluesUsed} of {clueLimit} used
+                    {isActI ? `${actICluesUsed} of ${clueLimit} used` : `Clue provided`}
                   </p>
                   <button
                     onClick={handleClose}
