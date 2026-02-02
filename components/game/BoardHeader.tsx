@@ -5,6 +5,7 @@ import Image from 'next/image'
 interface BoardHeaderProps {
   onOpenMenu: () => void
   onOpenInvestigationBoard: () => void
+  isLoadingInvestigation?: boolean
   // Actions
   onGetClue: () => void
   onQuestionSuspects: () => void
@@ -14,6 +15,7 @@ interface BoardHeaderProps {
 export function BoardHeader({ 
   onOpenMenu,
   onOpenInvestigationBoard,
+  isLoadingInvestigation = false,
   onGetClue,
   onQuestionSuspects,
   onSolveMurder
@@ -283,11 +285,11 @@ export function BoardHeader({
           text-shadow: 0 1px 0 rgba(255,255,255,0.3);
         }
 
-        .btn-investigation:hover {
+        .btn-investigation:hover:not(:disabled) {
           background: linear-gradient(to bottom, #e8c84a, #a08020);
         }
 
-        .btn-investigation:active {
+        .btn-investigation:active:not(:disabled) {
           transform: translateY(2px);
           box-shadow: 
             inset 1px 1px 0 rgba(0,0,0,0.3),
@@ -295,6 +297,26 @@ export function BoardHeader({
             0 1px 0 #5c4a16,
             0 2px 2px rgba(0,0,0,0.5);
           background: linear-gradient(to bottom, #8c701c, #d4af37);
+        }
+
+        .btn-investigation:disabled {
+          opacity: 0.7;
+          cursor: wait;
+        }
+
+        .spinner {
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          border: 2px solid #1a0f0a;
+          border-top-color: transparent;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          margin-right: 8px;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
         }
 
         .icon-btn {
@@ -426,8 +448,16 @@ export function BoardHeader({
           className="btn-investigation" 
           onClick={onOpenInvestigationBoard}
           title="Open Investigation Board"
+          disabled={isLoadingInvestigation}
         >
-          🔍 Investigation Board
+          {isLoadingInvestigation ? (
+            <>
+              <span className="spinner"></span>
+              Loading...
+            </>
+          ) : (
+            <>🔍 Investigation Board</>
+          )}
         </button>
 
         <button 

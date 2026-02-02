@@ -91,6 +91,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
   const [showLetterNotification, setShowLetterNotification] = useState(false)
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
+  const [showThankYouNoteNotification, setShowThankYouNoteNotification] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
   const [scenes, setScenes] = useState<Scene[]>([])
@@ -98,6 +99,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [selectedSuspectForReveal, setSelectedSuspectForReveal] = useState<Suspect | null>(null)
   const [showVictimCard, setShowVictimCard] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isLoadingInvestigation, setIsLoadingInvestigation] = useState(false)
   const [selectedScene, setSelectedScene] = useState<Scene | null>(null)
   const [selectedSceneImageIndex, setSelectedSceneImageIndex] = useState<number>(0)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
@@ -265,9 +267,19 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     }
   }, [hasReadVeronicaLetter, loading])
 
+  // Debug: Monitor showThankYouNoteNotification state
+  useEffect(() => {
+    console.log('[THANK-YOU-NOTE-NOTIFICATION] State changed:', showThankYouNoteNotification)
+  }, [showThankYouNoteNotification])
+
   const handleOpenLetter = () => {
     setShowLetterNotification(false)
     setShowVeronicaLetter(true)
+  }
+
+  const handleOpenThankYouNote = () => {
+    setShowThankYouNoteNotification(false)
+    setShowThankYouNote(true)
   }
 
   const handleCloseLetter = () => {
@@ -328,9 +340,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     console.log('[ACT-I-SUCCESS] Starting sequence with unlocked content:', unlockedContent)
     setActIUnlockData(unlockedContent)
     
-    // Wait 2 seconds, then show Veronica's Thank You note
+    // Wait 2 seconds, then show the thank you note notification
+    console.log('[ACT-I-SUCCESS] Setting timeout for thank you note notification')
     setTimeout(() => {
-      setShowThankYouNote(true)
+      console.log('[ACT-I-SUCCESS] Timeout fired! Setting showThankYouNoteNotification to true')
+      setShowThankYouNoteNotification(true)
     }, 2000)
   }
 
@@ -368,7 +382,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {/* Header Bar */}
       <BoardHeader 
         onOpenMenu={onOpenMenu}
-        onOpenInvestigationBoard={() => router.push(`/game/${caseId || 'case01'}/investigation`)}
+        onOpenInvestigationBoard={() => {
+          setIsLoadingInvestigation(true)
+          router.push(`/game/${caseId || 'case01'}/investigation`)
+        }}
+        isLoadingInvestigation={isLoadingInvestigation}
         onGetClue={() => setShowClueModal(true)}
         onQuestionSuspects={() => onAction('question')}
         onSolveMurder={() => setShowValidateTheory(true)}
@@ -963,6 +981,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <LetterNotificationModal onOpenLetter={handleOpenLetter} />
       )}
 
+      {/* Thank You Note Notification Modal */}
+      {showThankYouNoteNotification && (
+        <LetterNotificationModal onOpenLetter={handleOpenThankYouNote} />
+      )}
+
       {/* Additional Previews */}
       {showVeronicaLetter && (
         <VeronicaLetter onBeginInvestigation={handleCloseLetter} isFirstView={false} />
@@ -972,9 +995,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <VeronicaThankYouNote onClose={() => {
           setShowThankYouNote(false)
           
-          // If this is part of Act I success sequence, show unlock modal
+          // If this is part of Act I success sequence, show unlock modal after 1 second
           if (actIUnlockData) {
-            setShowActIUnlockModal(true)
+            setTimeout(() => {
+              setShowActIUnlockModal(true)
+            }, 1000)
           } else {
             // Otherwise handle normal close flow
             if (onPreviewClose) {

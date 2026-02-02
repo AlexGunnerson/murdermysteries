@@ -292,14 +292,23 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
           result={resultModal.result}
           feedback={resultModal.feedback}
           onClose={() => {
+            // Check if this is Act I success by looking at the unlocked content
+            // We check if we're unlocking Act II content (stage === 'act_ii')
             const isActISuccess = resultModal.result === 'correct' && 
-                                  resultModal.unlockedContent?.stage === 'act_ii' &&
-                                  currentStage !== 'act_ii'
+                                  resultModal.unlockedContent?.stage === 'act_ii'
+            
+            console.log('[THEORY-RESULT-MODAL] Closing with:', {
+              result: resultModal.result,
+              unlockedStage: resultModal.unlockedContent?.stage,
+              currentStage,
+              isActISuccess
+            })
             
             setResultModal(null)
             
             // If Act I success (proving contradiction), trigger the special sequence
             if (isActISuccess && onActISuccess) {
+              console.log('[THEORY-RESULT-MODAL] Calling onActISuccess')
               onClose() // Close ValidateTheory modal
               onActISuccess(resultModal.unlockedContent) // Trigger sequence in parent
             } else if (resultModal.result === 'correct') {
@@ -818,7 +827,9 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                   textShadow: '0 0 4px rgba(197, 160, 101, 0.3)',
                 }}
               >
-                Submit two artifacts that validate your theory proving Reginald&apos;s death was not an accident.
+                {currentStage === 'act_ii' 
+                  ? 'Submit at least four artifacts that prove who committed the murder and why.'
+                  : 'Submit two artifacts that validate your theory proving Reginald\'s death was not an accident.'}
               </p>
               
               <div className="relative w-full" style={{ minHeight: '450px' }}>
@@ -834,7 +845,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                   <textarea
                     value={theoryText}
                     onChange={(e) => setTheoryText(e.target.value)}
-                    placeholder="Enter your theory here... Who had the means, motive, and opportunity?"
+                    placeholder="Enter your theory here..."
                     className="flex-1 bg-transparent resize-none border-none focus:ring-0 text-[#e8e4da] text-base leading-7 placeholder:text-gray-600 relative z-10 outline-none"
                     style={{ 
                       minHeight: '300px',
