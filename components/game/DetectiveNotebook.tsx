@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useGameState } from "@/lib/hooks/useGameState"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
+import { LetterNotificationModal } from "@/components/game/LetterNotificationModal"
 import { VeronicaThankYouNote } from "@/components/game/VeronicaThankYouNote"
 import { CallLog } from "@/components/game/CallLog"
 import { SpeechNotes } from "@/components/game/SpeechNotes"
@@ -88,6 +89,7 @@ interface DetectiveNotebookProps {
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const router = useRouter()
   const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
+  const [showLetterNotification, setShowLetterNotification] = useState(false)
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNote, setShowThankYouNote] = useState(false)
   const [suspects, setSuspects] = useState<Suspect[]>([])
@@ -253,12 +255,20 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     loadMetadata()
   }, [unlockedContent.records])
 
-  // Auto-open Veronica's letter for first-time players
+  // Auto-show letter notification for first-time players (with 2-second delay)
   useEffect(() => {
     if (!hasReadVeronicaLetter && !loading) {
-      setShowVeronicaLetter(true)
+      const timer = setTimeout(() => {
+        setShowLetterNotification(true)
+      }, 2000)
+      return () => clearTimeout(timer)
     }
   }, [hasReadVeronicaLetter, loading])
+
+  const handleOpenLetter = () => {
+    setShowLetterNotification(false)
+    setShowVeronicaLetter(true)
+  }
 
   const handleCloseLetter = () => {
     setShowVeronicaLetter(false)
@@ -946,6 +956,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             }
           }}
         />
+      )}
+
+      {/* Letter Notification Modal */}
+      {showLetterNotification && (
+        <LetterNotificationModal onOpenLetter={handleOpenLetter} />
       )}
 
       {/* Additional Previews */}
