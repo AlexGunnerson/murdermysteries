@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useGameState } from "@/lib/hooks/useGameState"
+import { filterSecretsByStage } from "@/lib/utils/storyUtils"
 import { VeronicaLetter } from "@/components/game/VeronicaLetter"
 import { LetterNotificationModal } from "@/components/game/LetterNotificationModal"
 import { VeronicaThankYouNote } from "@/components/game/VeronicaThankYouNote"
@@ -29,6 +30,7 @@ import { BlackmailViewer } from "./detective-board/BlackmailViewer"
 import { BlackmailSceneViewer } from "./detective-board/BlackmailSceneViewer"
 import { SecurityFootageViewer } from "./detective-board/SecurityFootageViewer"
 import { PaintingBackViewer } from "./detective-board/PaintingBackViewer"
+import { VeronicaCommentaryModal } from "./detective-board/VeronicaCommentaryModal"
 import { ValeNotesPage1, ValeNotesPage2 } from "./documents/ValeNotesDocs"
 import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from "./documents/CoronerReportDocs"
 import { ValidateTheory } from "./ValidateTheory"
@@ -88,7 +90,7 @@ interface DetectiveNotebookProps {
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const router = useRouter()
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, hasSeenBlackmailCommentary, markBlackmailCommentaryAsSeen, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
   const [showLetterNotification, setShowLetterNotification] = useState(false)
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNoteNotification, setShowThankYouNoteNotification] = useState(false)
@@ -107,6 +109,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
   const [blackmailSuspectId, setBlackmailSuspectId] = useState<string | undefined>(undefined)
+  const [showVeronicaCommentary, setShowVeronicaCommentary] = useState(false)
   const [showSecurityFootage, setShowSecurityFootage] = useState(false)
   const [securityFootageImages, setSecurityFootageImages] = useState<string[]>([])
   const [showValeNotes, setShowValeNotes] = useState(false)
@@ -799,6 +802,16 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         />
       )}
 
+      {/* Veronica Commentary Modal - appears above blackmail viewer */}
+      {showVeronicaCommentary && (
+        <VeronicaCommentaryModal
+          onClose={() => {
+            setShowVeronicaCommentary(false)
+            markBlackmailCommentaryAsSeen()
+          }}
+        />
+      )}
+
       {/* Blackmail Document Viewer (Scene - Missing Vale) */}
       {showBlackmailSceneViewer && (
         <BlackmailSceneViewer
@@ -850,6 +863,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             // Note: We don't add painting to navigation stack - we want to skip it and return directly to the scene
             setShowPaintingBack(false)
             setShowBlackmailViewer(true)
+
+            // Show Veronica's commentary after 0.5s delay if not seen before
+            if (!hasSeenBlackmailCommentary) {
+              setTimeout(() => {
+                setShowVeronicaCommentary(true)
+              }, 500)
+            }
 
             // Unlock the blackmail record in the database (in background)
             if (sessionId) {
@@ -946,7 +966,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             .replace('{suspect_bio}', selectedSuspectForReveal.bio)
             .replace('{suspect_personality}', storyConfig.suspects[selectedSuspectForReveal.id]?.personality || '')
             .replace('{suspect_alibi}', storyConfig.suspects[selectedSuspectForReveal.id]?.alibi || '')
-            .replace('{suspect_secrets}', storyConfig.suspects[selectedSuspectForReveal.id]?.secrets?.join('\n') || '')
+            .replace('{suspect_secrets}', 
+              filterSecretsByStage(
+                storyConfig.suspects[selectedSuspectForReveal.id]?.secrets || [],
+                currentStage
+              ).join('\n')
+            )
             .replace('{dynamic_knowledge}', discoveredFacts.map(f => f.content).join('\n'))
           }
           onClose={handleCloseSuspectCard}
