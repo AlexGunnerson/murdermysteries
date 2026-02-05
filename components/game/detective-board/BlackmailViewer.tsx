@@ -10,6 +10,7 @@ import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackma
 
 interface BlackmailViewerProps {
   onClose: () => void
+  suspectId?: string  // Optional: if provided, directly show this suspect's documents
 }
 
 interface SuspectDocs {
@@ -21,8 +22,8 @@ interface SuspectDocs {
   pages: Array<{ label: string; content: React.ReactNode }>
 }
 
-export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
-  const [selectedSuspect, setSelectedSuspect] = useState<string | null>(null)
+export function BlackmailViewer({ onClose, suspectId }: BlackmailViewerProps) {
+  const [selectedSuspect, setSelectedSuspect] = useState<string | null>(suspectId || null)
 
   const suspects: SuspectDocs[] = [
     {
@@ -119,11 +120,20 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
 
   // If a suspect is selected, show their documents
   if (selectedSuspectData) {
+    // If we came in with a suspectId prop, skip the selection screen when going back
+    const handleBack = () => {
+      if (suspectId) {
+        onClose() // Skip selection screen, close entirely
+      } else {
+        setSelectedSuspect(null) // Go back to selection screen
+      }
+    }
+
     return (
       <div className="relative">
         {/* Back button overlay */}
         <button
-          onClick={() => setSelectedSuspect(null)}
+          onClick={handleBack}
           className="fixed top-8 left-8 z-[60] p-3 bg-[#f4e8d8] hover:bg-[#e8dcc8] text-gray-800 rounded-full transition-colors shadow-lg"
           aria-label="Back"
         >
@@ -133,7 +143,7 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
         <DocumentHTMLViewer
           documentName={`${selectedSuspectData.name} - Blackmail Evidence`}
           pages={selectedSuspectData.pages}
-          onClose={() => setSelectedSuspect(null)}
+          onClose={handleBack}
         />
       </div>
     )

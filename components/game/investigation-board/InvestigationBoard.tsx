@@ -1129,6 +1129,9 @@ function InvestigationBoardContent({
       {/* Blackmail Papers - Found Behind Painting (Complete or Individual) */}
       {reviewingHTMLDocument && (reviewingHTMLDocument.documentId === 'record_blackmail_portrait' || reviewingHTMLDocument.documentId.startsWith('record_blackmail_portrait_')) && (
         <BlackmailViewer
+          suspectId={reviewingHTMLDocument.documentId.startsWith('record_blackmail_portrait_') 
+            ? reviewingHTMLDocument.documentId.replace('record_blackmail_portrait_', '') 
+            : undefined}
           onClose={() => setReviewingHTMLDocument(null)}
         />
       )}
@@ -1136,6 +1139,9 @@ function InvestigationBoardContent({
       {/* Blackmail Papers - Found Near Body (Missing Vale or Individual) */}
       {reviewingHTMLDocument && (reviewingHTMLDocument.documentId === 'record_blackmail_floor' || reviewingHTMLDocument.documentId.startsWith('record_blackmail_floor_')) && (
         <BlackmailSceneViewer
+          suspectId={reviewingHTMLDocument.documentId.startsWith('record_blackmail_floor_') 
+            ? reviewingHTMLDocument.documentId.replace('record_blackmail_floor_', '') 
+            : undefined}
           onClose={() => setReviewingHTMLDocument(null)}
         />
       )}

@@ -106,6 +106,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [selectedDocumentImageIndex, setSelectedDocumentImageIndex] = useState<number>(0)
   const [showBlackmailViewer, setShowBlackmailViewer] = useState(false)
   const [showBlackmailSceneViewer, setShowBlackmailSceneViewer] = useState(false)
+  const [blackmailSuspectId, setBlackmailSuspectId] = useState<string | undefined>(undefined)
   const [showSecurityFootage, setShowSecurityFootage] = useState(false)
   const [securityFootageImages, setSecurityFootageImages] = useState<string[]>([])
   const [showValeNotes, setShowValeNotes] = useState(false)
@@ -565,10 +566,20 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                     }
                     // Check if it's blackmail documents (scene version - full set or individual)
                     else if (doc.id === 'record_blackmail_floor' || doc.id.startsWith('record_blackmail_floor_')) {
+                      // Extract suspect ID if it's an individual piece
+                      const suspectId = doc.id.startsWith('record_blackmail_floor_') 
+                        ? doc.id.replace('record_blackmail_floor_', '') 
+                        : undefined
+                      setBlackmailSuspectId(suspectId)
                       setShowBlackmailSceneViewer(true)
                     }
                     // Check if it's blackmail documents (portrait version - full set or individual)
                     else if (doc.id === 'record_blackmail_portrait' || doc.id.startsWith('record_blackmail_portrait_')) {
+                      // Extract suspect ID if it's an individual piece
+                      const suspectId = doc.id.startsWith('record_blackmail_portrait_') 
+                        ? doc.id.replace('record_blackmail_portrait_', '') 
+                        : undefined
+                      setBlackmailSuspectId(suspectId)
                       setShowBlackmailViewer(true)
                     }
                     // Otherwise open image viewer if document has images
@@ -774,8 +785,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {/* Blackmail Document Viewer (Found Behind Painting - Complete) */}
       {showBlackmailViewer && (
         <BlackmailViewer
+          suspectId={blackmailSuspectId}
           onClose={() => {
             setShowBlackmailViewer(false)
+            setBlackmailSuspectId(undefined)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
@@ -789,8 +802,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {/* Blackmail Document Viewer (Scene - Missing Vale) */}
       {showBlackmailSceneViewer && (
         <BlackmailSceneViewer
+          suspectId={blackmailSuspectId}
           onClose={() => {
             setShowBlackmailSceneViewer(false)
+            setBlackmailSuspectId(undefined)
             if (onPreviewClose) {
               onPreviewClose()
               setOnPreviewClose(null)
@@ -970,8 +985,18 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 setShowSecurityFootage(true)
               }
             } else if (docId === 'record_blackmail_portrait' || docId.startsWith('record_blackmail_portrait_')) {
+              // Extract suspect ID if it's an individual piece
+              const suspectId = docId.startsWith('record_blackmail_portrait_') 
+                ? docId.replace('record_blackmail_portrait_', '') 
+                : undefined
+              setBlackmailSuspectId(suspectId)
               setShowBlackmailViewer(true)
             } else if (docId === 'record_blackmail_floor' || docId.startsWith('record_blackmail_floor_')) {
+              // Extract suspect ID if it's an individual piece
+              const suspectId = docId.startsWith('record_blackmail_floor_') 
+                ? docId.replace('record_blackmail_floor_', '') 
+                : undefined
+              setBlackmailSuspectId(suspectId)
               setShowBlackmailSceneViewer(true)
             } else if (docId === 'record_phone_logs') {
               setShowCallLog(true)
