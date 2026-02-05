@@ -1,7 +1,6 @@
 "use client"
 
 import { ArrowLeft } from "lucide-react"
-import { QuickNoteButton } from "./QuickNoteButton"
 
 interface CallLogProps {
   onClose: () => void
@@ -275,9 +274,6 @@ export function CallLog({ onClose }: CallLogProps) {
         </div>
       </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

@@ -2,7 +2,6 @@
 
 import { ArrowLeft, FileText } from "lucide-react"
 import Image from "next/image"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface VictimDossierViewProps {
   onClose: () => void
@@ -282,9 +281,6 @@ export function VictimDossierView({ onClose }: VictimDossierViewProps) {
           </div>
         </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

@@ -194,29 +194,8 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         setErrorModal('Please select exactly two artifacts as evidence for your theory.')
         return
       }
-    } else {
-      // Act II: Must submit 4 or more pieces of evidence to prove who committed the crime
-      // Required artifacts that prove Colin is the murderer
-      const requiredArtifacts = [
-        'study_4',              // Reginald's pocket square in study
-        'study_5',              // Torn glove near safe
-        'colin_champagne',      // Colin wearing white torn glove
-        'record_blackmail_portrait'  // Blackmail set behind portrait (Colin's real blackmail)
-      ]
-      
-      // Check minimum count
-      if (selectedEvidence.length < 4) {
-        setErrorModal('Please select at least four artifacts as evidence for your theory.')
-        return
-      }
-      
-      // Check if all required artifacts are present
-      const missingRequired = requiredArtifacts.filter(id => !selectedEvidence.includes(id))
-      if (missingRequired.length > 0) {
-        setErrorModal('Not all the pieces fit. Keep digging.')
-        return
-      }
     }
+    // Note: Act II validation is handled by the unlock rules system in the backend
 
     if (!sessionId) {
       setErrorModal('Game session not initialized. Please refresh the page.')
@@ -828,7 +807,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
                 }}
               >
                 {currentStage === 'act_ii' 
-                  ? 'Submit at least four artifacts that prove who committed the murder and why.'
+                  ? 'Submit at least four artifacts that prove who committed the murder, where they did it and why.'
                   : 'Submit two artifacts that validate your theory proving Reginald\'s death was not an accident.'}
               </p>
               

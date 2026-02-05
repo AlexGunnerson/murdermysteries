@@ -7,7 +7,6 @@ import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from
 import { ColinBlackmailPage1, ColinBlackmailPage2 } from "../documents/ColinBlackmailDocs"
 import { LydiaBlackmailPage1, LydiaBlackmailPage2, LydiaBlackmailPage3 } from "../documents/LydiaBlackmailDocs"
 import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackmailPage4, ValeBlackmailPage5 } from "../documents/ValeBlackmailDocs"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface BlackmailViewerProps {
   onClose: () => void
@@ -330,9 +329,6 @@ export function BlackmailViewer({ onClose }: BlackmailViewerProps) {
           </div>
         </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

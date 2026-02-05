@@ -372,9 +372,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     scene.initiallyAvailable || unlockedContent.scenes.has(scene.id)
   )
   // Show documents that are either initially available OR have been unlocked
-  const unlockedDocuments = documents.filter(doc => 
-    doc.initiallyAvailable || unlockedContent.records.has(doc.id)
-  )
+  // BUT exclude individual blackmail pieces (keep only full sets for document viewer)
+  const unlockedDocuments = documents.filter(doc => {
+    const isUnlocked = doc.initiallyAvailable || unlockedContent.records.has(doc.id)
+    const isIndividualBlackmail = doc.id.startsWith('record_blackmail_floor_') || 
+                                   doc.id.startsWith('record_blackmail_portrait_')
+    return isUnlocked && !isIndividualBlackmail
+  })
   const chatSuspects = Array.from(new Set(chatHistory.map(msg => msg.suspectId)))
 
   return (
@@ -559,12 +563,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                       setSecurityFootageImages(doc.images || [])
                       setShowSecurityFootage(true)
                     }
-                    // Check if it's blackmail documents (scene version)
-                    else if (doc.id === 'record_blackmail_floor') {
+                    // Check if it's blackmail documents (scene version - full set or individual)
+                    else if (doc.id === 'record_blackmail_floor' || doc.id.startsWith('record_blackmail_floor_')) {
                       setShowBlackmailSceneViewer(true)
                     }
-                    // Check if it's blackmail documents (portrait version)
-                    else if (doc.id === 'record_blackmail_portrait') {
+                    // Check if it's blackmail documents (portrait version - full set or individual)
+                    else if (doc.id === 'record_blackmail_portrait' || doc.id.startsWith('record_blackmail_portrait_')) {
                       setShowBlackmailViewer(true)
                     }
                     // Otherwise open image viewer if document has images
@@ -716,12 +720,29 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             
             // Open the requested document
             if (documentId === 'record_security_footage') {
-              // Find and open the security footage with custom viewer
-              const doc = documents.find(d => d.id === documentId)
-              if (doc && doc.images) {
-                setSecurityFootageImages(doc.images)
-                setShowSecurityFootage(true)
-              }
+              // Open security footage with hardcoded images (since document might not be loaded yet)
+              const footageImages = [
+                "/cases/case01/images/evidence/securityfootage/cam1.1.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam1.2.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam1.3.png",
+                "/cases/case01/images/evidence/securityfootage/cam1.4.png",
+                "/cases/case01/images/evidence/securityfootage/cam1.5.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam2.1.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.2.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.3.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.4.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.5.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.6.png",
+                "/cases/case01/images/evidence/securityfootage/cam2.7.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam2.8.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam3.1.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam3.2.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam3.3.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam3.4.jpg",
+                "/cases/case01/images/evidence/securityfootage/cam3.5.jpg"
+              ]
+              setSecurityFootageImages(footageImages)
+              setShowSecurityFootage(true)
             } else if (documentId === 'painting_back') {
               // Open the painting back viewer
               setShowPaintingBack(true)
@@ -948,9 +969,9 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 setSecurityFootageImages(doc.images)
                 setShowSecurityFootage(true)
               }
-            } else if (docId === 'record_blackmail_portrait') {
+            } else if (docId === 'record_blackmail_portrait' || docId.startsWith('record_blackmail_portrait_')) {
               setShowBlackmailViewer(true)
-            } else if (docId === 'record_blackmail_floor') {
+            } else if (docId === 'record_blackmail_floor' || docId.startsWith('record_blackmail_floor_')) {
               setShowBlackmailSceneViewer(true)
             } else if (docId === 'record_phone_logs') {
               setShowCallLog(true)

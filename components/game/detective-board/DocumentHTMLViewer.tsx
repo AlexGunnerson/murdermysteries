@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface DocumentPage {
   label: string
@@ -151,9 +150,6 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
           )}
         </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

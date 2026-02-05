@@ -203,7 +203,11 @@ export const useGameStore = create<GameState>()(
               const stateData = await stateResponse.json()
               
               if (stateData.session) {
-                // Restore unlocked content
+                // Get current revealed content before updating
+                const currentState = get()
+                
+                // Restore unlocked content, but preserve revealed content
+                // (revealed content is UI-only state persisted in localStorage)
                 set({
                   currentStage: stateData.session.current_stage || 'start',
                   unlockedContent: {
@@ -211,15 +215,16 @@ export const useGameStore = create<GameState>()(
                     scenes: new Set(stateData.unlockedContent.scenes || []),
                     records: new Set(stateData.unlockedContent.records || []),
                   },
-                  revealedContent: {
-                    suspects: new Set(stateData.revealedContent?.suspects || []),
-                    scenes: new Set(stateData.revealedContent?.scenes || []),
-                  },
+                  // Keep existing revealed content instead of resetting it
+                  revealedContent: currentState.revealedContent,
                 })
               }
             }
           } catch (error) {
             console.error('Error initializing game:', error)
+            // Get current revealed content before resetting
+            const currentState = get()
+            
             // Fallback to local-only mode if API fails
             set({
               caseId,
@@ -232,10 +237,8 @@ export const useGameStore = create<GameState>()(
                 scenes: new Set<string>(),
                 records: new Set<string>(),
               },
-              revealedContent: {
-                suspects: new Set<string>(),
-                scenes: new Set<string>(),
-              },
+              // Preserve revealed content even on error
+              revealedContent: currentState.revealedContent,
               isCompleted: false,
               isSolvedCorrectly: null,
               isLoading: false,
@@ -266,6 +269,8 @@ export const useGameStore = create<GameState>()(
               const data = await response.json()
               
               if (data.session) {
+                // Preserve revealed content when fetching game state
+                // (revealed content is UI-only state persisted in localStorage)
                 set({
                   currentStage: data.session.current_stage || 'start',
                   unlockedContent: {
@@ -273,10 +278,8 @@ export const useGameStore = create<GameState>()(
                     scenes: new Set(data.unlockedContent.scenes || []),
                     records: new Set(data.unlockedContent.records || []),
                   },
-                  revealedContent: {
-                    suspects: new Set(data.revealedContent?.suspects || []),
-                    scenes: new Set(data.revealedContent?.scenes || []),
-                  },
+                  // Keep existing revealed content instead of resetting it
+                  revealedContent: state.revealedContent,
                 })
               }
             }

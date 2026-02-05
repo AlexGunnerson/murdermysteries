@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth/session'
 import { streamAIResponse, ChatContext, sanitizeResponseForClient } from '@/lib/services/aiService'
 import { createServiceRoleClient } from '@/lib/supabase/server'
-import { evaluateUnlocks, applyUnlocks, saveEvidencePresentation, checkAndApplyActIUnlocks } from '@/lib/services/unlockService'
+import { evaluateUnlocks, applyUnlocks, saveEvidencePresentation, checkAndApplyActIUnlocks, getCumulativeEvidenceForSuspect } from '@/lib/services/unlockService'
 import { GameStage } from '@/lib/config/unlockRules'
 
 export const runtime = 'nodejs'
@@ -40,6 +40,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get cumulative evidence for AI context (if chatting with a suspect)
+    let cumulativeEvidence: string[] = []
+    if (sessionId && context.suspectProfile?.id) {
+      try {
+        cumulativeEvidence = await getCumulativeEvidenceForSuspect({
+          sessionId,
+          suspectId: context.suspectProfile.id
+        })
+      } catch (error) {
+        console.error('Error fetching cumulative evidence:', error)
+        // Continue without cumulative evidence
+      }
+    }
+
     // Check for unlocks if evidence is attached
     let unlockResult = null
     if (sessionId && context.attachedItems && context.attachedItems.length > 0) {
@@ -61,13 +75,19 @@ export async function POST(request: NextRequest) {
             evidenceIds: context.attachedItems.map(i => i.id)
           })
 
-          // Evaluate unlocks
+          // Update cumulative evidence with newly attached items
+          const updatedCumulativeEvidence = Array.from(
+            new Set([...cumulativeEvidence, ...context.attachedItems.map(i => i.id)])
+          )
+
+          // Evaluate unlocks (passing cumulative evidence for cumulative rules)
           unlockResult = await evaluateUnlocks({
             sessionId,
             suspectId: context.suspectProfile.id,
             evidenceIds: context.attachedItems.map(i => i.id),
             currentStage: (session.current_stage || 'start') as GameStage,
-            trigger: 'chat'
+            trigger: 'chat',
+            cumulativeEvidence: updatedCumulativeEvidence
           })
 
           // Apply unlocks if any
@@ -83,6 +103,12 @@ export async function POST(request: NextRequest) {
         console.error('Error evaluating unlocks:', error)
         // Don't fail the chat if unlock evaluation fails
       }
+    }
+
+    // Add cumulative evidence to context for AI
+    const enhancedContext: ChatContext = {
+      ...context,
+      cumulativeEvidence: cumulativeEvidence.length > 0 ? cumulativeEvidence : undefined
     }
 
     // Create a ReadableStream for SSE
@@ -105,7 +131,7 @@ export async function POST(request: NextRequest) {
           }
 
           // Stream AI response
-          for await (const chunk of streamAIResponse(message, context)) {
+          for await (const chunk of streamAIResponse(message, enhancedContext)) {
             if (chunk.error) {
               const errorData = `data: ${JSON.stringify({ error: chunk.error })}\n\n`
               controller.enqueue(encoder.encode(errorData))

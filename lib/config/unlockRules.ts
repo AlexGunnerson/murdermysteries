@@ -14,6 +14,7 @@ export interface UnlockRule {
   requiredSuspectId?: string  // For chat attachments - must be shown to specific suspect
   requiredArtifacts: string[]
   logicOperator: LogicOperator
+  useCumulativeEvidence?: boolean  // If true, checks all evidence ever shown to suspect, not just current message
   unlocks: {
     stage?: GameStage
     suspects?: string[]
@@ -36,21 +37,21 @@ export const UNLOCK_RULES: UnlockRule[] = [
     unlocks: {
       stage: 'act_ii',
       suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
-      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes'],
+      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_blackmail_floor_colin', 'record_blackmail_floor_martin', 'record_blackmail_floor_lydia', 'record_phone_logs', 'record_speech_notes'],
       statusUpdate: 'Murder Confirmed'
     },
-    notificationMessage: 'The contradiction has been proven! The wine spill was staged - this was murder, not an accident.',
+    notificationMessage: 'The contradiction has been proven! According to Dr. Vale\'s Medical Notes, Reginald is allergic to red wine. The wine spill was staged - this was murder, not an accident.',
     description: 'Player notices red wine in crime scene photo and cross-references with Dr. Vale\'s Medical Notes showing Reginald is allergic to red wine'
   },
 
-  // Master Bedroom Unlock - Show blackmail to Veronica
+  // Master Bedroom Unlock - Show blackmail to Veronica (accepts full set or any individual piece)
   {
     id: 'master_bedroom_chat',
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_veronica',
-    requiredArtifacts: ['record_blackmail_floor'],
-    logicOperator: 'AND',
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_floor_colin', 'record_blackmail_floor_martin', 'record_blackmail_floor_lydia'],
+    logicOperator: 'OR',
     unlocks: {
       scenes: ['scene_master_bedroom']
     },
@@ -58,18 +59,18 @@ export const UNLOCK_RULES: UnlockRule[] = [
     description: 'Show the floor blackmail papers to Veronica to prove a page is missing'
   },
 
-  // Master Bedroom Unlock - Theory validation alternative
+  // Master Bedroom Unlock - Theory validation alternative (accepts full set or any individual piece)
   {
     id: 'master_bedroom_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_blackmail_floor', 'record_veronica_thankyou'],
+    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_floor_colin', 'record_blackmail_floor_martin', 'record_blackmail_floor_lydia', 'record_veronica_thankyou'],
     logicOperator: 'AND',
     unlocks: {
       scenes: ['scene_master_bedroom']
     },
     notificationMessage: 'Your theory about the missing blackmail page is correct! The master bedroom may hold the complete set.',
-    description: 'Submit theory with both blackmail papers and Veronica\'s note mentioning everyone had blackmail'
+    description: 'Submit theory with blackmail papers and Veronica\'s note mentioning everyone had blackmail'
   },
 
   // Blackmail Set #2 - Retrieved from painting (handled by button, but tracked here)
@@ -80,39 +81,40 @@ export const UNLOCK_RULES: UnlockRule[] = [
     requiredArtifacts: [], // No validation needed - button click unlocks it
     logicOperator: 'AND',
     unlocks: {
-      records: ['record_blackmail_portrait']
+      records: ['record_blackmail_portrait', 'record_blackmail_portrait_colin', 'record_blackmail_portrait_martin', 'record_blackmail_portrait_lydia', 'record_blackmail_portrait_vale']
     },
     notificationMessage: 'You\'ve retrieved the complete blackmail files from behind the painting!',
     description: 'Player clicks "Retrieve Blackmail!" button on painting in Master Bedroom'
   },
 
-  // The Confrontation - Vale admits to greenhouse theft
+  // The Confrontation - Vale admits to greenhouse theft (accepts full set or individual Vale piece)
   {
     id: 'vale_confrontation',
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_vale',
-    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait'],
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait', 'record_blackmail_portrait_vale'],
     logicOperator: 'AND',
+    useCumulativeEvidence: true,  // Check all evidence ever shown to Vale, not just current message
     unlocks: {
       scenes: ['scene_study']
     },
-    notificationMessage: 'Dr. Vale has confessed to stealing plants from the greenhouse! He mentions CCTV footage in the Study can prove his alibi.',
-    description: 'Show phone records and blackmail Set 2 (from painting) to Vale to trigger confession'
+    notificationMessage: 'Study Unlocked!',
+    description: 'Show phone records and Vale\'s blackmail (full set or individual) to trigger confession (cumulative across all messages)'
   },
 
-  // The Confrontation - Theory validation alternative
+  // The Confrontation - Theory validation alternative (accepts full set or individual Vale piece)
   {
     id: 'vale_confrontation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait'],
+    requiredArtifacts: ['record_phone_logs', 'record_blackmail_portrait', 'record_blackmail_portrait_vale'],
     logicOperator: 'AND',
     unlocks: {
       scenes: ['scene_study']
     },
     notificationMessage: 'Your theory about Dr. Vale\'s deception is correct! The Study may contain evidence of his whereabouts.',
-    description: 'Submit theory with phone records and blackmail Set 2 proving Vale lied'
+    description: 'Submit theory with phone records and Vale\'s blackmail proving Vale lied'
   },
 
   // CCTV Proof - Retrieved from study (handled by button, but tracked here)
@@ -135,13 +137,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_colin',
-    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'scene_ballroom'], // Photos include pocket square and gloves
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_study_img_3'],
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Colin has confessed! He accidentally killed Reginald during a confrontation in the study. Case closed!',
-    description: 'Show Colin the incriminating evidence: pocket square pic, white gloves, and both blackmail sets'
+    description: 'Show Colin the incriminating evidence: Colin\'s blackmail from crime scene, Colin\'s blackmail from behind painting, and pocket square photo from study'
   },
 
   // The Accusation - Colin confession (Theory Validation)
@@ -149,13 +151,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'colin_accusation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_blackmail_floor', 'record_blackmail_portrait', 'scene_ballroom'],
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_study_img_3'],
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Your accusation is correct! Colin Dorsey is the killer. He confesses to the accidental killing during a confrontation in the study.',
-    description: 'Submit theory accusing Colin with all the evidence'
+    description: 'Submit theory with Colin\'s blackmail from both locations and pocket square photo proving Colin is the killer'
   }
 ]
 

@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, ChevronLeft, ChevronRight, Camera } from "lucide-react"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface SecurityFootageViewerProps {
   images: string[]
@@ -146,9 +145,6 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
           ))}
         </div>
       )}
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

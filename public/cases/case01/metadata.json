@@ -254,6 +254,76 @@
       }
     },
     {
+      "id": "record_blackmail_floor_colin",
+      "name": "Colin's Blackmail - Found Near Body",
+      "description": "Colin Dorsey's blackmail documents found scattered near Reginald's body. Contains evidence of Colin's attempt to sell Dorothy Ashcombe's ring on the black market.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "record_blackmail_floor_martin",
+      "name": "Martin's Blackmail - Found Near Body",
+      "description": "Martin Ashcombe's blackmail documents found scattered near Reginald's body. Contains evidence of Martin's affair with Clara and subsequent hush money payments.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "record_blackmail_floor_lydia",
+      "name": "Lydia's Blackmail - Found Near Body",
+      "description": "Lydia Portwell's blackmail documents found scattered near Reginald's body. Contains evidence of embezzlement from the Ashcombe Foundation.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_staged_scene"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait_colin",
+      "name": "Colin's Blackmail - Behind Painting",
+      "description": "Colin Dorsey's complete blackmail documents hidden behind the painting in the master bedroom. The real evidence showing Colin attempted to sell Dorothy Ashcombe's ring - the most prized family heirloom.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait_martin",
+      "name": "Martin's Blackmail - Behind Painting",
+      "description": "Martin Ashcombe's complete blackmail documents hidden behind the painting in the master bedroom. Contains the full evidence of his affair with Clara.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait_lydia",
+      "name": "Lydia's Blackmail - Behind Painting",
+      "description": "Lydia Portwell's complete blackmail documents hidden behind the painting in the master bedroom. Contains detailed evidence of her embezzlement scheme.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait_vale",
+      "name": "Dr. Vale's Blackmail - Behind Painting",
+      "description": "Dr. Leonard Vale's blackmail documents hidden behind the painting in the master bedroom. Contains evidence of his prescription fraud and financial troubles.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
       "id": "record_phone_logs",
       "name": "Phone Records",
       "description": "Estate phone logs from the evening of the gala, showing all incoming and outgoing calls.",

@@ -33,6 +33,7 @@ import { DocumentViewer } from '../detective-board/DocumentViewer'
 import { DocumentHTMLViewer } from '../detective-board/DocumentHTMLViewer'
 import { BlackmailViewer } from '../detective-board/BlackmailViewer'
 import { BlackmailSceneViewer } from '../detective-board/BlackmailSceneViewer'
+import { SecurityFootageViewer } from '../detective-board/SecurityFootageViewer'
 import { SpeechNotes } from '../SpeechNotes'
 import { CallLog } from '../CallLog'
 import { VeronicaThankYouNote } from '../VeronicaThankYouNote'
@@ -94,6 +95,7 @@ function InvestigationBoardContent({
   const [copiedNode, setCopiedNode] = useState<Node | null>(null)
   const [reviewingDocument, setReviewingDocument] = useState<{ title: string; images: string[] } | null>(null)
   const [reviewingHTMLDocument, setReviewingHTMLDocument] = useState<{ title: string; documentId: string } | null>(null)
+  const [reviewingSecurityFootage, setReviewingSecurityFootage] = useState<string[] | null>(null)
   const [chatSuspect, setChatSuspect] = useState<any | null>(null)
   const [storyConfig, setStoryConfig] = useState<any | null>(null)
   const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 })
@@ -216,11 +218,18 @@ function InvestigationBoardContent({
     if (docNode) {
       const docData = docNode.data as any
       
+      // Check if it's security footage
+      if (documentId === 'record_security_footage') {
+        const images = docData.images || []
+        setReviewingSecurityFootage(images)
+      }
       // Check if it's an HTML document or document with custom viewer
-      if (docData.isHTML || 
+      else if (docData.isHTML || 
           docData.isLetter ||
           documentId === 'record_blackmail_portrait' || 
+          documentId.startsWith('record_blackmail_portrait_') ||
           documentId === 'record_blackmail_floor' ||
+          documentId.startsWith('record_blackmail_floor_') ||
           documentId === 'record_speech_notes' ||
           documentId === 'record_coroner' ||
           documentId === 'record_phone_logs' ||
@@ -1091,6 +1100,14 @@ function InvestigationBoardContent({
         />
       )}
       
+      {/* Security Footage Viewer */}
+      {reviewingSecurityFootage && (
+        <SecurityFootageViewer
+          images={reviewingSecurityFootage}
+          onClose={() => setReviewingSecurityFootage(null)}
+        />
+      )}
+      
       {/* HTML Document Viewers */}
       {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_vale_notes' && (
         <DocumentHTMLViewer
@@ -1109,15 +1126,15 @@ function InvestigationBoardContent({
         />
       )}
       
-      {/* Blackmail Papers - Found Behind Painting (Complete) */}
-      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_portrait' && (
+      {/* Blackmail Papers - Found Behind Painting (Complete or Individual) */}
+      {reviewingHTMLDocument && (reviewingHTMLDocument.documentId === 'record_blackmail_portrait' || reviewingHTMLDocument.documentId.startsWith('record_blackmail_portrait_')) && (
         <BlackmailViewer
           onClose={() => setReviewingHTMLDocument(null)}
         />
       )}
       
-      {/* Blackmail Papers - Found Near Body (Missing Vale) */}
-      {reviewingHTMLDocument && reviewingHTMLDocument.documentId === 'record_blackmail_floor' && (
+      {/* Blackmail Papers - Found Near Body (Missing Vale or Individual) */}
+      {reviewingHTMLDocument && (reviewingHTMLDocument.documentId === 'record_blackmail_floor' || reviewingHTMLDocument.documentId.startsWith('record_blackmail_floor_')) && (
         <BlackmailSceneViewer
           onClose={() => setReviewingHTMLDocument(null)}
         />

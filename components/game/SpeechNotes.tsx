@@ -1,7 +1,6 @@
 "use client"
 
 import { ArrowLeft } from "lucide-react"
-import { QuickNoteButton } from "./QuickNoteButton"
 
 interface SpeechNotesProps {
   onClose: () => void
@@ -167,9 +166,6 @@ export function SpeechNotes({ onClose }: SpeechNotesProps) {
         </div>
       </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

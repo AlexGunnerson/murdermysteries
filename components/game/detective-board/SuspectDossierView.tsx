@@ -5,7 +5,6 @@ import Image from "next/image"
 import { useState, useRef } from "react"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 import { useGameState } from "@/lib/hooks/useGameState"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface SuspectDossierViewProps {
   suspect: {
@@ -36,6 +35,9 @@ export function SuspectDossierView({
   const { unlockedContent } = useGameState()
   const queuedNotificationsRef = useRef<string[]>([])
   
+  // Check if this is the victim (deceased - cannot be questioned)
+  const isVictim = suspect.id.startsWith('victim_')
+  
   // Check if this suspect is unlocked for questioning
   // Veronica (suspect_veronica) is always available
   const isUnlockedForQuestioning = suspect.id === 'suspect_veronica' || unlockedContent.suspects.has(suspect.id)
@@ -65,7 +67,7 @@ export function SuspectDossierView({
     >
       {/* Split-screen container - 'The Noir Dossier' */}
       <div 
-        className="relative w-full h-full max-w-[1400px] max-h-[85vh] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 rounded-sm overflow-hidden"
+        className={`relative w-full h-full ${isVictim ? 'max-w-[700px]' : 'max-w-[1400px]'} max-h-[85vh] mx-auto grid grid-cols-1 ${isVictim ? '' : 'lg:grid-cols-2'} gap-0 rounded-sm overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
         style={{
           boxShadow: `
@@ -362,116 +364,115 @@ export function SuspectDossierView({
           </div>
         </div>
 
-        {/* RIGHT PANEL - 'Deep Charcoal Leather' Chat Interface */}
-        <div className="bg-[#1a1a1a] flex flex-col overflow-hidden relative">
-          {/* Deep leather texture overlay */}
-          <div 
-            className="absolute inset-0 pointer-events-none opacity-25"
-            style={{
-              backgroundImage: `
-                repeating-linear-gradient(
-                  45deg,
-                  transparent,
-                  transparent 12px,
-                  rgba(0, 0, 0, 0.15) 12px,
-                  rgba(0, 0, 0, 0.15) 13px
-                ),
-                repeating-linear-gradient(
-                  -45deg,
-                  transparent,
-                  transparent 12px,
-                  rgba(0, 0, 0, 0.12) 12px,
-                  rgba(0, 0, 0, 0.12) 13px
-                )
-              `,
-            }}
-          />
-          
-          {/* Header - Noir Gold Typography */}
-          <div 
-            className="bg-[#121212] border-b p-6 flex items-center justify-between relative z-10"
-            style={{
-              borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.3), rgba(197, 160, 101, 0.6), rgba(197, 160, 101, 0.3)) 1',
-              boxShadow: '0 2px 12px rgba(197, 160, 101, 0.15)',
-            }}
-          >
-            <div className="flex items-center gap-3">
-              <Search 
-                className="w-6 h-6 text-[#d4af37]" 
-                strokeWidth={1.5}
-                style={{
-                  filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
-                }}
-              />
-              <h2 
-                className="text-3xl text-[#d4af37] tracking-wider uppercase"
-                style={{ 
-                  fontFamily: "'Playfair Display', serif",
-                  letterSpacing: '0.15em',
-                  fontWeight: 500,
-                  textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
-                }}
-              >
-                Question Suspects
-              </h2>
-            </div>
-          </div>
-
-          {/* Chat Interface or Locked Message */}
-          <div className="flex-1 overflow-hidden relative z-10">
-            {isUnlockedForQuestioning ? (
-              <ChatInterfaceWithAttachments
-                suspectId={suspect.id}
-                suspectName={suspect.name}
-                suspectRole={suspect.role}
-                suspectPersonality={suspectPersonality}
-                systemPrompt={systemPrompt}
-                suspectAvatarUrl={suspect.avatarUrl}
-                onUnlockQueued={handleUnlockQueued}
-              />
-            ) : (
-              <div className="h-full flex items-center justify-center bg-[#1a1a1a] relative">
-                <div 
-                  className="absolute inset-0 opacity-5"
+        {/* RIGHT PANEL - 'Deep Charcoal Leather' - Only show for non-victims */}
+        {!isVictim && (
+          <div className="bg-[#1a1a1a] flex flex-col overflow-hidden relative">
+            {/* Deep leather texture overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none opacity-25"
+              style={{
+                backgroundImage: `
+                  repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 12px,
+                    rgba(0, 0, 0, 0.15) 12px,
+                    rgba(0, 0, 0, 0.15) 13px
+                  ),
+                  repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 12px,
+                    rgba(0, 0, 0, 0.12) 12px,
+                    rgba(0, 0, 0, 0.12) 13px
+                  )
+                `,
+              }}
+            />
+            
+            {/* Header - Noir Gold Typography */}
+            <div 
+              className="bg-[#121212] border-b p-6 flex items-center justify-between relative z-10"
+              style={{
+                borderImage: 'linear-gradient(to right, rgba(197, 160, 101, 0.3), rgba(197, 160, 101, 0.6), rgba(197, 160, 101, 0.3)) 1',
+                boxShadow: '0 2px 12px rgba(197, 160, 101, 0.15)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <Search 
+                  className="w-6 h-6 text-[#d4af37]" 
+                  strokeWidth={1.5}
                   style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`
+                    filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.5))',
                   }}
                 />
-                <div className="text-center px-8 relative z-10">
-                  <Lock 
-                    className="w-20 h-20 mx-auto mb-6 text-gray-600"
+                <h2 
+                  className="text-3xl text-[#d4af37] tracking-wider uppercase"
+                  style={{ 
+                    fontFamily: "'Playfair Display', serif",
+                    letterSpacing: '0.15em',
+                    fontWeight: 500,
+                    textShadow: '0 0 20px rgba(212, 175, 55, 0.4), 0 0 8px rgba(212, 175, 55, 0.3)',
+                  }}
+                >
+                  Question Suspects
+                </h2>
+              </div>
+            </div>
+
+            {/* Chat Interface or Locked Message */}
+            <div className="flex-1 overflow-hidden relative z-10">
+              {isUnlockedForQuestioning ? (
+                <ChatInterfaceWithAttachments
+                  suspectId={suspect.id}
+                  suspectName={suspect.name}
+                  suspectRole={suspect.role}
+                  suspectPersonality={suspectPersonality}
+                  systemPrompt={systemPrompt}
+                  suspectAvatarUrl={suspect.avatarUrl}
+                  onUnlockQueued={handleUnlockQueued}
+                />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-[#1a1a1a] relative">
+                  <div 
+                    className="absolute inset-0 opacity-5"
                     style={{
-                      filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.3))'
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`
                     }}
                   />
-                  <h3 
-                    className="text-2xl font-bold mb-4"
-                    style={{
-                      color: '#d4af37',
-                      fontFamily: "'Playfair Display', serif",
-                      textShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
-                    }}
-                  >
-                    Not Available for Questioning
-                  </h3>
-                  <p 
-                    className="text-gray-400 max-w-md mx-auto leading-relaxed"
-                    style={{
-                      fontFamily: 'Courier, monospace',
-                    }}
-                  >
-                    {suspect.name} is not yet available for questioning. 
-                    You'll need to prove this was murder before Veronica allows you access to the inner circle.
-                  </p>
+                  <div className="text-center px-8 relative z-10">
+                    <Lock 
+                      className="w-20 h-20 mx-auto mb-6 text-gray-600"
+                      style={{
+                        filter: 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.3))'
+                      }}
+                    />
+                    <h3 
+                      className="text-2xl font-bold mb-4"
+                      style={{
+                        color: '#d4af37',
+                        fontFamily: "'Playfair Display', serif",
+                        textShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
+                      }}
+                    >
+                      Not Available for Questioning
+                    </h3>
+                    <p 
+                      className="text-gray-400 max-w-md mx-auto leading-relaxed"
+                      style={{
+                        fontFamily: 'Courier, monospace',
+                      }}
+                    >
+                      {suspect.name} is not yet available for questioning. 
+                      You'll need to prove this was murder before Veronica allows you access to the inner circle.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

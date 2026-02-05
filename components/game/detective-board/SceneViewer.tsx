@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera, ArrowLeft, Repeat } from "lucide-react"
-import { QuickNoteButton } from "../QuickNoteButton"
 
 interface SceneViewerProps {
   sceneName: string
@@ -433,9 +432,6 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
           ))}
         </div>
       )}
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { ArrowLeft } from "lucide-react"
-import { QuickNoteButton } from "./QuickNoteButton"
 
 interface VeronicaThankYouNoteProps {
   onClose: () => void
@@ -339,9 +338,6 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
         </div>
       </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

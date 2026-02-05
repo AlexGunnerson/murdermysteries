@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import { QuickNoteButton } from "./QuickNoteButton"
 
 interface VeronicaLetterProps {
   onBeginInvestigation: () => void
@@ -348,9 +347,6 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
         </div>
       </div>
       </div>
-
-      {/* Quick Note Button */}
-      <QuickNoteButton />
     </div>
   )
 }

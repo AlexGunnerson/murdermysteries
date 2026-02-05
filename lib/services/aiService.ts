@@ -40,6 +40,7 @@ export interface ChatContext {
     title: string
     type: 'document' | 'photo' | 'scene'
   }>
+  cumulativeEvidence?: string[]  // All evidence ever shown to this suspect
 }
 
 /**
@@ -127,7 +128,7 @@ export async function generateAIResponse(
  * Build complete prompt with context and history
  */
 function buildPrompt(userMessage: string, context: ChatContext): string {
-  const { systemPrompt, conversationHistory, discoveredFacts, suspectProfile, attachedItems } = context
+  const { systemPrompt, conversationHistory, discoveredFacts, suspectProfile, attachedItems, cumulativeEvidence } = context
 
   // Build the full context
   let prompt = `${systemPrompt}\n\n`
@@ -158,17 +159,29 @@ function buildPrompt(userMessage: string, context: ChatContext): string {
     prompt += `\n`
   }
 
+  // Add cumulative evidence context if available
+  if (cumulativeEvidence && cumulativeEvidence.length > 0) {
+    prompt += `\n=== EVIDENCE PREVIOUSLY SHOWN TO YOU ===\n`
+    prompt += `Throughout this investigation, the detective has shown you the following evidence (across all conversations):\n\n`
+    cumulativeEvidence.forEach((evidenceId, index) => {
+      prompt += `${index + 1}. [ID: ${evidenceId}]\n`
+    })
+    prompt += `\nIMPORTANT: You are aware of ALL evidence listed above. Check if cumulative evidence combinations trigger special responses per your character instructions.\n`
+    prompt += `=== END CUMULATIVE EVIDENCE ===\n\n`
+  }
+
   // Add attached evidence if any
   if (attachedItems && attachedItems.length > 0) {
-    prompt += `\n=== EVIDENCE BEING SHOWN TO YOU ===\n`
-    prompt += `The detective is physically showing you the following evidence. React based on EXACTLY what they're showing:\n\n`
+    prompt += `\n=== EVIDENCE BEING SHOWN TO YOU RIGHT NOW ===\n`
+    prompt += `The detective is physically showing you the following evidence in this message. React based on EXACTLY what they're showing:\n\n`
     attachedItems.forEach((item, index) => {
       prompt += `${index + 1}. "${item.title}" (${item.type}) [ID: ${item.id}]\n`
     })
     prompt += `\nIMPORTANT INSTRUCTIONS:\n`
-    prompt += `- React to ONLY the evidence shown above. Do not reference evidence not listed.\n`
+    prompt += `- React to the evidence shown above in THIS message.\n`
     prompt += `- Follow your character's EVIDENCE INTERACTION RULES based on which specific documents are shown.\n`
     prompt += `- Check the evidence IDs carefully to determine which scenario you're in (e.g., "record_phone_logs", "record_blackmail_floor", "record_blackmail_portrait").\n`
+    prompt += `- Consider CUMULATIVE evidence shown above - if combining current + previous evidence triggers a confession, respond accordingly.\n`
     prompt += `- Show appropriate emotions (nervousness, defensiveness, surprise) if the evidence is incriminating.\n`
     prompt += `- If multiple pieces of evidence are shown together, this may trigger different responses than if shown individually.\n`
     prompt += `- Stay in character and make the detective work for each admission.\n`

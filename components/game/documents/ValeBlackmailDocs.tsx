@@ -214,7 +214,7 @@ export const ValeBlackmailPage5 = () => (
     </div>
 
     <p className="font-bold mt-6 mb-2">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-sm text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-lg text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
       <p>
         I've reviewed Vale's invoices against the actual pharmacy records from Ashcombe Pharmacy. The numbers don't match. Not even close.
       </p>
