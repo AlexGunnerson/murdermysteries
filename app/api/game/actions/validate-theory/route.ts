@@ -129,12 +129,16 @@ export async function POST(request: NextRequest) {
         feedback: finalFeedback,
       })
 
+    // Check if game was completed
+    const gameCompleted = unlockedContent?.statusUpdate === 'Case Solved'
+
     return NextResponse.json({
       success: true,
       result: finalResult,
       feedback: finalFeedback,
       matchedFacts: [],
       unlockedContent,
+      gameCompleted,
     })
   } catch (error) {
     console.error('Error validating theory:', error)

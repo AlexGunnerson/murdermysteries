@@ -1,31 +1,92 @@
 "use client"
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
 
 interface VeronicaCommentaryModalProps {
   onClose: () => void
+  text?: string
+  typingSpeed?: number
 }
 
-export function VeronicaCommentaryModal({ onClose }: VeronicaCommentaryModalProps) {
+// Custom hook for typewriter effect
+function useTypewriter(text: string, speed: number = 35, delay: number = 400) {
+  const [displayedText, setDisplayedText] = useState('')
+  const [isComplete, setIsComplete] = useState(false)
+  
+  useEffect(() => {
+    // Reset when text changes
+    setDisplayedText('')
+    setIsComplete(false)
+    
+    // Delay before starting typewriter
+    const delayTimeout = setTimeout(() => {
+      let currentIndex = 0
+      
+      const typeInterval = setInterval(() => {
+        if (currentIndex < text.length) {
+          setDisplayedText(text.slice(0, currentIndex + 1))
+          currentIndex++
+        } else {
+          setIsComplete(true)
+          clearInterval(typeInterval)
+        }
+      }, speed)
+      
+      return () => clearInterval(typeInterval)
+    }, delay)
+    
+    return () => {
+      clearTimeout(delayTimeout)
+    }
+  }, [text, speed, delay])
+  
+  return { displayedText, isComplete }
+}
+
+export function VeronicaCommentaryModal({ 
+  onClose, 
+  text = "Detective, wait... These aren't the papers I gave you. This is an entirely different set—a backup Reginald must have kept. I had no idea he made copies, let alone where he hid them. And look... Dr. Vale's file is here in this set. How meticulous of him to maintain duplicates.",
+  typingSpeed = 35
+}: VeronicaCommentaryModalProps) {
+  const { displayedText, isComplete } = useTypewriter(text, typingSpeed, 400)
   return (
     <>
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Courier+Prime:wght@400;700&display=swap');
         
-        @keyframes fadeIn {
-          from {
+        @keyframes modalEnter {
+          0% {
             opacity: 0;
-            transform: translate(-50%, -20px);
+            transform: translate(-50%, -40px) scale(0.95);
           }
-          to {
+          100% {
             opacity: 1;
-            transform: translate(-50%, 0);
+            transform: translate(-50%, 0) scale(1);
+          }
+        }
+        
+        @keyframes cursorBlink {
+          0%, 50% {
+            opacity: 1;
+          }
+          51%, 100% {
+            opacity: 0;
           }
         }
         
         .commentary-enter {
-          animation: fadeIn 0.4s ease-out forwards;
+          animation: modalEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .typing-cursor {
+          display: inline-block;
+          width: 2px;
+          height: 1em;
+          background-color: #d4af37;
+          margin-left: 2px;
+          animation: cursorBlink 1s infinite;
         }
       `}</style>
       
@@ -106,7 +167,8 @@ export function VeronicaCommentaryModal({ onClose }: VeronicaCommentaryModalProp
               }}
             >
               <p>
-                "Detective, wait... These aren't the papers I gave you. This is an entirely different set—a backup Reginald must have kept. I had no idea he made copies, let alone where he hid them. And look... Dr. Vale's file is here in this set. How meticulous of him to maintain duplicates."
+                "{displayedText}"
+                {!isComplete && <span className="typing-cursor" />}
               </p>
             </div>
           </div>

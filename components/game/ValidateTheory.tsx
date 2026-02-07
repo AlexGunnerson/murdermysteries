@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { FileText, Image as ImageIcon, CheckCircle, ChevronRight, X } from 'lucide-react'
 import { useGameState } from '@/lib/hooks/useGameState'
@@ -29,6 +30,7 @@ interface EvidenceItem {
 }
 
 export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewScene, onActISuccess }: ValidateTheoryProps) {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<'documents' | 'photos'>('documents')
   const [selectedEvidence, setSelectedEvidence] = useState<string[]>([])
   const [theoryText, setTheoryText] = useState('')
@@ -39,7 +41,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resultModal, setResultModal] = useState<{result: 'correct' | 'incorrect', feedback: string, unlockedContent?: any} | null>(null)
   const [errorModal, setErrorModal] = useState<string | null>(null)
-  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, currentStage } = useGameState()
+  const { theoryHistory, addTheorySubmission, unlockedContent, sessionId, fetchGameState, currentStage, markGameAsCompleted, isGameCompleted, caseId } = useGameState()
   
   // Evidence data - this will be populated from the game state
   const [evidenceData, setEvidenceData] = useState<{
@@ -182,6 +184,10 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
   }
 
   const handleSubmit = async () => {
+    if (isGameCompleted) {
+      return
+    }
+    
     if (!theoryText.trim()) {
       setErrorModal('Please write your theory before submitting.')
       return
@@ -226,6 +232,24 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
       console.log('[VALIDATE-THEORY-UI] Submitted artifact IDs:', selectedEvidence)
       console.log('[VALIDATE-THEORY-UI] Response received:', data)
+
+      // Check if game was completed
+      if (data.gameCompleted) {
+        markGameAsCompleted('Case Solved')
+        
+        // Add theory to history
+        addTheorySubmission({
+          description: theoryText.trim(),
+          artifactIds: selectedEvidence,
+          result: data.result,
+          feedback: data.feedback,
+          unlockedContent: data.unlockedContent,
+        })
+        
+        // Redirect to victory page
+        router.push(`/game/${caseId}/victory`)
+        return
+      }
 
       // Add theory to history
       addTheorySubmission({
@@ -996,7 +1020,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
             </button>
             <button 
               onClick={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitting || isGameCompleted}
               className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border-2 border-[#d4af37] px-8 py-3 rounded-sm flex items-center gap-2 font-bold tracking-wider transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 fontFamily: "'Courier Prime', monospace",

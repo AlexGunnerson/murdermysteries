@@ -90,7 +90,7 @@ interface DetectiveNotebookProps {
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const router = useRouter()
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, hasSeenBlackmailCommentary, markBlackmailCommentaryAsSeen, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, hasSeenBlackmailCommentary, markBlackmailCommentaryAsSeen, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId, isGameCompleted } = useGameState()
   const [showLetterNotification, setShowLetterNotification] = useState(false)
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNoteNotification, setShowThankYouNoteNotification] = useState(false)
@@ -871,25 +871,37 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               }, 500)
             }
 
-            // Unlock the blackmail record in the database (in background)
+            // Unlock all blackmail records in the database (main set + all individual documents)
             if (sessionId) {
               try {
-                const response = await fetch('/api/game/actions/unlock', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    sessionId,
-                    contentType: 'record',
-                    contentId: 'record_blackmail_portrait',
-                  }),
-                })
+                // Unlock all documents as specified in unlock rule: blackmail_set_2
+                const documentsToUnlock = [
+                  'record_blackmail_portrait',
+                  'record_blackmail_portrait_colin',
+                  'record_blackmail_portrait_martin',
+                  'record_blackmail_portrait_lydia',
+                  'record_blackmail_portrait_vale'
+                ]
 
-                if (response.ok) {
-                  // Refresh game state to reflect the new unlock
-                  await fetchGameState()
-                }
+                // Unlock each document
+                await Promise.all(
+                  documentsToUnlock.map(contentId =>
+                    fetch('/api/game/actions/unlock', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        sessionId,
+                        contentType: 'record',
+                        contentId,
+                      }),
+                    })
+                  )
+                )
+
+                // Refresh game state to reflect the new unlocks
+                await fetchGameState()
               } catch (error) {
                 console.error('Error unlocking blackmail:', error)
               }

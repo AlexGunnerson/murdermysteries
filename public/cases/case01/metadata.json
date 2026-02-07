@@ -72,23 +72,6 @@
   
   "locations": [
     {
-      "id": "scene_staircase",
-      "name": "Grand Staircase",
-      "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
-      "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
-      "images": [
-        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
-        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_2.png"
-      ],
-      "galaImages": [
-        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/gala/reginald_wine_spill.png"
-      ],
-      "galaAnnotations": {
-        "reginald_wine_spill.png": "The wine pooled there like a dark shadow, marking the place where I found him. I cannot bear to look at this for long—the memory of seeing him there, so still, will haunt me forever."
-      },
-      "initiallyAvailable": true
-    },
-    {
       "id": "scene_greenhouse",
       "name": "Grand Conservatory (Greenhouse)",
       "description": "Reginald's pride and joy - a glass-domed greenhouse filled with rare orchids and tropical blooms. He personally led tours here during the afternoon.",
@@ -125,6 +108,23 @@
       ],
       "galaAnnotations": {
         "veronica_outside.png": "I needed a moment away from the heat of the ballroom. Standing there in the dark, watching the party through the glass, I realized how much I've come to prefer the silence over the performance."
+      },
+      "initiallyAvailable": true
+    },
+    {
+      "id": "scene_staircase",
+      "name": "Grand Staircase",
+      "description": "The crime scene. Reginald's body was found at the bottom of these marble stairs. A wine glass lay nearby, its dark contents spilled across the floor in a tight cluster.",
+      "imageUrl": "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
+      "images": [
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_1.png",
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/investigation/stairs_2.png"
+      ],
+      "galaImages": [
+        "/cases/case01/images/scenes/Scene 6 - Grand Staircase/gala/reginald_wine_spill.png"
+      ],
+      "galaAnnotations": {
+        "reginald_wine_spill.png": "The wine pooled there like a dark shadow, marking the place where I found him. I cannot bear to look at this for long—the memory of seeing him there, so still, will haunt me forever."
       },
       "initiallyAvailable": true
     },
@@ -193,7 +193,7 @@
       "imageUrl": "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
       "images": [
         "/cases/case01/images/scenes/Scene 4 - Study/study_1.png",
-        "/cases/case01/images/scenes/Scene 4 - Study/study_2.jpg",
+        "/cases/case01/images/scenes/Scene 4 - Study/study_2.png",
         "/cases/case01/images/scenes/Scene 4 - Study/study_3.png",
         "/cases/case01/images/scenes/Scene 4 - Study/study_4.png",
         "/cases/case01/images/scenes/Scene 4 - Study/study_5.jpg"

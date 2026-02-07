@@ -6,6 +6,8 @@ const nextConfig = {
     imageSizes: [64, 128, 256, 384],
     // Enable modern formats (WebP/AVIF) - already default in Next.js 13+
     formats: ['image/webp', 'image/avif'],
+    // Set minimum cache TTL to 0 for development to always show latest images
+    minimumCacheTTL: 0,
   },
 }
 

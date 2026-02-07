@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useGameState, useSuspectChatHistory } from '@/lib/hooks/useGameState'
 import { extractFactsFromResponse } from '@/lib/services/aiService'
@@ -58,8 +59,9 @@ export function ChatInterfaceWithAttachments({
   const [showAllFilters, setShowAllFilters] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const router = useRouter()
 
-  const { addChatMessage, discoveredFacts, addDiscoveredFact, unlockedContent, sessionId, fetchGameState } = useGameState()
+  const { addChatMessage, discoveredFacts, addDiscoveredFact, unlockedContent, sessionId, fetchGameState, markGameAsCompleted, isGameCompleted, caseId } = useGameState()
   const chatHistory = useSuspectChatHistory(suspectId)
 
   // Load available items from game state
@@ -183,7 +185,7 @@ export function ChatInterfaceWithAttachments({
   }
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isStreaming) return
+    if (!inputMessage.trim() || isStreaming || isGameCompleted) return
 
     const userMessage = inputMessage.trim()
     const messageAttachments = [...attachedItems]
@@ -269,6 +271,30 @@ export function ChatInterfaceWithAttachments({
               // Handle unlock events
               if (data.unlock) {
                 const unlockData = data.unlock
+                
+                // Check if game was completed
+                if (unlockData.gameCompleted) {
+                  markGameAsCompleted('Case Solved')
+                  
+                  // Complete the response streaming
+                  if (fullResponse) {
+                    addChatMessage({
+                      suspectId,
+                      role: 'assistant',
+                      content: fullResponse,
+                    })
+                  }
+                  
+                  setCurrentResponse('')
+                  setIsStreaming(false)
+                  
+                  // Redirect to victory page
+                  if (caseId) {
+                    router.push(`/game/${caseId}/victory`)
+                  }
+                  return
+                }
+                
                 let unlockMessage = unlockData.message || 'New content unlocked!'
                 
                 // Queue notification to show after chat closes
@@ -718,8 +744,8 @@ export function ChatInterfaceWithAttachments({
             onChange={(e) => setInputMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask a question..."
-            disabled={isStreaming}
-            className="flex-1 resize-none bg-transparent border border-[#d4af37]/30 text-gray-300 placeholder-gray-600 focus:border-[#d4af37]/60 focus:ring-1 focus:ring-[#d4af37]/40 rounded-sm text-base"
+            disabled={isStreaming || isGameCompleted}
+            className="flex-1 resize-none bg-transparent border border-[#d4af37]/30 text-gray-300 placeholder-gray-600 focus:border-[#d4af37]/60 focus:ring-1 focus:ring-[#d4af37]/40 rounded-sm text-base disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.3)',
             }}
@@ -727,8 +753,8 @@ export function ChatInterfaceWithAttachments({
           />
           <Button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isStreaming}
-            className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border border-[#d4af37]/40 rounded-sm transition-colors"
+            disabled={!inputMessage.trim() || isStreaming || isGameCompleted}
+            className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border border-[#d4af37]/40 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(212, 175, 55, 0.2)',
             }}

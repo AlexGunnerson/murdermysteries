@@ -66,6 +66,8 @@ export interface GameState {
   // Game status
   isCompleted: boolean
   isSolvedCorrectly: boolean | null
+  isGameCompleted: boolean
+  gameStatus: string | null
   hasReadVeronicaLetter: boolean
   hasSeenBlackmailCommentary: boolean
   actICluesUsed: number
@@ -93,6 +95,7 @@ export interface GameState {
   markDocumentAsViewed: (documentId: string) => void
   
   completeGame: (isCorrect: boolean) => void
+  markGameAsCompleted: (status: string) => void
   resetGame: () => void
   markLetterAsRead: () => void
   markBlackmailCommentaryAsSeen: () => void
@@ -121,6 +124,8 @@ const initialState = {
   viewedDocuments: new Set<string>(),
   isCompleted: false,
   isSolvedCorrectly: null,
+  isGameCompleted: false,
+  gameStatus: null,
   hasReadVeronicaLetter: false,
   hasSeenBlackmailCommentary: false,
   actICluesUsed: 0,
@@ -423,6 +428,15 @@ export const useGameStore = create<GameState>()(
           set({
             isCompleted: true,
             isSolvedCorrectly: isCorrect,
+          })
+        },
+
+        markGameAsCompleted: (status: string) => {
+          set({
+            isGameCompleted: true,
+            gameStatus: status,
+            isCompleted: true,
+            isSolvedCorrectly: true,
           })
         },
 

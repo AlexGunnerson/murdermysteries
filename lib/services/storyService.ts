@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { filterSecretsByStage, GameStage } from '@/lib/utils/storyUtils'
 
 // Type definitions
 export interface Suspect {
@@ -213,7 +214,8 @@ export class StoryService {
    */
   async getSuspectPrompt(
     suspectId: string,
-    discoveredFacts: string[]
+    discoveredFacts: string[],
+    currentStage: GameStage = 'start'
   ): Promise<string> {
     const config = await this.loadStoryConfig()
     const metadata = await this.loadMetadata()
@@ -235,6 +237,10 @@ export class StoryService {
       ? `The detective has discovered: ${relevantFacts.join(', ')}`
       : 'The detective is just beginning their investigation.'
 
+    // Filter secrets based on current game stage
+    const filteredSecrets = filterSecretsByStage(suspectConfig.secrets, currentStage)
+    const secretsText = filteredSecrets.join('\n')
+
     // Replace template variables in system prompt
     let prompt = config.systemPrompt
       .replace('{suspect_name}', suspect.name)
@@ -242,6 +248,7 @@ export class StoryService {
       .replace('{suspect_bio}', suspect.bio)
       .replace('{suspect_personality}', suspectConfig.personality)
       .replace('{suspect_alibi}', suspectConfig.alibi)
+      .replace('{suspect_secrets}', secretsText)
       .replace('{dynamic_knowledge}', dynamicKnowledge)
 
     return prompt

@@ -77,7 +77,7 @@ export const EVIDENCE_COMBINATIONS = {
     description: "Colin was in the study during the murder. The evidence proves it.",
     artifacts: [
       'scene_study_img_1', // displaced rug
-      'scene_study_img_2', // gloves on safe
+      'scene_study_img_2', // gloves on desk
       'scene_study_img_3', // tie clip
     ],
   },
@@ -89,7 +89,7 @@ export const EVIDENCE_COMBINATIONS = {
 export const CORRECT_SOLUTION = {
   killer: 'Colin Dorsey',
   motive: 'Colin attempted to sell Dorothy Ashcombe\'s ring (the most prized family heirloom) on the black market. Reginald discovered this betrayal and kept proof in his safe. Colin went to the study during the gala to swap his blackmail page for a less damaging fake. Reginald confronted him, they struggled, and Reginald fell and died.',
-  keyEvidence: 'White gloves on the safe in the study, displaced rug showing a struggle, Reginald\'s tie clip under the sofa, and the swapped blackmail papers (ring replaced with pocket watch)',
+  keyEvidence: 'White gloves on Reginald\'s desk in the study, displaced rug showing a struggle, Reginald\'s tie clip under the sofa, and the swapped blackmail papers (ring replaced with pocket watch)',
   explanation: 'Colin staged the scene at the grand staircase to make it look like an accident. He also removed Dr. Vale\'s blackmail page to frame him. The evidence in the study proves the murder happened there, not on the stairs.',
 }
 

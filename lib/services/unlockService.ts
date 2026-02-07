@@ -105,7 +105,8 @@ export async function applyUnlocks(
     stage: unlocks.stage,
     suspects: unlocks.suspects,
     scenes: unlocks.scenes,
-    records: unlocks.records
+    records: unlocks.records,
+    statusUpdate: unlocks.statusUpdate
   })
 
   // Update stage if it changed
@@ -118,6 +119,21 @@ export async function applyUnlocks(
       })
       .eq('id', sessionId)
     console.log('[UNLOCK-SERVICE] Updated stage to:', unlocks.stage)
+  }
+
+  // Handle game completion status updates
+  if (unlocks.statusUpdate === 'Case Solved') {
+    await supabase
+      .from('game_sessions')
+      .update({
+        is_completed: true,
+        is_solved_correctly: true,
+        completed_at: new Date().toISOString(),
+        game_status: unlocks.statusUpdate,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', sessionId)
+    console.log('[UNLOCK-SERVICE] Game completed successfully! Status:', unlocks.statusUpdate)
   }
 
   // Prepare content to unlock

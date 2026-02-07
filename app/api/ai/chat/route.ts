@@ -118,13 +118,15 @@ export async function POST(request: NextRequest) {
         try {
           // Send unlock event first if applicable
           if (unlockResult && unlockResult.hasUnlocks) {
+            const gameCompleted = unlockResult.unlocks.statusUpdate === 'Case Solved'
             const unlockData = `data: ${JSON.stringify({ 
               unlock: {
                 suspects: unlockResult.unlocks.suspects || [],
                 scenes: unlockResult.unlocks.scenes || [],
                 records: unlockResult.unlocks.records || [],
                 stage: unlockResult.unlocks.stage,
-                message: unlockResult.notificationMessage
+                message: unlockResult.notificationMessage,
+                gameCompleted
               }
             })}\n\n`
             controller.enqueue(encoder.encode(unlockData))

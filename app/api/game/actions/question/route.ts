@@ -75,8 +75,11 @@ export async function POST(request: NextRequest) {
 
     const factKeys = discoveredFacts?.map(f => f.fact_key) || []
 
-    // Generate AI system prompt with discovered facts
-    const systemPrompt = await storyService.getSuspectPrompt(suspectId, factKeys)
+    // Get current game stage for act-based secret filtering
+    const currentStage = (session.current_stage || 'start') as 'start' | 'act_i' | 'act_ii'
+
+    // Generate AI system prompt with discovered facts and current stage
+    const systemPrompt = await storyService.getSuspectPrompt(suspectId, factKeys, currentStage)
 
     // Just return suspect info for the ChatInterface
     return NextResponse.json({
