@@ -14,7 +14,7 @@ interface GameMenuProps {
 export function GameMenu({ isOpen, onClose }: GameMenuProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
-  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, caseId } = useGameState()
+  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, markGameAsCompleted, caseId } = useGameState()
 
   if (!isOpen) return null
 
@@ -95,7 +95,7 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
       const sessionData = await sessionResponse.json()
       const sessionId = sessionData.session.id
 
-      // Update stage to Act II and unlock all Act II content via API
+      // Update stage to Act II and unlock Act I completion content via API
       const unlockResponse = await fetch('/api/game/state', {
         method: 'PUT',
         headers: {
@@ -106,7 +106,7 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
           currentStage: 'act_ii',
           unlockedContent: {
             suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
-            records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_phone_logs', 'record_speech_notes'],
+            records: ['record_veronica_thankyou', 'record_blackmail_floor'],
             scenes: [], // No scenes unlocked at Act II start
           },
         }),
@@ -116,7 +116,7 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
         throw new Error('Failed to unlock Act II content')
       }
 
-      // Update local state
+      // Update local state - only unlock what Act I completion gives
       resetGame()
       setCurrentStage('act_ii')
       unlockSuspect('suspect_martin')
@@ -125,14 +125,113 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
       unlockSuspect('suspect_vale')
       unlockRecord('record_veronica_thankyou')
       unlockRecord('record_blackmail_floor')
-      unlockRecord('record_phone_logs')
-      unlockRecord('record_speech_notes')
 
       // Reload page to fetch fresh state
       window.location.reload()
     } catch (error) {
       console.error('Error jumping to Act II:', error)
       alert('Failed to jump to Act II. Please try again.')
+    }
+  }
+
+  const handleJumpToVictory = async () => {
+    if (!caseId) {
+      alert('No active case to jump to Victory')
+      return
+    }
+
+    try {
+      // Reset game first (clears database state)
+      const resetResponse = await fetch(`/api/game/state?caseId=${caseId}`, {
+        method: 'DELETE',
+      })
+
+      if (!resetResponse.ok) {
+        throw new Error('Failed to reset game state')
+      }
+
+      // Create session
+      const sessionResponse = await fetch('/api/game/state', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caseId,
+          isCompleted: false,
+        }),
+      })
+
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to create/update session')
+      }
+
+      const sessionData = await sessionResponse.json()
+      const sessionId = sessionData.session.id
+
+      // Update stage to Act II and unlock all content via API
+      const unlockResponse = await fetch('/api/game/state', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          currentStage: 'act_ii',
+          isCompleted: true,
+          unlockedContent: {
+            suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+            records: [
+              'record_veronica_thankyou',
+              'record_blackmail_floor',
+              'record_blackmail_floor_colin',
+              'record_blackmail_floor_martin',
+              'record_blackmail_floor_lydia',
+              'record_blackmail_portrait',
+              'record_blackmail_portrait_colin',
+              'record_blackmail_portrait_martin',
+              'record_blackmail_portrait_lydia',
+              'record_blackmail_portrait_vale',
+              'record_phone_logs',
+              'record_greenhouse_footage'
+            ],
+            scenes: ['scene_master_bedroom', 'scene_study'],
+          },
+        }),
+      })
+
+      if (!unlockResponse.ok) {
+        throw new Error('Failed to unlock victory content')
+      }
+
+      // Update local state - unlock all key evidence
+      resetGame()
+      setCurrentStage('act_ii')
+      unlockSuspect('suspect_martin')
+      unlockSuspect('suspect_colin')
+      unlockSuspect('suspect_lydia')
+      unlockSuspect('suspect_vale')
+      unlockRecord('record_veronica_thankyou')
+      unlockRecord('record_blackmail_floor')
+      unlockRecord('record_blackmail_floor_colin')
+      unlockRecord('record_blackmail_floor_martin')
+      unlockRecord('record_blackmail_floor_lydia')
+      unlockRecord('record_blackmail_portrait')
+      unlockRecord('record_blackmail_portrait_colin')
+      unlockRecord('record_blackmail_portrait_martin')
+      unlockRecord('record_blackmail_portrait_lydia')
+      unlockRecord('record_blackmail_portrait_vale')
+      unlockRecord('record_phone_logs')
+      unlockRecord('record_greenhouse_footage')
+      unlockScene('scene_master_bedroom')
+      unlockScene('scene_study')
+      markGameAsCompleted('Case Solved')
+
+      // Navigate to victory page
+      router.push(`/game/${caseId}/victory`)
+    } catch (error) {
+      console.error('Error jumping to Victory:', error)
+      alert('Failed to jump to Victory. Please try again.')
     }
   }
 
@@ -281,6 +380,29 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
                   }}
                 >
                   → Act II
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('Jump to Victory Screen? All evidence will be unlocked and case marked as solved.')) {
+                      handleJumpToVictory()
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                  style={{
+                    color: '#d4af37',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                  }}
+                >
+                  ★ Victory
                 </button>
               </div>
             </div>
