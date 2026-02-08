@@ -64,21 +64,28 @@ export async function POST(request: NextRequest) {
 
     const currentStage = (session.current_stage || 'start') as GameStage
     
-    console.log('[VALIDATE-THEORY] Evaluating unlocks:', {
-      sessionId,
-      evidenceIds: artifactIds,
-      currentStage,
-      artifactCount: artifactIds.length,
-    })
+    console.log('\n╔════════════════════════════════════════════════════════════╗')
+    console.log('║              VALIDATE THEORY - EVALUATION START            ║')
+    console.log('╚════════════════════════════════════════════════════════════╝')
+    console.log('[VALIDATE-THEORY] Session ID:', sessionId)
+    console.log('[VALIDATE-THEORY] Current stage:', currentStage)
+    console.log('[VALIDATE-THEORY] Artifact IDs submitted:', artifactIds)
+    console.log('[VALIDATE-THEORY] Artifact count:', artifactIds.length)
+    console.log('[VALIDATE-THEORY] Theory description:', description.substring(0, 100) + '...')
     
-    // Debug: Check if this is the Act II unlock attempt
-    if (artifactIds.includes('record_vale_notes') || artifactIds.includes('scene_staircase_gala_img_0')) {
-      console.log('[VALIDATE-THEORY] Act II unlock attempt detected!')
-      console.log('[VALIDATE-THEORY] Has record_vale_notes:', artifactIds.includes('record_vale_notes'))
-      console.log('[VALIDATE-THEORY] Has scene_staircase_gala_img_0:', artifactIds.includes('scene_staircase_gala_img_0'))
-      console.log('[VALIDATE-THEORY] Current stage:', currentStage, '(must be "start" for Act II unlock)')
+    // Debug: Check if this is the Colin accusation
+    if (artifactIds.includes('record_blackmail_floor_colin') || artifactIds.includes('record_blackmail_portrait_colin')) {
+      console.log('\n[VALIDATE-THEORY] 🔍 COLIN ACCUSATION DETECTED!')
+      console.log('[VALIDATE-THEORY] Checking for required artifacts:')
+      console.log('[VALIDATE-THEORY]   ✓ record_blackmail_floor_colin?', artifactIds.includes('record_blackmail_floor_colin'))
+      console.log('[VALIDATE-THEORY]   ✓ record_blackmail_portrait_colin?', artifactIds.includes('record_blackmail_portrait_colin'))
+      console.log('[VALIDATE-THEORY]   ✓ scene_ballroom_gala_img_2?', artifactIds.includes('scene_ballroom_gala_img_2'))
+      console.log('[VALIDATE-THEORY]   ✓ scene_study_img_0?', artifactIds.includes('scene_study_img_0'))
+      console.log('[VALIDATE-THEORY]   ✓ scene_study_img_2?', artifactIds.includes('scene_study_img_2'))
+      console.log('[VALIDATE-THEORY] Current stage:', currentStage, '(must be "act_ii" for victory)')
     }
     
+    console.log('[VALIDATE-THEORY] Calling evaluateUnlocks...')
     const unlockResult = await evaluateUnlocks({
       sessionId,
       evidenceIds: artifactIds,
@@ -86,11 +93,10 @@ export async function POST(request: NextRequest) {
       trigger: 'theory'
     })
 
-    console.log('[VALIDATE-THEORY] Unlock result:', {
-      hasUnlocks: unlockResult.hasUnlocks,
-      matchedRule: unlockResult.matchedRule?.id,
-      unlocks: unlockResult.unlocks
-    })
+    console.log('\n[VALIDATE-THEORY] Unlock evaluation complete:')
+    console.log('[VALIDATE-THEORY]   Has unlocks?', unlockResult.hasUnlocks)
+    console.log('[VALIDATE-THEORY]   Matched rule:', unlockResult.matchedRule?.id || 'none')
+    console.log('[VALIDATE-THEORY]   Unlocks:', unlockResult.unlocks)
 
     // Determine result based on unlock triggers (artifact-based system)
     let finalResult: 'correct' | 'incorrect' = 'incorrect'
@@ -104,21 +110,27 @@ export async function POST(request: NextRequest) {
     } | undefined
 
     if (unlockResult.hasUnlocks) {
+      console.log('[VALIDATE-THEORY] ✓✓✓ UNLOCKS FOUND! Applying...')
       await applyUnlocks(sessionId, unlockResult)
       unlockedContent = unlockResult.unlocks
+      console.log('[VALIDATE-THEORY] ✓ Unlocks applied to database')
       
-      console.log('[VALIDATE-THEORY] Applied unlocks')
       // Note: checkAndApplyActIUnlocks is deprecated (Act I no longer exists)
       // All unlocks are handled directly in unlock rules
       await checkAndApplyActIUnlocks(sessionId)
 
       finalResult = 'correct'
       finalFeedback = unlockResult.matchedRule?.notificationMessage || 'Your theory is correct! New content has been unlocked.'
+      
+      console.log('[VALIDATE-THEORY] Theory result: CORRECT')
+      console.log('[VALIDATE-THEORY] Feedback:', finalFeedback)
     } else {
-      console.log('[VALIDATE-THEORY] No unlocks matched')
+      console.log('[VALIDATE-THEORY] No unlocks matched - theory is incorrect')
+      finalResult = 'incorrect'
     }
 
     // Save theory submission with the result
+    console.log('[VALIDATE-THEORY] Saving theory submission to database...')
     await supabase
       .from('theory_submissions')
       .insert({
@@ -128,9 +140,29 @@ export async function POST(request: NextRequest) {
         result: finalResult,
         feedback: finalFeedback,
       })
+    console.log('[VALIDATE-THEORY] ✓ Theory submission saved')
 
     // Check if game was completed
     const gameCompleted = unlockedContent?.statusUpdate === 'Case Solved'
+    
+    console.log('\n[VALIDATE-THEORY] Checking victory condition:')
+    console.log('[VALIDATE-THEORY]   Unlocked content status update:', unlockedContent?.statusUpdate)
+    console.log('[VALIDATE-THEORY]   Game completed?', gameCompleted)
+    
+    if (gameCompleted) {
+      console.log('[VALIDATE-THEORY] 🎉🎉🎉 VICTORY! Game completed!')
+    }
+    
+    console.log('\n╔════════════════════════════════════════════════════════════╗')
+    console.log('║              VALIDATE THEORY - RETURNING RESULT            ║')
+    console.log('╚════════════════════════════════════════════════════════════╝')
+    console.log('[VALIDATE-THEORY] Returning to client:', {
+      success: true,
+      result: finalResult,
+      gameCompleted,
+      unlockedContent
+    })
+    console.log('')
 
     return NextResponse.json({
       success: true,

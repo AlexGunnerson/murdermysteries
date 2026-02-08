@@ -230,14 +230,22 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
 
       const data = await response.json()
 
+      console.log('\n[VALIDATE-THEORY-UI] ═══════════════════════════════════')
+      console.log('[VALIDATE-THEORY-UI] Theory submission response received')
       console.log('[VALIDATE-THEORY-UI] Submitted artifact IDs:', selectedEvidence)
-      console.log('[VALIDATE-THEORY-UI] Response received:', data)
+      console.log('[VALIDATE-THEORY-UI] Full response:', data)
+      console.log('[VALIDATE-THEORY-UI] Result:', data.result)
+      console.log('[VALIDATE-THEORY-UI] Game completed?', data.gameCompleted)
+      console.log('[VALIDATE-THEORY-UI] ═══════════════════════════════════\n')
 
       // Check if game was completed
       if (data.gameCompleted) {
+        console.log('[VALIDATE-THEORY-UI] 🎉🎉🎉 VICTORY DETECTED!')
+        console.log('[VALIDATE-THEORY-UI] Marking game as completed...')
         markGameAsCompleted('Case Solved')
         
         // Add theory to history
+        console.log('[VALIDATE-THEORY-UI] Adding theory to history...')
         addTheorySubmission({
           description: theoryText.trim(),
           artifactIds: selectedEvidence,
@@ -247,6 +255,7 @@ export function ValidateTheory({ isOpen, onClose, onPreviewDocument, onPreviewSc
         })
         
         // Redirect to victory page
+        console.log('[VALIDATE-THEORY-UI] Redirecting to victory page:', `/game/${caseId}/victory`)
         router.push(`/game/${caseId}/victory`)
         return
       }

@@ -32,10 +32,19 @@ export async function evaluateUnlocks(params: {
 }): Promise<UnlockResult> {
   const { sessionId, suspectId, evidenceIds, currentStage, trigger, cumulativeEvidence } = params
 
-  console.log('[UNLOCK-SERVICE] Evaluating:', { currentStage, trigger, evidenceIds, suspectId })
+  console.log('\n╔════════════════════════════════════════════════════════════╗')
+  console.log('║          UNLOCK SERVICE - EVALUATION START                ║')
+  console.log('╚════════════════════════════════════════════════════════════╝')
+  console.log('[UNLOCK-SERVICE] Session ID:', sessionId)
+  console.log('[UNLOCK-SERVICE] Current Stage:', currentStage)
+  console.log('[UNLOCK-SERVICE] Trigger Type:', trigger)
+  console.log('[UNLOCK-SERVICE] Suspect ID:', suspectId || 'none')
+  console.log('[UNLOCK-SERVICE] Evidence IDs submitted this turn:', evidenceIds)
+  console.log('[UNLOCK-SERVICE] Evidence count this turn:', evidenceIds.length)
 
   // Map trigger types
   const triggerType: TriggerType = trigger === 'chat' ? 'chat_attachment' : 'theory_validation'
+  console.log('[UNLOCK-SERVICE] Mapped trigger type:', triggerType)
 
   // For cumulative rules, we need to get all evidence shown to this suspect
   let evidenceToCheck = evidenceIds
@@ -49,18 +58,31 @@ export async function evaluateUnlocks(params: {
             (!rule.requiredSuspectId || rule.requiredSuspectId === suspectId)
   )
 
+  console.log('[UNLOCK-SERVICE] Needs cumulative evidence?', needsCumulative)
+
   if (needsCumulative && suspectId && trigger === 'chat') {
+    console.log('[UNLOCK-SERVICE] Fetching cumulative evidence for suspect:', suspectId)
     // Use provided cumulative evidence or fetch it
     if (cumulativeEvidence) {
       evidenceToCheck = cumulativeEvidence
-      console.log('[UNLOCK-SERVICE] Using provided cumulative evidence:', evidenceToCheck)
+      console.log('[UNLOCK-SERVICE] Using provided cumulative evidence (count:', cumulativeEvidence.length, ')')
+      console.log('[UNLOCK-SERVICE] Cumulative evidence:', evidenceToCheck)
     } else {
       evidenceToCheck = await getCumulativeEvidenceForSuspect({ sessionId, suspectId })
-      console.log('[UNLOCK-SERVICE] Fetched cumulative evidence:', evidenceToCheck)
+      console.log('[UNLOCK-SERVICE] Fetched cumulative evidence (count:', evidenceToCheck.length, ')')
+      console.log('[UNLOCK-SERVICE] Cumulative evidence:', evidenceToCheck)
     }
+  } else {
+    console.log('[UNLOCK-SERVICE] Using only current turn evidence (count:', evidenceToCheck.length, ')')
   }
 
   // Find matching rule
+  console.log('[UNLOCK-SERVICE] Calling findMatchingRule with:')
+  console.log('  - Stage:', currentStage)
+  console.log('  - Trigger:', triggerType)
+  console.log('  - Suspect:', suspectId)
+  console.log('  - Evidence to check:', evidenceToCheck)
+  
   const matchedRule = findMatchingRule({
     stage: currentStage,
     trigger: triggerType,
@@ -68,9 +90,10 @@ export async function evaluateUnlocks(params: {
     evidenceIds: evidenceToCheck
   })
 
-  console.log('[UNLOCK-SERVICE] Matched rule:', matchedRule?.id || 'none')
-
   if (!matchedRule) {
+    console.log('\n╔════════════════════════════════════════════════════════════╗')
+    console.log('║          UNLOCK SERVICE - NO MATCH FOUND                   ║')
+    console.log('╚════════════════════════════════════════════════════════════╝\n')
     return {
       hasUnlocks: false,
       matchedRule: null,
@@ -79,6 +102,14 @@ export async function evaluateUnlocks(params: {
   }
 
   // Return the unlock result
+  console.log('\n╔════════════════════════════════════════════════════════════╗')
+  console.log('║          UNLOCK SERVICE - MATCH FOUND!                     ║')
+  console.log('╚════════════════════════════════════════════════════════════╝')
+  console.log('[UNLOCK-SERVICE] ✓✓✓ Matched Rule ID:', matchedRule.id)
+  console.log('[UNLOCK-SERVICE] Unlocks:', JSON.stringify(matchedRule.unlocks, null, 2))
+  console.log('[UNLOCK-SERVICE] Notification:', matchedRule.notificationMessage)
+  console.log('')
+  
   return {
     hasUnlocks: true,
     matchedRule,
@@ -197,30 +228,37 @@ export async function getCumulativeEvidenceForSuspect(params: {
   const { sessionId, suspectId } = params
   const supabase = createServiceRoleClient()
 
-  console.log('[UNLOCK-SERVICE] Getting cumulative evidence for:', { sessionId, suspectId })
+  console.log('\n--- FETCHING CUMULATIVE EVIDENCE ---')
+  console.log('[CUMULATIVE] Session ID:', sessionId)
+  console.log('[CUMULATIVE] Suspect ID:', suspectId)
 
   // Get all evidence presentations for this suspect
   const { data, error } = await supabase
     .from('evidence_presentations')
-    .select('evidence_ids')
+    .select('evidence_ids, presented_at')
     .eq('game_session_id', sessionId)
     .eq('suspect_id', suspectId)
     .order('presented_at', { ascending: true })
 
   if (error) {
-    console.error('[UNLOCK-SERVICE] Error fetching cumulative evidence:', error)
+    console.error('[CUMULATIVE] ✗ Error fetching cumulative evidence:', error)
     return []
   }
 
+  console.log('[CUMULATIVE] Found', data?.length || 0, 'evidence presentation records')
+
   // Flatten and deduplicate all evidence IDs
   const allEvidenceIds = new Set<string>()
-  data?.forEach((presentation) => {
+  data?.forEach((presentation, index) => {
     const ids = presentation.evidence_ids as string[]
+    console.log(`[CUMULATIVE]   Presentation ${index + 1} (${presentation.presented_at}):`, ids)
     ids.forEach((id) => allEvidenceIds.add(id))
   })
 
-  const cumulativeEvidence = Array.from(allEvidenceIds)
-  console.log('[UNLOCK-SERVICE] Cumulative evidence:', cumulativeEvidence)
+  const cumulativeEvidence = Array.from(allEvidenceIds).sort()
+  console.log('[CUMULATIVE] ✓ Total unique evidence IDs:', cumulativeEvidence.length)
+  console.log('[CUMULATIVE] Complete cumulative evidence list:', cumulativeEvidence)
+  console.log('--- END CUMULATIVE EVIDENCE ---\n')
 
   return cumulativeEvidence
 }

@@ -167,14 +167,14 @@ export const UNLOCK_RULES: UnlockRule[] = [
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_colin',
-    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_1', 'scene_study_img_1', 'scene_study_img_3'],
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_2', 'scene_study_img_1', 'scene_study_img_3'],
     logicOperator: 'AND',
     useCumulativeEvidence: true,  // Check all evidence ever shown to Colin, not just current message
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Colin has confessed! He accidentally killed Reginald during a confrontation in the study. Case closed!',
-    description: 'Show Colin the incriminating evidence: Colin\'s blackmail from both locations, gala photo of Colin in white gloves, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) from study'
+    description: 'Show Colin the incriminating evidence: Colin\'s blackmail from both locations, gala photo of Colin in white gloves (colin_champagne.png - scene_ballroom_gala_img_2), white glove on desk photo (study_2.png - scene_study_img_1), and struggle evidence photo (study_4.png - scene_study_img_3) from study'
   },
 
   // The Accusation - Colin confession (Theory Validation)
@@ -182,13 +182,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'colin_accusation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_1', 'scene_study_img_1', 'scene_study_img_3'],
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_2', 'scene_study_img_1', 'scene_study_img_3'],
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Your accusation is correct! Colin Dorsey is the killer. He confesses to the accidental killing during a confrontation in the study.',
-    description: 'Submit theory with Colin\'s blackmail from both locations, gala photo of Colin in white gloves, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) proving Colin is the killer'
+    description: 'Submit theory with Colin\'s blackmail from both locations, gala photo of Colin in white gloves (colin_champagne.png - scene_ballroom_gala_img_2), white glove on desk photo (study_2.png - scene_study_img_1), and struggle evidence photo (study_4.png - scene_study_img_3) proving Colin is the killer'
   }
 ]
 
@@ -217,7 +217,9 @@ export function findMatchingRule(params: {
 }): UnlockRule | null {
   const { stage, trigger, suspectId, evidenceIds } = params
 
-  console.log('[UNLOCK-RULES] Finding match for:', { stage, trigger, suspectId, evidenceIds })
+  console.log('\n=== UNLOCK RULE MATCHING ===')
+  console.log('[UNLOCK-RULES] Finding match for:', { stage, trigger, suspectId, evidenceCount: evidenceIds.length })
+  console.log('[UNLOCK-RULES] Evidence IDs provided:', evidenceIds)
 
   // Get applicable rules
   const applicableRules = UNLOCK_RULES.filter(
@@ -225,42 +227,78 @@ export function findMatchingRule(params: {
   )
 
   console.log('[UNLOCK-RULES] Found', applicableRules.length, 'applicable rules for stage:', stage, 'trigger:', trigger)
+  applicableRules.forEach(rule => {
+    console.log(`  - ${rule.id} (requires suspect: ${rule.requiredSuspectId || 'any'})`)
+  })
 
   // Check each rule for a match
   for (const rule of applicableRules) {
-    console.log('[UNLOCK-RULES] Checking rule:', rule.id, 'requires:', rule.requiredArtifacts)
+    console.log(`\n[UNLOCK-RULES] Checking rule: ${rule.id}`)
+    console.log(`[UNLOCK-RULES]   Description: ${rule.description}`)
+    console.log(`[UNLOCK-RULES]   Required artifacts (${rule.requiredArtifacts.length}):`, rule.requiredArtifacts)
+    console.log(`[UNLOCK-RULES]   Logic operator: ${rule.logicOperator}`)
+    console.log(`[UNLOCK-RULES]   Uses cumulative evidence: ${rule.useCumulativeEvidence || false}`)
     
     // If rule requires specific suspect, check it matches
     if (rule.requiredSuspectId && rule.requiredSuspectId !== suspectId) {
-      console.log('[UNLOCK-RULES] Rule requires suspect:', rule.requiredSuspectId, 'but got:', suspectId)
+      console.log(`[UNLOCK-RULES]   ✗ SKIP - Rule requires suspect: ${rule.requiredSuspectId}, but got: ${suspectId}`)
       continue
     }
 
     // Check if evidence matches requirements
     if (rule.logicOperator === 'AND') {
       // ALL required artifacts must be present
-      const allPresent = rule.requiredArtifacts.every(artifact =>
-        evidenceIds.includes(artifact)
-      )
-      console.log('[UNLOCK-RULES] AND check - all present?', allPresent)
+      console.log(`[UNLOCK-RULES]   Checking AND logic - ALL required artifacts must be present`)
+      
+      const missingArtifacts: string[] = []
+      const presentArtifacts: string[] = []
+      
+      rule.requiredArtifacts.forEach(artifact => {
+        if (evidenceIds.includes(artifact)) {
+          presentArtifacts.push(artifact)
+        } else {
+          missingArtifacts.push(artifact)
+        }
+      })
+      
+      console.log(`[UNLOCK-RULES]     ✓ Present (${presentArtifacts.length}/${rule.requiredArtifacts.length}):`, presentArtifacts)
+      console.log(`[UNLOCK-RULES]     ✗ Missing (${missingArtifacts.length}/${rule.requiredArtifacts.length}):`, missingArtifacts)
+      
+      const allPresent = missingArtifacts.length === 0
+      
       if (allPresent) {
-        console.log('[UNLOCK-RULES] ✓ Rule matched:', rule.id)
+        console.log(`[UNLOCK-RULES]   ✓✓✓ RULE MATCHED: ${rule.id}`)
+        console.log(`[UNLOCK-RULES]   Will unlock:`, rule.unlocks)
+        console.log('=== END UNLOCK RULE MATCHING ===\n')
         return rule
+      } else {
+        console.log(`[UNLOCK-RULES]   ✗ FAIL - Missing ${missingArtifacts.length} required artifact(s)`)
       }
     } else {
       // ANY required artifact must be present (OR logic)
-      const anyPresent = rule.requiredArtifacts.some(artifact =>
+      console.log(`[UNLOCK-RULES]   Checking OR logic - ANY required artifact must be present`)
+      
+      const presentArtifacts = rule.requiredArtifacts.filter(artifact =>
         evidenceIds.includes(artifact)
       )
-      console.log('[UNLOCK-RULES] OR check - any present?', anyPresent)
+      
+      console.log(`[UNLOCK-RULES]     ✓ Present (${presentArtifacts.length}/${rule.requiredArtifacts.length}):`, presentArtifacts)
+      
+      const anyPresent = presentArtifacts.length > 0
+      
       if (anyPresent) {
-        console.log('[UNLOCK-RULES] ✓ Rule matched:', rule.id)
+        console.log(`[UNLOCK-RULES]   ✓✓✓ RULE MATCHED: ${rule.id}`)
+        console.log(`[UNLOCK-RULES]   Will unlock:`, rule.unlocks)
+        console.log('=== END UNLOCK RULE MATCHING ===\n')
         return rule
+      } else {
+        console.log(`[UNLOCK-RULES]   ✗ FAIL - No required artifacts present`)
       }
     }
   }
 
-  console.log('[UNLOCK-RULES] ✗ No matching rule found')
+  console.log('\n[UNLOCK-RULES] ✗✗✗ NO MATCHING RULE FOUND')
+  console.log('=== END UNLOCK RULE MATCHING ===\n')
   return null
 }
 

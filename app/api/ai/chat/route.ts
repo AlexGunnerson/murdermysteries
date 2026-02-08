@@ -58,6 +58,14 @@ export async function POST(request: NextRequest) {
     let unlockResult = null
     if (sessionId && context.attachedItems && context.attachedItems.length > 0) {
       try {
+        console.log('\n╔════════════════════════════════════════════════════════════╗')
+        console.log('║                  CHAT API - EVIDENCE ATTACHED              ║')
+        console.log('╚════════════════════════════════════════════════════════════╝')
+        console.log('[CHAT-API] Session ID:', sessionId)
+        console.log('[CHAT-API] Suspect ID:', context.suspectProfile?.id)
+        console.log('[CHAT-API] Attached items this message:', context.attachedItems.map(i => i.id))
+        console.log('[CHAT-API] Attached items count:', context.attachedItems.length)
+        
         const supabase = createServiceRoleClient()
         
         // Get session data
@@ -68,19 +76,25 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (session) {
+          console.log('[CHAT-API] Current game stage:', session.current_stage)
+          
           // Save evidence presentation
+          console.log('[CHAT-API] Saving evidence presentation to database...')
           await saveEvidencePresentation({
             sessionId,
             suspectId: context.suspectProfile.id,
             evidenceIds: context.attachedItems.map(i => i.id)
           })
+          console.log('[CHAT-API] ✓ Evidence presentation saved')
 
           // Update cumulative evidence with newly attached items
           const updatedCumulativeEvidence = Array.from(
             new Set([...cumulativeEvidence, ...context.attachedItems.map(i => i.id)])
           )
+          console.log('[CHAT-API] Updated cumulative evidence (count:', updatedCumulativeEvidence.length, '):', updatedCumulativeEvidence)
 
           // Evaluate unlocks (passing cumulative evidence for cumulative rules)
+          console.log('[CHAT-API] Evaluating unlocks...')
           unlockResult = await evaluateUnlocks({
             sessionId,
             suspectId: context.suspectProfile.id,
@@ -92,15 +106,22 @@ export async function POST(request: NextRequest) {
 
           // Apply unlocks if any
           if (unlockResult.hasUnlocks) {
+            console.log('[CHAT-API] ✓✓✓ UNLOCKS FOUND! Applying...')
+            console.log('[CHAT-API] Matched rule:', unlockResult.matchedRule?.id)
+            console.log('[CHAT-API] Unlocks:', unlockResult.unlocks)
+            
             await applyUnlocks(sessionId, unlockResult)
+            console.log('[CHAT-API] ✓ Unlocks applied to database')
             
             // Note: checkAndApplyActIUnlocks is deprecated (Act I no longer exists)
             // All unlocks are handled directly in unlock rules
             await checkAndApplyActIUnlocks(sessionId)
+          } else {
+            console.log('[CHAT-API] No unlocks triggered')
           }
         }
       } catch (error) {
-        console.error('Error evaluating unlocks:', error)
+        console.error('[CHAT-API] ✗ Error evaluating unlocks:', error)
         // Don't fail the chat if unlock evaluation fails
       }
     }
@@ -119,8 +140,15 @@ export async function POST(request: NextRequest) {
           // Check if game is completed BEFORE streaming AI response
           const gameCompleted = unlockResult && unlockResult.hasUnlocks && unlockResult.unlocks.statusUpdate === 'Case Solved'
           
+          console.log('\n[CHAT-API-STREAM] Checking victory condition:')
+          console.log('[CHAT-API-STREAM]   Has unlock result?', !!unlockResult)
+          console.log('[CHAT-API-STREAM]   Has unlocks?', unlockResult?.hasUnlocks)
+          console.log('[CHAT-API-STREAM]   Status update:', unlockResult?.unlocks.statusUpdate)
+          console.log('[CHAT-API-STREAM]   Game completed?', gameCompleted)
+          
           // Send unlock event first if applicable
           if (unlockResult && unlockResult.hasUnlocks) {
+            console.log('[CHAT-API-STREAM] Sending unlock event to client...')
             const unlockData = `data: ${JSON.stringify({ 
               unlock: {
                 suspects: unlockResult.unlocks.suspects || [],
@@ -132,12 +160,15 @@ export async function POST(request: NextRequest) {
               }
             })}\n\n`
             controller.enqueue(encoder.encode(unlockData))
+            console.log('[CHAT-API-STREAM] ✓ Unlock event sent')
             
             // If game completed, send done event immediately and skip AI response
             if (gameCompleted) {
+              console.log('[CHAT-API-STREAM] 🎉🎉🎉 VICTORY! Sending done event and skipping AI response')
               const completeData = `data: ${JSON.stringify({ done: true })}\n\n`
               controller.enqueue(encoder.encode(completeData))
               controller.close()
+              console.log('[CHAT-API-STREAM] ✓ Stream closed - client should redirect to victory')
               return
             }
           }

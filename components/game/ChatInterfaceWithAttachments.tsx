@@ -287,14 +287,22 @@ export function ChatInterfaceWithAttachments({
 
               // Handle unlock events
               if (data.unlock) {
+                console.log('\n[CHAT-CLIENT] 📨 Received unlock event from server')
+                console.log('[CHAT-CLIENT] Unlock data:', data.unlock)
+                
                 const unlockData = data.unlock
                 
                 // Check if game was completed
+                console.log('[CHAT-CLIENT] Checking if game completed:', unlockData.gameCompleted)
+                
                 if (unlockData.gameCompleted) {
+                  console.log('[CHAT-CLIENT] 🎉🎉🎉 VICTORY DETECTED!')
+                  console.log('[CHAT-CLIENT] Marking game as completed...')
                   markGameAsCompleted('Case Solved')
                   
                   // Complete the response streaming
                   if (fullResponse) {
+                    console.log('[CHAT-CLIENT] Adding final AI message to chat...')
                     addChatMessage({
                       suspectId,
                       role: 'assistant',
@@ -307,7 +315,10 @@ export function ChatInterfaceWithAttachments({
                   
                   // Redirect to victory page
                   if (caseId) {
+                    console.log('[CHAT-CLIENT] Redirecting to victory page:', `/game/${caseId}/victory`)
                     router.push(`/game/${caseId}/victory`)
+                  } else {
+                    console.error('[CHAT-CLIENT] ✗ Cannot redirect - no caseId available!')
                   }
                   return
                 }
