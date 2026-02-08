@@ -116,9 +116,11 @@ export async function POST(request: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
+          // Check if game is completed BEFORE streaming AI response
+          const gameCompleted = unlockResult && unlockResult.hasUnlocks && unlockResult.unlocks.statusUpdate === 'Case Solved'
+          
           // Send unlock event first if applicable
           if (unlockResult && unlockResult.hasUnlocks) {
-            const gameCompleted = unlockResult.unlocks.statusUpdate === 'Case Solved'
             const unlockData = `data: ${JSON.stringify({ 
               unlock: {
                 suspects: unlockResult.unlocks.suspects || [],
@@ -130,6 +132,14 @@ export async function POST(request: NextRequest) {
               }
             })}\n\n`
             controller.enqueue(encoder.encode(unlockData))
+            
+            // If game completed, send done event immediately and skip AI response
+            if (gameCompleted) {
+              const completeData = `data: ${JSON.stringify({ done: true })}\n\n`
+              controller.enqueue(encoder.encode(completeData))
+              controller.close()
+              return
+            }
           }
 
           // Stream AI response

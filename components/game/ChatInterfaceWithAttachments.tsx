@@ -96,13 +96,30 @@ export function ChatInterfaceWithAttachments({
           .filter((scene: any) => scene.initiallyAvailable || unlockedContent.scenes.has(scene.id))
           .flatMap((scene: any) => {
             const images = scene.images || [scene.imageUrl]
-            return images.map((imageUrl: string, idx: number) => ({
+            const investigationPhotos = images.map((imageUrl: string, idx: number) => ({
               id: `${scene.id}_img_${idx}`,
               title: `${scene.name}${images.length > 1 ? ` - Image ${idx + 1}` : ''}`,
               type: 'photo' as const,
               thumbnailUrl: imageUrl,
               location: scene.name // Add location for filtering
             }))
+            
+            // Also load gala photos if they exist
+            const galaPhotos = (scene.galaImages || []).map((imageUrl: string, idx: number) => {
+              const filename = imageUrl.split('/').pop()
+              const photoTitle = scene.galaAnnotations?.[filename] 
+                ? `${scene.name} - Gala Photo ${idx + 1}` 
+                : `${scene.name} - Gala Photo ${idx + 1}`
+              return {
+                id: `${scene.id}_gala_img_${idx}`,
+                title: photoTitle,
+                type: 'photo' as const,
+                thumbnailUrl: imageUrl,
+                location: `${scene.name} (Gala Night)` // Add gala location for filtering
+              }
+            })
+            
+            return [...investigationPhotos, ...galaPhotos]
           })
         
         // Load photos from records with location metadata

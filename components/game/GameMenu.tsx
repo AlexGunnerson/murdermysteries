@@ -134,6 +134,109 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
     }
   }
 
+  const handleReadyToQuestionColin = async () => {
+    if (!caseId) {
+      alert('No active case to jump checkpoint')
+      return
+    }
+
+    try {
+      // Reset game first (clears database state)
+      const resetResponse = await fetch(`/api/game/state?caseId=${caseId}`, {
+        method: 'DELETE',
+      })
+
+      if (!resetResponse.ok) {
+        throw new Error('Failed to reset game state')
+      }
+
+      // Create session
+      const sessionResponse = await fetch('/api/game/state', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          caseId,
+          isCompleted: false,
+        }),
+      })
+
+      if (!sessionResponse.ok) {
+        throw new Error('Failed to create/update session')
+      }
+
+      const sessionData = await sessionResponse.json()
+      const sessionId = sessionData.session.id
+
+      // Update stage to Act II and unlock all evidence needed to question Colin
+      const unlockResponse = await fetch('/api/game/state', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sessionId,
+          currentStage: 'act_ii',
+          statusUpdate: 'Murder Confirmed',
+          isCompleted: false,
+          unlockedContent: {
+            suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+            records: [
+              'record_veronica_thankyou',
+              'record_blackmail_floor',
+              'record_blackmail_floor_colin',
+              'record_blackmail_floor_martin',
+              'record_blackmail_floor_lydia',
+              'record_phone_logs',
+              'record_speech_notes',
+              'record_blackmail_portrait',
+              'record_blackmail_portrait_colin',
+              'record_blackmail_portrait_martin',
+              'record_blackmail_portrait_lydia',
+              'record_blackmail_portrait_vale',
+              'record_greenhouse_footage'
+            ],
+            scenes: ['scene_master_bedroom', 'scene_study'],
+          },
+        }),
+      })
+
+      if (!unlockResponse.ok) {
+        throw new Error('Failed to unlock checkpoint content')
+      }
+
+      // Update local state - unlock all evidence needed to question Colin
+      resetGame()
+      setCurrentStage('act_ii')
+      unlockSuspect('suspect_martin')
+      unlockSuspect('suspect_colin')
+      unlockSuspect('suspect_lydia')
+      unlockSuspect('suspect_vale')
+      unlockRecord('record_veronica_thankyou')
+      unlockRecord('record_blackmail_floor')
+      unlockRecord('record_blackmail_floor_colin')
+      unlockRecord('record_blackmail_floor_martin')
+      unlockRecord('record_blackmail_floor_lydia')
+      unlockRecord('record_phone_logs')
+      unlockRecord('record_speech_notes')
+      unlockRecord('record_blackmail_portrait')
+      unlockRecord('record_blackmail_portrait_colin')
+      unlockRecord('record_blackmail_portrait_martin')
+      unlockRecord('record_blackmail_portrait_lydia')
+      unlockRecord('record_blackmail_portrait_vale')
+      unlockRecord('record_greenhouse_footage')
+      unlockScene('scene_master_bedroom')
+      unlockScene('scene_study')
+
+      // Reload page to fetch fresh state
+      window.location.reload()
+    } catch (error) {
+      console.error('Error jumping to checkpoint:', error)
+      alert('Failed to jump to checkpoint. Please try again.')
+    }
+  }
+
   const handleJumpToVictory = async () => {
     if (!caseId) {
       alert('No active case to jump to Victory')
@@ -380,6 +483,29 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
                   }}
                 >
                   → Act II
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm('Jump to Ready to Question Colin checkpoint? All evidence will be unlocked including both blackmail sets, study photos, and greenhouse footage.')) {
+                      handleReadyToQuestionColin()
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                  style={{
+                    color: '#d4af37',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                  }}
+                >
+                  ⚡ Ready to Question Colin
                 </button>
                 <button
                   onClick={() => {
