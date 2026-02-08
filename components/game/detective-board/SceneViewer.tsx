@@ -8,7 +8,7 @@ interface SceneViewerProps {
   sceneName: string
   images: string[]
   onClose: () => void
-  onOpenDocument?: (documentId: string) => void
+  onOpenDocument?: (documentId: string) => Promise<void>
   sceneId?: string
   initialIndex?: number
   unlockedContent?: string[]
@@ -113,17 +113,18 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
     setIsDragging(false)
   }
 
-  const handleSecurityFootageClick = () => {
+  const handleSecurityFootageClick = async () => {
     if (onOpenDocument) {
-      onOpenDocument('record_security_footage')
-      onClose() // Close the scene viewer
+      // Don't close the scene viewer - let the parent handle it
+      // This keeps the user in context while loading
+      await onOpenDocument('record_security_footage')
     }
   }
 
-  const handlePaintingInvestigationClick = () => {
+  const handlePaintingInvestigationClick = async () => {
     if (onOpenDocument) {
-      onOpenDocument('painting_back')
-      onClose() // Close the scene viewer
+      // Don't close the scene viewer - let the parent handle it
+      await onOpenDocument('painting_back')
     }
   }
 

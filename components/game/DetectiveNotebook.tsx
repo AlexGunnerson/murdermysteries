@@ -36,6 +36,7 @@ import { CoronerReportPage1, CoronerReportPage2, CoronerReportPage3 } from "./do
 import { ValidateTheory } from "./ValidateTheory"
 import { QuickNoteButton } from "./QuickNoteButton"
 import { GetClueModal } from "./GetClueModal"
+import { LoadingModal } from "./LoadingModal"
 
 interface Suspect {
   id: string
@@ -129,6 +130,10 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showSceneSelector, setShowSceneSelector] = useState(false)
   const [selectedSceneForSelector, setSelectedSceneForSelector] = useState<Scene | null>(null)
   const [selectedPhotoType, setSelectedPhotoType] = useState<'investigation' | 'gala'>('investigation')
+  const [isUnlockingFootage, setIsUnlockingFootage] = useState(false)
+  const [footageUnlocked, setFootageUnlocked] = useState(false)
+  const [showLoadingModal, setShowLoadingModal] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState("Loading...")
 
   // Navigation stack for context-aware returns
   type ViewerContext = {
@@ -276,19 +281,69 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     console.log('[THANK-YOU-NOTE-NOTIFICATION] State changed:', showThankYouNoteNotification)
   }, [showThankYouNoteNotification])
 
+  // Preload security footage when study scene is opened
+  useEffect(() => {
+    const preloadSecurityFootage = async () => {
+      // Only preload if:
+      // 1. Study scene is opened
+      // 2. Not already unlocked/unlocking
+      // 3. Have a valid session
+      if (
+        selectedScene?.id === 'scene_study' && 
+        !footageUnlocked && 
+        !isUnlockingFootage && 
+        sessionId
+      ) {
+        setIsUnlockingFootage(true)
+        
+        try {
+          const response = await fetch('/api/game/actions/unlock', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              sessionId,
+              contentType: 'record',
+              contentId: 'record_greenhouse_footage',
+            }),
+          })
+
+          if (response.ok) {
+            setFootageUnlocked(true)
+            // Refresh game state in background (don't await)
+            fetchGameState()
+          }
+        } catch (error) {
+          console.error('Error preloading security footage:', error)
+        } finally {
+          setIsUnlockingFootage(false)
+        }
+      }
+    }
+
+    preloadSecurityFootage()
+  }, [selectedScene, footageUnlocked, isUnlockingFootage, sessionId, fetchGameState])
+
   const handleOpenLetter = () => {
     setShowLetterNotification(false)
     setShowVeronicaLetter(true)
+    // Mark the letter as viewed so it appears red in documents
+    markDocumentAsViewed('veronica_letter')
   }
 
   const handleOpenThankYouNote = () => {
     setShowThankYouNoteNotification(false)
     setShowThankYouNote(true)
+    // Mark the thank you note as viewed so it appears red in documents
+    markDocumentAsViewed('record_veronica_thankyou')
   }
 
   const handleCloseLetter = () => {
     setShowVeronicaLetter(false)
     markLetterAsRead()
+    // Mark the letter as viewed so it appears red in documents
+    markDocumentAsViewed('veronica_letter')
     if (onPreviewClose) {
       onPreviewClose()
       setOnPreviewClose(null)
@@ -377,11 +432,14 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   )
   // Show documents that are either initially available OR have been unlocked
   // BUT exclude individual blackmail pieces (keep only full sets for document viewer)
+  // AND exclude security footage (only accessible through scene viewer button)
   const unlockedDocuments = documents.filter(doc => {
     const isUnlocked = doc.initiallyAvailable || unlockedContent.records.has(doc.id)
     const isIndividualBlackmail = doc.id.startsWith('record_blackmail_floor_') || 
                                    doc.id.startsWith('record_blackmail_portrait_')
-    return isUnlocked && !isIndividualBlackmail
+    const isSecurityFootage = doc.id === 'record_security_footage' || 
+                              doc.id === 'record_greenhouse_footage'
+    return isUnlocked && !isIndividualBlackmail && !isSecurityFootage
   })
   const chatSuspects = Array.from(new Set(chatHistory.map(msg => msg.suspectId)))
 
@@ -697,44 +755,50 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             }
           }}
           onOpenDocument={async (documentId) => {
-            // Unlock button-click records in the database
+            // Handle security footage
             if (documentId === 'record_security_footage' && sessionId) {
-              try {
-                const response = await fetch('/api/game/actions/unlock', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    sessionId,
-                    contentType: 'record',
-                    contentId: 'record_greenhouse_footage',
-                  }),
-                })
+              // If not yet unlocked, unlock now with loading modal
+              // The preload in the background should have already started this,
+              // but we handle it here in case the user clicks very quickly
+              if (!footageUnlocked) {
+                setLoadingMessage("Loading Security Footage...")
+                setShowLoadingModal(true)
+                
+                try {
+                  const response = await fetch('/api/game/actions/unlock', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      sessionId,
+                      contentType: 'record',
+                      contentId: 'record_greenhouse_footage',
+                    }),
+                  })
 
-                if (response.ok) {
-                  // Refresh game state to reflect the new unlock
-                  await fetchGameState()
+                  if (response.ok) {
+                    setFootageUnlocked(true)
+                    // Refresh game state in background (don't await)
+                    fetchGameState()
+                  }
+                } catch (error) {
+                  console.error('Error unlocking security footage:', error)
+                } finally {
+                  setShowLoadingModal(false)
                 }
-              } catch (error) {
-                console.error('Error unlocking security footage:', error)
               }
-            }
 
-            // Store current scene in navigation stack before opening document
-            if (selectedScene) {
-              setNavigationStack([...navigationStack, { 
-                type: 'scene', 
-                data: { scene: selectedScene, imageIndex: selectedSceneImageIndex }
-              }])
-            }
-            
-            // Close scene viewer
-            setSelectedScene(null)
-            
-            // Open the requested document
-            if (documentId === 'record_security_footage') {
-              // Open security footage with hardcoded images (since document might not be loaded yet)
+              // Store current scene in navigation stack before opening footage
+              // This keeps the scene viewer in the stack so we can return to it
+              if (selectedScene) {
+                setNavigationStack([...navigationStack, { 
+                  type: 'scene', 
+                  data: { scene: selectedScene, imageIndex: selectedSceneImageIndex }
+                }])
+              }
+              
+              // Open security footage with hardcoded images
               const footageImages = [
                 "/cases/case01/images/evidence/securityfootage/cam1.1.jpg",
                 "/cases/case01/images/evidence/securityfootage/cam1.2.jpg",
@@ -757,9 +821,23 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               ]
               setSecurityFootageImages(footageImages)
               setShowSecurityFootage(true)
+              
+              // Close scene viewer AFTER opening footage (this creates the "on top" effect)
+              setSelectedScene(null)
             } else if (documentId === 'painting_back') {
+              // Store current scene in navigation stack before opening painting
+              if (selectedScene) {
+                setNavigationStack([...navigationStack, { 
+                  type: 'scene', 
+                  data: { scene: selectedScene, imageIndex: selectedSceneImageIndex }
+                }])
+              }
+              
               // Open the painting back viewer
               setShowPaintingBack(true)
+              
+              // Close scene viewer
+              setSelectedScene(null)
             }
           }}
         />
@@ -799,6 +877,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             // Check for navigation stack and restore previous context
             handleNavigationClose()
           }}
+          onSuspectClick={() => {
+            // Close Veronica's commentary modal when a suspect is clicked
+            if (showVeronicaCommentary) {
+              setShowVeronicaCommentary(false)
+              markBlackmailCommentaryAsSeen()
+            }
+          }}
         />
       )}
 
@@ -825,6 +910,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             }
             // Check for navigation stack and restore previous context
             handleNavigationClose()
+          }}
+          onSuspectClick={() => {
+            // Close Veronica's commentary modal when a suspect is clicked
+            if (showVeronicaCommentary) {
+              setShowVeronicaCommentary(false)
+              markBlackmailCommentaryAsSeen()
+            }
           }}
         />
       )}
@@ -1407,6 +1499,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
 
       {/* Quick Note Button */}
       <QuickNoteButton />
+
+      {/* Loading Modal */}
+      {showLoadingModal && (
+        <LoadingModal message={loadingMessage} />
+      )}
     </>
   )
 }

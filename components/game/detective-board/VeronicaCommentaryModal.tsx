@@ -47,7 +47,7 @@ function useTypewriter(text: string, speed: number = 35, delay: number = 400) {
 
 export function VeronicaCommentaryModal({ 
   onClose, 
-  text = "Detective, wait... These aren't the papers I gave you. This is an entirely different set—a backup Reginald must have kept. I had no idea he made copies, let alone where he hid them. And look... Dr. Vale's file is here in this set. How meticulous of him to maintain duplicates.",
+  text = "Detective, wait... These aren't the papers I gave you - this is an entirely different set. Reginald must've kept a backup set of the blackmail somewhere else. I had no idea he made copies, let alone where he hid them...",
   typingSpeed = 35
 }: VeronicaCommentaryModalProps) {
   const { displayedText, isComplete } = useTypewriter(text, typingSpeed, 400)

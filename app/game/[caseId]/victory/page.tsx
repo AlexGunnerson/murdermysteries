@@ -290,7 +290,7 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                     During the gala presentation, I went to the study. I had to swap that page. I couldn&apos;t simply remove it—others in the family knew Reginald kept something on me, though not what it was. Removing it entirely would be too suspicious. But if I replaced it with something less damaging—Uncle Charles&apos;s pocket watch instead of Dorothy&apos;s ring—no one would know the difference. Reginald wasn&apos;t actively reviewing the files, and after his death, the truth would remain buried.
                   </p>
                   <p>
-                    But Reginald... he walked in. He caught me at the safe with my gloves on. We argued. He was furious—said I&apos;d betrayed the family&apos;s trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I&apos;ll never forget that sound.
+                    But Reginald... he walked in. He caught me at the safe. We argued. He was furious—said I&apos;d betrayed the family&apos;s trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I&apos;ll never forget that sound.
                   </p>
                   <p>
                     I panicked. I checked for a pulse, but he was gone. I couldn&apos;t think straight. I staged it at the staircase to look like an accident. The wine glass, the positioning... I thought if it looked like he&apos;d slipped after drinking, no one would ask questions. I even took Dr. Vale&apos;s blackmail page to create a false lead.

@@ -167,13 +167,14 @@ export const UNLOCK_RULES: UnlockRule[] = [
     stage: 'act_ii',
     trigger: 'chat_attachment',
     requiredSuspectId: 'suspect_colin',
-    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_study_img_1', 'scene_study_img_3'],
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_1', 'scene_study_img_1', 'scene_study_img_3'],
     logicOperator: 'AND',
+    useCumulativeEvidence: true,  // Check all evidence ever shown to Colin, not just current message
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Colin has confessed! He accidentally killed Reginald during a confrontation in the study. Case closed!',
-    description: 'Show Colin the incriminating evidence: Colin\'s blackmail from both locations, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) from study'
+    description: 'Show Colin the incriminating evidence: Colin\'s blackmail from both locations, gala photo of Colin in white gloves, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) from study'
   },
 
   // The Accusation - Colin confession (Theory Validation)
@@ -181,13 +182,13 @@ export const UNLOCK_RULES: UnlockRule[] = [
     id: 'colin_accusation_theory',
     stage: 'act_ii',
     trigger: 'theory_validation',
-    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_study_img_1', 'scene_study_img_3'],
+    requiredArtifacts: ['record_blackmail_floor_colin', 'record_blackmail_portrait_colin', 'scene_ballroom_gala_img_1', 'scene_study_img_1', 'scene_study_img_3'],
     logicOperator: 'AND',
     unlocks: {
       statusUpdate: 'Case Solved'
     },
     notificationMessage: 'Your accusation is correct! Colin Dorsey is the killer. He confesses to the accidental killing during a confrontation in the study.',
-    description: 'Submit theory with Colin\'s blackmail from both locations, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) proving Colin is the killer'
+    description: 'Submit theory with Colin\'s blackmail from both locations, gala photo of Colin in white gloves, white glove on desk photo (study_2.png), and struggle evidence photo (study_4.png) proving Colin is the killer'
   }
 ]
 

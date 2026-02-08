@@ -70,7 +70,11 @@ export interface GameState {
   gameStatus: string | null
   hasReadVeronicaLetter: boolean
   hasSeenBlackmailCommentary: boolean
-  actICluesUsed: number
+  actIViewedClues: string[]  // Ordered array of viewed Act I clues
+  actIIViewedClues: string[]  // Ordered array of viewed Act II clues
+  finalPhaseWhoViewedClues: string[]  // Ordered array of viewed Who clues
+  finalPhaseMotiveViewedClues: string[]  // Ordered array of viewed Motive clues
+  finalPhaseWhereViewedClues: string[]  // Ordered array of viewed Where clues
   
   // Loading states
   isLoading: boolean
@@ -99,7 +103,11 @@ export interface GameState {
   resetGame: () => void
   markLetterAsRead: () => void
   markBlackmailCommentaryAsSeen: () => void
-  incrementActIClue: () => void
+  addActIClue: (clueText: string) => void
+  addActIIClue: (clueText: string) => void
+  addFinalPhaseWhoClue: (clueText: string) => void
+  addFinalPhaseMotiveClue: (clueText: string) => void
+  addFinalPhaseWhereClue: (clueText: string) => void
   
   setLoading: (loading: boolean) => void
   setSyncing: (syncing: boolean) => void
@@ -128,7 +136,11 @@ const initialState = {
   gameStatus: null,
   hasReadVeronicaLetter: false,
   hasSeenBlackmailCommentary: false,
-  actICluesUsed: 0,
+  actIViewedClues: [],
+  actIIViewedClues: [],
+  finalPhaseWhoViewedClues: [],
+  finalPhaseMotiveViewedClues: [],
+  finalPhaseWhereViewedClues: [],
   isLoading: false,
   isSyncing: false,
 }
@@ -261,7 +273,7 @@ export const useGameStore = create<GameState>()(
         setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => {
           // Reset Act I clues when moving to Act II
           if (stage === 'act_ii') {
-            set({ currentStage: stage, actICluesUsed: 0 })
+            set({ currentStage: stage, actIViewedClues: [], actIIViewedClues: [] })
           } else {
             set({ currentStage: stage })
           }
@@ -521,9 +533,33 @@ export const useGameStore = create<GameState>()(
           set({ hasSeenBlackmailCommentary: true })
         },
 
-        incrementActIClue: () => {
+        addActIClue: (clueText: string) => {
           set((state) => ({
-            actICluesUsed: state.actICluesUsed + 1
+            actIViewedClues: [...state.actIViewedClues, clueText]
+          }))
+        },
+
+        addActIIClue: (clueText: string) => {
+          set((state) => ({
+            actIIViewedClues: [...state.actIIViewedClues, clueText]
+          }))
+        },
+
+        addFinalPhaseWhoClue: (clueText: string) => {
+          set((state) => ({
+            finalPhaseWhoViewedClues: [...state.finalPhaseWhoViewedClues, clueText]
+          }))
+        },
+
+        addFinalPhaseMotiveClue: (clueText: string) => {
+          set((state) => ({
+            finalPhaseMotiveViewedClues: [...state.finalPhaseMotiveViewedClues, clueText]
+          }))
+        },
+
+        addFinalPhaseWhereClue: (clueText: string) => {
+          set((state) => ({
+            finalPhaseWhereViewedClues: [...state.finalPhaseWhereViewedClues, clueText]
           }))
         },
 

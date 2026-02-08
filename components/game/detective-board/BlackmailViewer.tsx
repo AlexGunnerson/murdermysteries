@@ -11,6 +11,7 @@ import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackma
 interface BlackmailViewerProps {
   onClose: () => void
   suspectId?: string  // Optional: if provided, directly show this suspect's documents
+  onSuspectClick?: () => void  // Optional: callback when a suspect is clicked
 }
 
 interface SuspectDocs {
@@ -22,7 +23,7 @@ interface SuspectDocs {
   pages: Array<{ label: string; content: React.ReactNode }>
 }
 
-export function BlackmailViewer({ onClose, suspectId }: BlackmailViewerProps) {
+export function BlackmailViewer({ onClose, suspectId, onSuspectClick }: BlackmailViewerProps) {
   const [selectedSuspect, setSelectedSuspect] = useState<string | null>(suspectId || null)
 
   const suspects: SuspectDocs[] = [
@@ -266,7 +267,13 @@ export function BlackmailViewer({ onClose, suspectId }: BlackmailViewerProps) {
                 {suspects.map((suspect) => (
                   <button
                     key={suspect.id}
-                    onClick={() => setSelectedSuspect(suspect.id)}
+                    onClick={() => {
+                      // Always close Veronica's commentary when clicking a suspect
+                      if (onSuspectClick) {
+                        onSuspectClick()
+                      }
+                      setSelectedSuspect(suspect.id)
+                    }}
                     className="relative p-6 bg-[#f4f1ea] rounded-sm transition-all duration-200 group text-left overflow-hidden"
                     style={{
                       border: `2px solid ${suspect.accentColor}40`,
