@@ -48,23 +48,6 @@ export function BlackmailSceneViewer({ onClose, suspectId, onSuspectClick }: Bla
       ]
     },
     {
-      id: 'colin',
-      name: 'Colin Dorsey',
-      role: 'The Estate Manager',
-      pageCount: 2,
-      accentColor: '#2c4a6b', // dark navy
-      pages: [
-        {
-          label: "DOCUMENT 1 OF 2",
-          content: <ColinBlackmailScenePage1 />
-        },
-        {
-          label: "DOCUMENT 2 OF 2",
-          content: <ColinBlackmailScenePage2 />
-        }
-      ]
-    },
-    {
       id: 'lydia',
       name: 'Lydia Portwell',
       role: 'The Charity Director',
@@ -82,6 +65,23 @@ export function BlackmailSceneViewer({ onClose, suspectId, onSuspectClick }: Bla
         {
           label: "DOCUMENT 3 OF 3",
           content: <LydiaBlackmailPage3 />
+        }
+      ]
+    },
+    {
+      id: 'colin',
+      name: 'Colin Dorsey',
+      role: 'The Estate Manager',
+      pageCount: 2,
+      accentColor: '#2c4a6b', // dark navy
+      pages: [
+        {
+          label: "DOCUMENT 1 OF 2",
+          content: <ColinBlackmailScenePage1 />
+        },
+        {
+          label: "DOCUMENT 2 OF 2",
+          content: <ColinBlackmailScenePage2 />
         }
       ]
     }

@@ -73,7 +73,7 @@
   "locations": [
     {
       "id": "scene_greenhouse",
-      "name": "Grand Conservatory (Greenhouse)",
+      "name": "Greenhouse",
       "description": "Reginald's pride and joy - a glass-domed greenhouse filled with rare orchids and tropical blooms. He personally led tours here during the afternoon.",
       "imageUrl": "/cases/case01/images/scenes/Scene 2 - Greenhouse/investigation/greenhouse_1.png",
       "images": [
@@ -254,16 +254,6 @@
       }
     },
     {
-      "id": "record_blackmail_floor_colin",
-      "name": "Colin's Blackmail - Found Near Body",
-      "description": "Colin Dorsey's blackmail documents found scattered near Reginald's body. Contains evidence of Colin's attempt to sell Dorothy Ashcombe's ring on the black market.",
-      "isHTML": true,
-      "initiallyAvailable": false,
-      "unlockConditions": {
-        "requiredFacts": ["fact_staged_scene"]
-      }
-    },
-    {
       "id": "record_blackmail_floor_martin",
       "name": "Martin's Blackmail - Found Near Body",
       "description": "Martin Ashcombe's blackmail documents found scattered near Reginald's body. Contains evidence of Martin's affair with Clara and subsequent hush money payments.",
@@ -284,13 +274,13 @@
       }
     },
     {
-      "id": "record_blackmail_portrait_colin",
-      "name": "Colin's Blackmail - Behind Painting",
-      "description": "Colin Dorsey's complete blackmail documents hidden behind the painting in the master bedroom. The real evidence showing Colin attempted to sell Dorothy Ashcombe's ring - the most prized family heirloom.",
+      "id": "record_blackmail_floor_colin",
+      "name": "Colin's Blackmail - Found Near Body",
+      "description": "Colin Dorsey's blackmail documents found scattered near Reginald's body. Contains evidence of Colin's attempt to sell Dorothy Ashcombe's ring on the black market.",
       "isHTML": true,
       "initiallyAvailable": false,
       "unlockConditions": {
-        "requiredFacts": ["fact_vale_page_missing"]
+        "requiredFacts": ["fact_staged_scene"]
       }
     },
     {
@@ -307,6 +297,16 @@
       "id": "record_blackmail_portrait_lydia",
       "name": "Lydia's Blackmail - Behind Painting",
       "description": "Lydia Portwell's complete blackmail documents hidden behind the painting in the master bedroom. Contains detailed evidence of her embezzlement scheme.",
+      "isHTML": true,
+      "initiallyAvailable": false,
+      "unlockConditions": {
+        "requiredFacts": ["fact_vale_page_missing"]
+      }
+    },
+    {
+      "id": "record_blackmail_portrait_colin",
+      "name": "Colin's Blackmail - Behind Painting",
+      "description": "Colin Dorsey's complete blackmail documents hidden behind the painting in the master bedroom. The real evidence showing Colin attempted to sell Dorothy Ashcombe's ring - the most prized family heirloom.",
       "isHTML": true,
       "initiallyAvailable": false,
       "unlockConditions": {

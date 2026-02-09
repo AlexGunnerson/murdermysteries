@@ -9,8 +9,25 @@ import { useGameStore } from '@/lib/store/gameStore'
 export default function VictoryPage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
   const router = useRouter()
-  const { theoryHistory, discoveredFacts, isGameCompleted, gameStatus } = useGameStore()
+  const { 
+    discoveredFacts, 
+    isGameCompleted, 
+    gameStatus,
+    actIViewedClues,
+    actIIViewedClues,
+    finalPhaseWhoViewedClues,
+    finalPhaseMotiveViewedClues,
+    finalPhaseWhereViewedClues
+  } = useGameStore()
   const [isVisible, setIsVisible] = useState(false)
+  
+  // Calculate total hints used
+  const totalHintsUsed = 
+    actIViewedClues.length + 
+    actIIViewedClues.length + 
+    finalPhaseWhoViewedClues.length + 
+    finalPhaseMotiveViewedClues.length + 
+    finalPhaseWhereViewedClues.length
 
   useEffect(() => {
     // Redirect if game not completed
@@ -233,13 +250,13 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                       className="text-[#c5a065] text-sm"
                       style={{ fontFamily: "'Courier Prime', monospace" }}
                     >
-                      Theories Submitted:
+                      Hints Used:
                     </span>
                     <span 
                       className="text-[#d4af37] text-xl font-bold"
                       style={{ fontFamily: "'Courier Prime', monospace" }}
                     >
-                      {theoryHistory.length}
+                      {totalHintsUsed}
                     </span>
                   </div>
                 </div>

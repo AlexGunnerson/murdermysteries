@@ -992,6 +992,19 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
               }, 500)
             }
 
+            // Add facts to inform Veronica that blackmail has been retrieved and master bedroom visited
+            addDiscoveredFact({
+              content: 'Retrieved the complete blackmail papers from behind the painting in the master bedroom',
+              source: 'scene',
+              sourceId: 'scene_master_bedroom',
+            })
+            
+            addDiscoveredFact({
+              content: 'Visited the master bedroom and examined the painting',
+              source: 'scene',
+              sourceId: 'scene_master_bedroom',
+            })
+
             // Unlock all blackmail records in the database (main set + all individual documents)
             if (sessionId) {
               try {

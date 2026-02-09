@@ -43,12 +43,12 @@ export const ValeNotesPage1 = () => (
       .entry-date {
         font-weight: 700;
         color: #2a2a2a;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         margin-bottom: 0.3rem;
       }
       
       .entry-text {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         color: #2a2a2a;
         line-height: 1.6;
         text-shadow: 0 0 1px rgba(42, 42, 42, 0.1);
@@ -126,12 +126,12 @@ export const ValeNotesPage2 = () => (
       .entry-date {
         font-weight: 700;
         color: #2a2a2a;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         margin-bottom: 0.3rem;
       }
       
       .entry-text {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         color: #2a2a2a;
         line-height: 1.6;
         text-shadow: 0 0 1px rgba(42, 42, 42, 0.1);

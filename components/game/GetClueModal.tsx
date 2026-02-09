@@ -121,7 +121,7 @@ const getPhaseDisplay = (stage: 'start' | 'act_i' | 'act_ii'): string => {
 // Get objective text for each phase
 const getObjectiveText = (stage: 'start' | 'act_i' | 'act_ii'): string => {
   if (stage === 'start' || stage === 'act_i') {
-    return 'Prove this was not an accident. Examine the crime scene and find contradictions in the official story.'
+    return 'Prove this was not an accident. Examine the photos and documents and find contradictions in the official story.'
   }
   return 'Identify the killer. Question suspects, gather evidence, and build your case.'
 }

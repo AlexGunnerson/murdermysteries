@@ -237,7 +237,8 @@ export function ChatInterfaceWithAttachments({
   }
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isStreaming || isGameCompleted) return
+    // Allow sending if there's either a message OR attachments
+    if ((!inputMessage.trim() && attachedItems.length === 0) || isStreaming || isGameCompleted) return
 
     const userMessage = inputMessage.trim()
     const messageAttachments = [...attachedItems]
@@ -246,11 +247,12 @@ export function ChatInterfaceWithAttachments({
     setAttachedItems([])
     setIsStreaming(true)
 
-    // Add user message to chat history
+    // Add user message to chat history (only if there's text or show attachments info)
+    const messageContent = userMessage || 'here'
     addChatMessage({
       suspectId,
       role: 'user',
-      content: userMessage,
+      content: messageContent,
     })
 
     try {
@@ -842,7 +844,7 @@ export function ChatInterfaceWithAttachments({
           />
           <Button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isStreaming || isGameCompleted}
+            disabled={(!inputMessage.trim() && attachedItems.length === 0) || isStreaming || isGameCompleted}
             className="bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border border-[#d4af37]/40 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               boxShadow: '0 2px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(212, 175, 55, 0.2)',

@@ -25,9 +25,11 @@ export async function POST(request: NextRequest) {
       sessionId?: string
     }
 
-    if (!message || !context) {
+    // Allow empty message if attachments are present
+    const hasAttachments = context?.attachedItems && context.attachedItems.length > 0
+    if ((!message && !hasAttachments) || !context) {
       return NextResponse.json(
-        { error: 'Message and context are required' },
+        { error: 'Message or attachments are required' },
         { status: 400 }
       )
     }
