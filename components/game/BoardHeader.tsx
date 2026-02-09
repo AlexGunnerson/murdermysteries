@@ -456,7 +456,7 @@ export function BoardHeader({
               Loading...
             </>
           ) : (
-            <>🔍 Investigation Board</>
+            <>Investigation Board</>
           )}
         </button>
 

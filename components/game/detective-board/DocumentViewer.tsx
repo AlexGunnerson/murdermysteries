@@ -42,12 +42,16 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
     setPanOffset({ x: 0, y: 0 })
   }, [currentIndex])
 
+  // Boundary checks for navigation
+  const isAtStart = currentIndex === 0
+  const isAtEnd = currentIndex === images.length - 1
+
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
+    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1))
   }
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    setCurrentIndex((prev) => Math.max(prev - 1, 0))
   }
 
   const toggleZoom = (e: React.MouseEvent) => {
@@ -66,8 +70,8 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight' && !isZoomed) goToNext()
-    if (e.key === 'ArrowLeft' && !isZoomed) goToPrevious()
+    if (e.key === 'ArrowRight' && !isAtEnd && !isZoomed) goToNext()
+    if (e.key === 'ArrowLeft' && !isAtStart && !isZoomed) goToPrevious()
     if (e.key === 'Escape') onClose()
     if (hasAnnotations && (e.key === 'f' || e.key === 'F' || e.key === ' ')) {
       e.preventDefault()
@@ -105,14 +109,17 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
   const getVisibleImages = () => {
     if (images.length === 1) return [{ index: 0, position: 'center' }]
     
-    const prev = (currentIndex - 1 + images.length) % images.length
-    const next = (currentIndex + 1) % images.length
+    const visibleImages = [{ index: currentIndex, position: 'center' }]
     
-    return [
-      { index: prev, position: 'left' },
-      { index: currentIndex, position: 'center' },
-      { index: next, position: 'right' }
-    ]
+    if (currentIndex > 0) {
+      visibleImages.unshift({ index: currentIndex - 1, position: 'left' })
+    }
+    
+    if (currentIndex < images.length - 1) {
+      visibleImages.push({ index: currentIndex + 1, position: 'right' })
+    }
+    
+    return visibleImages
   }
 
   const currentAnnotation = getCurrentAnnotation()
@@ -222,7 +229,12 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-4 z-20 p-4 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-all hover:scale-110 shadow-xl"
+              disabled={isAtStart}
+              className={`absolute left-4 z-20 p-4 rounded-full transition-all shadow-xl ${
+                isAtStart 
+                  ? 'bg-gray-300 text-gray-400 cursor-not-allowed' 
+                  : 'bg-white/90 hover:bg-white text-gray-800 hover:scale-110'
+              }`}
               aria-label="Previous page"
             >
               <ChevronLeft className="w-8 h-8" />
@@ -230,7 +242,12 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
 
             <button
               onClick={goToNext}
-              className="absolute right-4 z-20 p-4 bg-white/90 hover:bg-white text-gray-800 rounded-full transition-all hover:scale-110 shadow-xl"
+              disabled={isAtEnd}
+              className={`absolute right-4 z-20 p-4 rounded-full transition-all shadow-xl ${
+                isAtEnd 
+                  ? 'bg-gray-300 text-gray-400 cursor-not-allowed' 
+                  : 'bg-white/90 hover:bg-white text-gray-800 hover:scale-110'
+              }`}
               aria-label="Next page"
             >
               <ChevronRight className="w-8 h-8" />
@@ -258,8 +275,8 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
                   isRight ? 'translate-x-[450px]' : ''
                 }`}
                 onClick={() => {
-                  if (isLeft) goToPrevious()
-                  if (isRight) goToNext()
+                  if (isLeft && !isAtStart) goToPrevious()
+                  if (isRight && !isAtEnd) goToNext()
                 }}
                 style={{
                   transform: `

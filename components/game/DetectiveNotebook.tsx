@@ -37,6 +37,7 @@ import { ValidateTheory } from "./ValidateTheory"
 import { QuickNoteButton } from "./QuickNoteButton"
 import { GetClueModal } from "./GetClueModal"
 import { LoadingModal } from "./LoadingModal"
+import { TheoryResultModal } from "./detective-board/TheoryResultModal"
 
 interface Suspect {
   id: string
@@ -123,8 +124,19 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [showPaintingBack, setShowPaintingBack] = useState(false)
   const [storyConfig, setStoryConfig] = useState<StoryConfig | null>(null)
   const [documentStackMenuOpen, setDocumentStackMenuOpen] = useState(false)
-  const [queuedNotifications, setQueuedNotifications] = useState<string[]>([])
+  
+  interface UnlockData {
+    suspects?: string[]
+    scenes?: string[]
+    records?: string[]
+    stage?: string
+    message?: string
+    gameCompleted?: boolean
+  }
+  
+  const [queuedUnlocks, setQueuedUnlocks] = useState<UnlockData[]>([])
   const [currentNotification, setCurrentNotification] = useState<string | null>(null)
+  const [currentTheoryResult, setCurrentTheoryResult] = useState<{result: 'correct' | 'incorrect', feedback: string} | null>(null)
   const [actIUnlockData, setActIUnlockData] = useState<any>(null)
   const [showActIUnlockModal, setShowActIUnlockModal] = useState(false)
   const [showSceneSelector, setShowSceneSelector] = useState(false)
@@ -372,26 +384,43 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   }
 
   // Handle unlock notifications queued from chat
-  const handleUnlocksQueued = (notifications: string[]) => {
-    setQueuedNotifications(notifications)
+  const handleUnlocksQueued = (unlocks: UnlockData[]) => {
+    setQueuedUnlocks(unlocks)
   }
 
-  // Display queued notifications sequentially with delay
+  // Display queued unlocks sequentially with delay
   useEffect(() => {
-    if (queuedNotifications.length > 0 && !currentNotification) {
-      // Show first notification after 500ms delay
+    if (queuedUnlocks.length > 0 && !currentNotification && !currentTheoryResult) {
+      // Show first unlock after 500ms delay
       const timer = setTimeout(() => {
-        setCurrentNotification(queuedNotifications[0])
-        setQueuedNotifications(prev => prev.slice(1))
+        const unlock = queuedUnlocks[0]
+        
+        // Check if this is Act II progression - show TheoryResultModal
+        if (unlock.stage === 'act_ii') {
+          setCurrentTheoryResult({
+            result: 'correct',
+            feedback: unlock.message || 'The contradiction has been proven!'
+          })
+        } else {
+          // Show simple notification for other unlocks
+          setCurrentNotification(unlock.message || 'New content unlocked!')
+        }
+        
+        setQueuedUnlocks(prev => prev.slice(1))
       }, 500)
       
       return () => clearTimeout(timer)
     }
-  }, [queuedNotifications, currentNotification])
+  }, [queuedUnlocks, currentNotification, currentTheoryResult])
 
   // Clear current notification (manual dismissal only)
   const handleDismissNotification = () => {
     setCurrentNotification(null)
+  }
+  
+  // Clear current theory result (manual dismissal only)
+  const handleDismissTheoryResult = () => {
+    setCurrentTheoryResult(null)
   }
 
   // Handle Act I success sequence
@@ -1080,6 +1109,16 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           }
           onClose={handleCloseSuspectCard}
           onUnlocksQueued={handleUnlocksQueued}
+          onActIIComplete={selectedSuspectForReveal.id === 'suspect_veronica' ? (unlockData: any) => {
+            console.log('[DETECTIVE-NOTEBOOK] Act II completion callback triggered with unlock data:', unlockData)
+            // Store the unlock data (same as handleActISuccess)
+            setActIUnlockData(unlockData)
+            
+            setTimeout(() => {
+              console.log('[DETECTIVE-NOTEBOOK] Showing thank you note notification')
+              setShowThankYouNoteNotification(true)
+            }, 500)
+          } : undefined}
         />
       )}
 
@@ -1206,6 +1245,15 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           }
           handleNavigationClose()
         }} />
+      )}
+
+      {/* Theory Result Modal for Act II progression via chat */}
+      {currentTheoryResult && (
+        <TheoryResultModal
+          result={currentTheoryResult.result}
+          feedback={currentTheoryResult.feedback}
+          onClose={handleDismissTheoryResult}
+        />
       )}
 
       {/* Unlock Notification (shown after chat closes) */}

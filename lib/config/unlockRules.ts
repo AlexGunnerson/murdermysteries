@@ -27,9 +27,9 @@ export interface UnlockRule {
 }
 
 export const UNLOCK_RULES: UnlockRule[] = [
-  // Stage: Start -> Act II (Contradiction proven)
+  // Stage: Start -> Act II (Contradiction proven via Theory Validation)
   {
-    id: 'contradiction',
+    id: 'contradiction_theory',
     stage: 'start',
     trigger: 'theory_validation',
     requiredArtifacts: ['record_vale_notes', 'scene_staircase_gala_img_0'],
@@ -42,6 +42,25 @@ export const UNLOCK_RULES: UnlockRule[] = [
     },
     notificationMessage: 'The contradiction has been proven! According to Dr. Vale\'s Medical Notes, Reginald is allergic to red wine. The wine spill was staged - this was murder, not an accident.',
     description: 'Player notices red wine in crime scene photo and cross-references with Dr. Vale\'s Medical Notes showing Reginald is allergic to red wine'
+  },
+
+  // Stage: Start -> Act II (Contradiction proven via Chat with Veronica)
+  {
+    id: 'contradiction_chat',
+    stage: 'start',
+    trigger: 'chat_attachment',
+    requiredSuspectId: 'suspect_veronica',
+    requiredArtifacts: ['record_vale_notes', 'scene_staircase_gala_img_0'],
+    logicOperator: 'AND',
+    useCumulativeEvidence: true,  // Check all evidence ever shown to Veronica, not just current message
+    unlocks: {
+      stage: 'act_ii',
+      suspects: ['suspect_martin', 'suspect_colin', 'suspect_lydia', 'suspect_vale'],
+      records: ['record_veronica_thankyou', 'record_blackmail_floor', 'record_blackmail_floor_colin', 'record_blackmail_floor_martin', 'record_blackmail_floor_lydia', 'record_phone_logs', 'record_speech_notes'],
+      statusUpdate: 'Murder Confirmed'
+    },
+    notificationMessage: 'The contradiction has been proven! According to Dr. Vale\'s Medical Notes, Reginald is allergic to red wine. The wine spill was staged - this was murder, not an accident.',
+    description: 'Player shows Veronica the crime scene photo and Dr. Vale\'s Medical Notes, proving the wine spill was staged and this was murder'
   },
 
   // Master Bedroom Unlock - Show blackmail to Veronica (accepts full set or any individual piece)

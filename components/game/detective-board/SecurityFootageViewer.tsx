@@ -18,17 +18,21 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
     containerRef.current?.focus()
   }, [])
 
+  // Boundary checks for navigation
+  const isAtStart = currentIndex === 0
+  const isAtEnd = currentIndex === images.length - 1
+
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
+    setCurrentIndex((prev) => Math.min(prev + 1, images.length - 1))
   }
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+    setCurrentIndex((prev) => Math.max(prev - 1, 0))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') goToNext()
-    if (e.key === 'ArrowLeft') goToPrevious()
+    if (e.key === 'ArrowRight' && !isAtEnd) goToNext()
+    if (e.key === 'ArrowLeft' && !isAtStart) goToPrevious()
     if (e.key === 'Escape') onClose()
   }
 
@@ -87,7 +91,12 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-4 z-20 p-4 bg-gray-800/90 hover:bg-gray-700 text-white rounded-full transition-all hover:scale-110 shadow-xl"
+              disabled={isAtStart}
+              className={`absolute left-4 z-20 p-4 rounded-full transition-all shadow-xl ${
+                isAtStart 
+                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-800/90 hover:bg-gray-700 text-white hover:scale-110'
+              }`}
               aria-label="Previous clip"
             >
               <ChevronLeft className="w-8 h-8" />
@@ -95,7 +104,12 @@ export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewer
 
             <button
               onClick={goToNext}
-              className="absolute right-4 z-20 p-4 bg-gray-800/90 hover:bg-gray-700 text-white rounded-full transition-all hover:scale-110 shadow-xl"
+              disabled={isAtEnd}
+              className={`absolute right-4 z-20 p-4 rounded-full transition-all shadow-xl ${
+                isAtEnd 
+                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                  : 'bg-gray-800/90 hover:bg-gray-700 text-white hover:scale-110'
+              }`}
               aria-label="Next clip"
             >
               <ChevronRight className="w-8 h-8" />

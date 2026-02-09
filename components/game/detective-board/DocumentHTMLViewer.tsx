@@ -23,17 +23,21 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
     containerRef.current?.focus()
   }, [])
 
+  // Boundary checks for navigation
+  const isAtStart = currentIndex === 0
+  const isAtEnd = currentIndex === pages.length - 1
+
   const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % pages.length)
+    setCurrentIndex((prev) => Math.min(prev + 1, pages.length - 1))
   }
 
   const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + pages.length) % pages.length)
+    setCurrentIndex((prev) => Math.max(prev - 1, 0))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') goToNext()
-    if (e.key === 'ArrowLeft') goToPrevious()
+    if (e.key === 'ArrowRight' && !isAtEnd) goToNext()
+    if (e.key === 'ArrowLeft' && !isAtStart) goToPrevious()
     if (e.key === 'Escape') onClose()
   }
 
@@ -107,7 +111,12 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
               <>
                 <button
                   onClick={goToPrevious}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg z-20"
+                  disabled={isAtStart}
+                  className={`absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all shadow-lg z-20 ${
+                    isAtStart 
+                      ? 'bg-[#8b7355]/50 text-[#8b7355]/40 cursor-not-allowed' 
+                      : 'bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] hover:scale-110'
+                  }`}
                   aria-label="Previous page"
                 >
                   <ChevronLeft className="w-6 h-6" />
@@ -115,7 +124,12 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
 
                 <button
                   onClick={goToNext}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] rounded-full transition-all hover:scale-110 shadow-lg z-20"
+                  disabled={isAtEnd}
+                  className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all shadow-lg z-20 ${
+                    isAtEnd 
+                      ? 'bg-[#8b7355]/50 text-[#8b7355]/40 cursor-not-allowed' 
+                      : 'bg-[#2a2520] hover:bg-[#3a3530] text-[#f4e8d8] hover:scale-110'
+                  }`}
                   aria-label="Next page"
                 >
                   <ChevronRight className="w-6 h-6" />

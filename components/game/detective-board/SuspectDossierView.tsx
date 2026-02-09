@@ -6,6 +6,15 @@ import { useState, useRef } from "react"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 import { useGameState } from "@/lib/hooks/useGameState"
 
+interface UnlockData {
+  suspects?: string[]
+  scenes?: string[]
+  records?: string[]
+  stage?: string
+  message?: string
+  gameCompleted?: boolean
+}
+
 interface SuspectDossierViewProps {
   suspect: {
     id: string
@@ -21,7 +30,8 @@ interface SuspectDossierViewProps {
   suspectAlibi: string
   systemPrompt: string
   onClose: () => void
-  onUnlocksQueued?: (notifications: string[]) => void
+  onUnlocksQueued?: (unlocks: UnlockData[]) => void
+  onActIIComplete?: (unlockData: UnlockData) => void
 }
 
 export function SuspectDossierView({ 
@@ -30,10 +40,11 @@ export function SuspectDossierView({
   suspectAlibi,
   systemPrompt,
   onClose,
-  onUnlocksQueued 
+  onUnlocksQueued,
+  onActIIComplete
 }: SuspectDossierViewProps) {
   const { unlockedContent } = useGameState()
-  const queuedNotificationsRef = useRef<string[]>([])
+  const queuedUnlocksRef = useRef<UnlockData[]>([])
   
   // Check if this is the victim (deceased - cannot be questioned)
   const isVictim = suspect.id.startsWith('victim_')
@@ -43,14 +54,23 @@ export function SuspectDossierView({
   const isUnlockedForQuestioning = suspect.id === 'suspect_veronica' || unlockedContent.suspects.has(suspect.id)
   
   // Handle unlock notifications from chat
-  const handleUnlockQueued = (notification: string) => {
-    queuedNotificationsRef.current.push(notification)
+  const handleUnlockQueued = (unlockData: UnlockData) => {
+    queuedUnlocksRef.current.push(unlockData)
+  }
+
+  // Handle Act II completion from chat
+  const handleActIIComplete = (unlockData: UnlockData) => {
+    console.log('[SUSPECT-DOSSIER] Act II completion triggered from chat with unlock data:', unlockData)
+    if (onActIIComplete) {
+      onActIIComplete(unlockData)
+    }
+    onClose() // Close the dossier
   }
   
-  // Handle close and pass queued notifications to parent
+  // Handle close and pass queued unlocks to parent
   const handleClose = () => {
-    if (queuedNotificationsRef.current.length > 0 && onUnlocksQueued) {
-      onUnlocksQueued(queuedNotificationsRef.current)
+    if (queuedUnlocksRef.current.length > 0 && onUnlocksQueued) {
+      onUnlocksQueued(queuedUnlocksRef.current)
     }
     onClose()
   }
@@ -431,6 +451,7 @@ export function SuspectDossierView({
                   systemPrompt={systemPrompt}
                   suspectAvatarUrl={suspect.avatarUrl}
                   onUnlockQueued={handleUnlockQueued}
+                  onActIIComplete={handleActIIComplete}
                 />
               ) : (
                 <div className="h-full flex items-center justify-center bg-[#1a1a1a] relative">

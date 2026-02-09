@@ -9,6 +9,16 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Send, Loader2, Paperclip, X, FileText, Image as ImageIcon, ChevronDown, ChevronUp } from 'lucide-react'
 import { smartConcat } from '@/lib/utils/textUtils'
+import { TheoryResultModal } from './detective-board/TheoryResultModal'
+
+interface UnlockData {
+  suspects?: string[]
+  scenes?: string[]
+  records?: string[]
+  stage?: string
+  message?: string
+  gameCompleted?: boolean
+}
 
 interface ChatInterfaceProps {
   suspectId: string
@@ -18,7 +28,8 @@ interface ChatInterfaceProps {
   systemPrompt: string
   suspectAvatarUrl?: string
   onFactDiscovered?: (fact: string) => void
-  onUnlockQueued?: (notification: string) => void
+  onUnlockQueued?: (unlockData: UnlockData) => void
+  onActIIComplete?: (unlockData: UnlockData) => void
 }
 
 interface AttachedItem {
@@ -38,6 +49,7 @@ export function ChatInterfaceWithAttachments({
   suspectAvatarUrl,
   onFactDiscovered,
   onUnlockQueued,
+  onActIIComplete,
 }: ChatInterfaceProps) {
   const [inputMessage, setInputMessage] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -57,6 +69,7 @@ export function ChatInterfaceWithAttachments({
   const [photosExpanded, setPhotosExpanded] = useState(false)
   const [photoLocationFilter, setPhotoLocationFilter] = useState<string>('all')
   const [showAllFilters, setShowAllFilters] = useState(false)
+  const [actIIUnlockModal, setActIIUnlockModal] = useState<{result: 'correct', feedback: string, unlockData?: UnlockData} | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
@@ -160,19 +173,41 @@ export function ChatInterfaceWithAttachments({
     loadAvailableItems()
   }, [unlockedContent])
 
-  // Get unique photo locations for filtering
+  // Get unique photo locations for filtering (normalize by removing Gala Night suffix)
   const photoLocations = Array.from(
     new Set(
       availableItems.photos
-        .map((p: any) => p.location)
+        .map((p: any) => {
+          if (!p.location) return null
+          // Remove "(Gala Night)" suffix to combine room variants
+          return p.location.replace(' (Gala Night)', '')
+        })
         .filter(Boolean)
     )
   ).sort()
+  
+  // Map full location names to shorter display names
+  const getShortLocationName = (location: string): string => {
+    const nameMap: Record<string, string> = {
+      'Grand Conservatory (Greenhouse)': 'Greenhouse',
+      'Grand Staircase': 'Staircase',
+      'Master Bedroom (Private Wing)': 'Master Bedroom',
+      "Reginald's Study": 'Study',
+      'Lawn & Terrace': 'Lawn & Terrace',
+      'Ballroom': 'Ballroom'
+    }
+    return nameMap[location] || location
+  }
 
-  // Filter photos based on selected location
+  // Filter photos based on selected location (match normalized location)
   const filteredPhotos = photoLocationFilter === 'all' 
     ? availableItems.photos 
-    : availableItems.photos.filter((p: any) => p.location === photoLocationFilter)
+    : availableItems.photos.filter((p: any) => {
+        if (!p.location) return false
+        // Normalize location by removing "(Gala Night)" suffix
+        const normalizedLocation = p.location.replace(' (Gala Night)', '')
+        return normalizedLocation === photoLocationFilter
+      })
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -323,11 +358,38 @@ export function ChatInterfaceWithAttachments({
                   return
                 }
                 
-                let unlockMessage = unlockData.message || 'New content unlocked!'
+                // Check for Act II progression - show modal immediately and skip AI response
+                if (unlockData.stage === 'act_ii') {
+                  console.log('[CHAT-CLIENT] 🎯 Act II unlock detected - showing modal immediately')
+                  
+                  setActIIUnlockModal({
+                    result: 'correct',
+                    feedback: unlockData.message || 'The contradiction has been proven!',
+                    unlockData: unlockData // Store unlock data to pass to callback
+                  })
+                  
+                  setIsStreaming(false)
+                  setCurrentResponse('')
+                  
+                  // Refresh game state to get new unlocked content
+                  if (fetchGameState) {
+                    fetchGameState()
+                  }
+                  
+                  // Don't queue unlock or continue streaming - modal will trigger callback on close
+                  return
+                }
                 
-                // Queue notification to show after chat closes
+                // Queue other unlock data to show after chat closes
                 if (onUnlockQueued) {
-                  onUnlockQueued(unlockMessage)
+                  onUnlockQueued({
+                    suspects: unlockData.suspects,
+                    scenes: unlockData.scenes,
+                    records: unlockData.records,
+                    stage: unlockData.stage,
+                    message: unlockData.message || 'New content unlocked!',
+                    gameCompleted: unlockData.gameCompleted
+                  })
                 }
                 
                 // Refresh game state to get new unlocked content
@@ -671,12 +733,11 @@ export function ChatInterfaceWithAttachments({
                           }`}
                           style={{ fontFamily: 'Courier, monospace' }}
                         >
-                          All ({availableItems.photos.length})
+                          All
                         </button>
                         
                         {/* Show first 3 locations or all if expanded */}
                         {(showAllFilters ? photoLocations : photoLocations.slice(0, 3)).map((location) => {
-                          const count = availableItems.photos.filter((p: any) => p.location === location).length
                           return (
                             <button
                               key={location}
@@ -688,7 +749,7 @@ export function ChatInterfaceWithAttachments({
                               }`}
                               style={{ fontFamily: 'Courier, monospace' }}
                             >
-                              {location} ({count})
+                              {getShortLocationName(location)}
                             </button>
                           )
                         })}
@@ -700,7 +761,7 @@ export function ChatInterfaceWithAttachments({
                             className="px-2 py-1 text-xs rounded transition-colors bg-[#1a1a1a] text-gray-400 border border-gray-700 hover:border-[#d4af37]/50"
                             style={{ fontFamily: 'Courier, monospace' }}
                           >
-                            {showAllFilters ? '▲ Less Filters' : `▼ More Filters (${photoLocations.length - 3})`}
+                            {showAllFilters ? '▲ Less Filters' : `▼ More Filters`}
                           </button>
                         )}
                       </div>
@@ -822,6 +883,22 @@ export function ChatInterfaceWithAttachments({
           background: #3a3a3a;
         }
       `}</style>
+
+      {/* Act II Unlock Modal - shown immediately when evidence proves contradiction */}
+      {actIIUnlockModal && (
+        <TheoryResultModal
+          result={actIIUnlockModal.result}
+          feedback={actIIUnlockModal.feedback}
+          onClose={() => {
+            console.log('[CHAT-CLIENT] Act II modal closed - triggering completion callback')
+            const unlockData = actIIUnlockModal.unlockData
+            setActIIUnlockModal(null)
+            if (onActIIComplete && unlockData) {
+              onActIIComplete(unlockData)
+            }
+          }}
+        />
+      )}
     </div>
   )
 }
