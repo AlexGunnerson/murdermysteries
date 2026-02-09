@@ -472,6 +472,7 @@ export function BoardHeader({
           className="btn-clue" 
           onClick={onSolveMurder}
           title="Validate Theory"
+          style={{ display: 'none' }}
         >
           Validate Theory
         </button>
