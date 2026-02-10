@@ -4,8 +4,8 @@ import { Trash2 } from 'lucide-react'
 
 interface NoteToolbarProps {
   position: { x: number; y: number }
-  currentColor: 'yellow' | 'blue' | 'pink' | 'green'
-  onColorChange: (color: 'yellow' | 'blue' | 'pink' | 'green') => void
+  currentColor: 'yellow' | 'blue' | 'pink' | 'green' | 'noir'
+  onColorChange: (color: 'yellow' | 'blue' | 'pink' | 'green' | 'noir') => void
   onDelete: () => void
 }
 
@@ -14,6 +14,7 @@ const colorOptions = [
   { name: 'blue', bg: '#93c5fd', label: 'Blue' },
   { name: 'pink', bg: '#fbcfe8', label: 'Pink' },
   { name: 'green', bg: '#bbf7d0', label: 'Green' },
+  { name: 'noir', bg: '#1a1a1a', label: 'Noir' },
 ] as const
 
 export function NoteToolbar({ position, currentColor, onColorChange, onDelete }: NoteToolbarProps) {
@@ -34,8 +35,8 @@ export function NoteToolbar({ position, currentColor, onColorChange, onDelete }:
             key={color.name}
             onClick={() => onColorChange(color.name)}
             className={`w-6 h-6 rounded-full transition-all duration-200 hover:scale-110 ${
-              currentColor === color.name ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-800' : ''
-            }`}
+              currentColor === color.name ? 'ring-2 ring-[#d4af37] ring-offset-2 ring-offset-gray-800' : ''
+            } ${color.name === 'noir' ? 'border border-[#d4af37]/50' : ''}`}
             style={{ background: color.bg }}
             title={color.label}
           />

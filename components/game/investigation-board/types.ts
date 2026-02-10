@@ -74,7 +74,7 @@ export interface SuspectNodeData {
 export interface NoteNodeData {
   id: string
   content: string
-  color: 'yellow' | 'blue' | 'pink' | 'green'
+  color: 'yellow' | 'blue' | 'pink' | 'green' | 'noir'
 }
 
 export interface BoardConnection {

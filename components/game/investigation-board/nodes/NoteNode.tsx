@@ -6,10 +6,10 @@ import { Handle, Position, NodeResizer, useReactFlow, useUpdateNodeInternals } f
 interface NoteNodeData {
   id: string
   content: string
-  color: 'yellow' | 'blue' | 'pink' | 'green'
+  color: 'yellow' | 'blue' | 'pink' | 'green' | 'noir'
   onUpdate: (id: string, content: string) => void
   onDelete: (id: string) => void
-  onColorChange: (id: string, color: 'yellow' | 'blue' | 'pink' | 'green') => void
+  onColorChange: (id: string, color: 'yellow' | 'blue' | 'pink' | 'green' | 'noir') => void
   autoFocus?: boolean
   isConnecting?: boolean
 }
@@ -23,18 +23,27 @@ const colorStyles = {
   yellow: {
     background: 'linear-gradient(135deg, #fef68a 0%, #fef08a 100%)',
     border: '#e5d968',
+    textClass: 'text-gray-800',
   },
   blue: {
     background: 'linear-gradient(135deg, #a8d8ff 0%, #93c5fd 100%)',
     border: '#7cb3e0',
+    textClass: 'text-gray-800',
   },
   pink: {
     background: 'linear-gradient(135deg, #ffcce5 0%, #fbcfe8 100%)',
     border: '#f0a8cc',
+    textClass: 'text-gray-800',
   },
   green: {
     background: 'linear-gradient(135deg, #ccffcc 0%, #bbf7d0 100%)',
     border: '#a8e0a8',
+    textClass: 'text-gray-800',
+  },
+  noir: {
+    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+    border: '#3d3d3d',
+    textClass: 'text-gray-100',
   },
 }
 
@@ -49,7 +58,7 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
   const lastHeightRef = useRef<number | null>(null)
   const updateNodeInternals = useUpdateNodeInternals()
   const { setNodes, getNode, getViewport } = useReactFlow()
-  const colorStyle = colorStyles[data.color]
+  const colorStyle = colorStyles[data.color] || colorStyles.noir
 
   // Auto-focus on mount if autoFocus is true
   useEffect(() => {
@@ -328,14 +337,14 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
             onChange={(e) => setContent(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full h-full bg-transparent border-none outline-none resize-none overflow-hidden text-sm text-gray-800 leading-relaxed nodrag"
+            className={`w-full h-full bg-transparent border-none outline-none resize-none overflow-hidden text-sm leading-relaxed nodrag placeholder-gray-500 ${colorStyle.textClass}`}
             style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
             placeholder="Type your note..."
           />
         ) : (
           <div 
             ref={contentRef}
-            className="w-full h-full overflow-hidden text-sm text-gray-800 leading-relaxed whitespace-pre-wrap cursor-text"
+            className={`w-full h-full overflow-hidden text-sm leading-relaxed whitespace-pre-wrap cursor-text ${colorStyle.textClass}`}
             style={{ fontFamily: "'Courier Prime', 'Courier New', monospace" }}
           >
             {content}

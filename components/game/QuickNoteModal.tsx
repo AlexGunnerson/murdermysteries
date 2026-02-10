@@ -81,7 +81,7 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
             left: '64px', // 32px (left) + 32px (drag offset right)
           }}
         >
-          <div className="bg-gray-200 text-gray-800 text-xs px-4 py-2.5 rounded-lg shadow-md inline-block">
+          <div className="bg-[#1a1a1a] text-gray-300 border border-[#3d3d3d] text-xs px-4 py-2.5 rounded-lg shadow-md inline-block">
             <p className="text-center font-medium whitespace-nowrap">Save or discard your note to continue</p>
           </div>
         </div>
@@ -109,23 +109,24 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
           <div
             className={`w-full h-full shadow-2xl ${isShaking ? 'animate-shake' : ''}`}
             style={{
-              background: 'linear-gradient(135deg, #fef68a 0%, #fef08a 100%)',
+              background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
               borderRadius: '2px',
-              border: '1px solid #e5d968',
-              boxShadow: '0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.1)',
+              border: '2px solid #3d3d3d',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.4)',
             }}
           >
             {/* Drag Handle Area */}
             <div
               className="drag-handle w-full h-8 cursor-move flex items-center justify-center"
               style={{
-                background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, transparent 100%)',
+                background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%)',
+                borderBottom: '1px solid #3d3d3d',
               }}
             >
               <div className="flex gap-1">
-                <div className="w-1 h-1 rounded-full bg-gray-400/50" />
-                <div className="w-1 h-1 rounded-full bg-gray-400/50" />
-                <div className="w-1 h-1 rounded-full bg-gray-400/50" />
+                <div className="w-1 h-1 rounded-full bg-gray-500/70" />
+                <div className="w-1 h-1 rounded-full bg-gray-500/70" />
+                <div className="w-1 h-1 rounded-full bg-gray-500/70" />
               </div>
             </div>
 
@@ -136,7 +137,7 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Type your note..."
-                className="flex-1 w-full bg-transparent border-none outline-none resize-none text-sm text-gray-800 leading-relaxed nodrag"
+                className="flex-1 w-full bg-transparent border-none outline-none resize-none text-sm text-gray-100 leading-relaxed nodrag placeholder-gray-500"
                 style={{
                   fontFamily: "'Courier Prime', 'Courier New', monospace",
                 }}
@@ -158,14 +159,14 @@ export function QuickNoteModal({ isOpen, onSave, onClose }: QuickNoteModalProps)
               <div className="flex justify-end gap-2 mt-2">
                 <button
                   onClick={handleDelete}
-                  className="p-2 rounded hover:bg-black/10 transition-colors"
+                  className="p-2 rounded hover:bg-white/10 transition-colors"
                   title="Discard note (Esc)"
                 >
-                  <Trash2 className="w-4 h-4 text-gray-700" />
+                  <Trash2 className="w-4 h-4 text-gray-400" />
                 </button>
                 <button
                   onClick={handleSave}
-                  className="px-3 py-2 rounded bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium transition-colors flex items-center gap-1"
+                  className="px-3 py-2 rounded bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] border border-[#d4af37]/40 text-xs font-medium transition-colors flex items-center gap-1"
                   title="Save to Investigation Board (Ctrl+Enter)"
                 >
                   <Save className="w-3 h-3" />

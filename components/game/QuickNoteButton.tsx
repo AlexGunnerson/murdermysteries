@@ -3,11 +3,14 @@
 import { useState } from 'react'
 import { StickyNote } from 'lucide-react'
 import { QuickNoteModal } from './QuickNoteModal'
+import { QuickNoteViewer } from './QuickNoteViewer'
+import { getQuickNotes } from '@/lib/utils/quickNotes'
 import { useGameState } from '@/lib/hooks/useGameState'
 import { useInvestigationBoardStore } from './investigation-board/useInvestigationBoardStore'
 
 export function QuickNoteButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isViewerOpen, setIsViewerOpen] = useState(false)
   const { caseId, updateChecklistProgress } = useGameState()
   const caseIdFromPath = (() => {
     if (typeof window === 'undefined') return null
@@ -84,16 +87,26 @@ export function QuickNoteButton() {
     console.log('[QUICK NOTE] Event dispatched successfully')
   }
 
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    
+    // Check if there are existing notes
+    const existingNotes = getQuickNotes(effectiveCaseId)
+    
+    if (existingNotes.length > 0) {
+      setIsViewerOpen(true)
+    } else {
+      setIsModalOpen(true)
+    }
+  }
+
   return (
     <>
       {/* Quick Note Button */}
       <button
         data-tour-quick-note
-        onClick={(e) => {
-          e.stopPropagation()
-          setIsModalOpen(true)
-        }}
-        className="fixed bottom-8 left-8 z-[70] p-3 bg-[#fef08a] hover:bg-[#fde047] text-gray-800 rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105"
+        onClick={handleButtonClick}
+        className="fixed bottom-8 left-8 z-[70] p-3 bg-[#1a1a1a] hover:bg-[#2d2d2d] text-[#d4af37] border border-[#d4af37]/40 rounded-full transition-all shadow-lg hover:shadow-xl hover:scale-105"
         title="Quick Note"
       >
         <StickyNote className="w-6 h-6" />
@@ -104,6 +117,17 @@ export function QuickNoteButton() {
         isOpen={isModalOpen}
         onSave={handleSaveNote}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      {/* Quick Note Viewer */}
+      <QuickNoteViewer
+        isOpen={isViewerOpen}
+        caseId={effectiveCaseId}
+        onClose={() => setIsViewerOpen(false)}
+        onNoteCreated={() => {
+          setIsViewerOpen(false)
+          setIsModalOpen(true)
+        }}
       />
     </>
   )

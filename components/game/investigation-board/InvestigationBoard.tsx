@@ -182,7 +182,7 @@ function InvestigationBoardContent({
     setNodes(prev => prev.filter(node => node.id !== noteId))
   }, [setNodes])
   
-  const handleColorChange = useCallback((noteId: string, color: 'yellow' | 'blue' | 'pink' | 'green') => {
+  const handleColorChange = useCallback((noteId: string, color: 'yellow' | 'blue' | 'pink' | 'green' | 'noir') => {
     setNodes(prev => 
       prev.map(node => 
         node.id === noteId
@@ -315,6 +315,66 @@ function InvestigationBoardContent({
       console.log('[INVESTIGATION BOARD] === END EVENT HANDLER ===')
     }
     
+    const handleQuickNoteUpdated = () => {
+      console.log('[INVESTIGATION BOARD] Quick note updated event received')
+      if (!isInitialized) {
+        console.log('[INVESTIGATION BOARD] Board not initialized yet, skipping update')
+        return
+      }
+      
+      // Reload the state to get the updated note content
+      const storedState = loadState()
+      if (!storedState) return
+      
+      // Update existing notes with new content
+      setNodes(prev => {
+        const updatedNodes = prev.map(node => {
+          if (node.id.startsWith('note_')) {
+            const storedNode = storedState.nodes.find((n: any) => n.id === node.id)
+            if (storedNode && (storedNode as any).data) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  content: (storedNode as any).data.content,
+                  color: (storedNode as any).data.color,
+                },
+              }
+            }
+          }
+          return node
+        })
+        console.log('[INVESTIGATION BOARD] Notes updated')
+        return updatedNodes
+      })
+    }
+    
+    const handleQuickNoteDeleted = () => {
+      console.log('[INVESTIGATION BOARD] Quick note deleted event received')
+      if (!isInitialized) {
+        console.log('[INVESTIGATION BOARD] Board not initialized yet, skipping delete')
+        return
+      }
+      
+      // Reload the state to get the current notes
+      const storedState = loadState()
+      if (!storedState) return
+      
+      const storedNodeIds = new Set(storedState.nodes.map((n: any) => n.id))
+      
+      // Remove notes that no longer exist in storage
+      setNodes(prev => {
+        const filtered = prev.filter(node => {
+          if (node.id.startsWith('note_')) {
+            return storedNodeIds.has(node.id)
+          }
+          return true
+        })
+        console.log('[INVESTIGATION BOARD] Deleted notes removed from board')
+        return filtered
+      })
+    }
+    
     const handleStorageChange = (e: StorageEvent) => {
       // Check if it's our storage key (for cross-tab updates)
       if (e.key === `investigation-board-state-${caseId}` && e.newValue && isInitialized) {
@@ -323,10 +383,14 @@ function InvestigationBoardContent({
     }
     
     window.addEventListener('quickNoteAdded', handleQuickNoteAdded)
+    window.addEventListener('quickNoteUpdated', handleQuickNoteUpdated)
+    window.addEventListener('quickNoteDeleted', handleQuickNoteDeleted)
     window.addEventListener('storage', handleStorageChange)
     
     return () => {
       window.removeEventListener('quickNoteAdded', handleQuickNoteAdded)
+      window.removeEventListener('quickNoteUpdated', handleQuickNoteUpdated)
+      window.removeEventListener('quickNoteDeleted', handleQuickNoteDeleted)
       window.removeEventListener('storage', handleStorageChange)
     }
   }, [caseId, isInitialized, nodes, loadState, handleUpdateNote, handleDeleteNote, handleColorChange, setNodes, updateChecklistProgress])

@@ -14,7 +14,7 @@ export const tourSteps: DriveStep[] = [
     element: '[data-tour-suspects]',
     popover: {
       title: 'THE LINEUP',
-      description: 'Each player in this deadly game has secrets. Click their mugs to pull up their files and interrogate them. Evidence talks—make them listen.',
+      description: 'Each member of Reginald\'s inner circle has secrets. Click their image to review their dossier and interrogate them.',
       side: 'bottom',
       align: 'start',
     },
@@ -23,7 +23,7 @@ export const tourSteps: DriveStep[] = [
     element: '[data-tour-documents]',
     popover: {
       title: 'PAPER TRAIL',
-      description: 'Letters, reports, records—the truth hides in the fine print. These documents hold the keys to cracking the case wide open.',
+      description: 'The truth hides in the fine print. These documents hold the keys to cracking the case wide open, review them carefully.',
       side: 'left',
       align: 'start',
       popoverOffset: 20,
@@ -39,7 +39,7 @@ export const tourSteps: DriveStep[] = [
     element: '[data-tour-scenes]',
     popover: {
       title: 'SCENE OF THE CRIME',
-      description: 'Photographs don\'t lie. Study every shadow, every detail. In this line of work, what you miss could get you killed.',
+      description: 'Photographs don\'t lie. Study every shadow, every detail. In this line of work, the truth is hidden in what you choose to ignore.',
       side: 'top',
       align: 'start',
     },
@@ -48,7 +48,7 @@ export const tourSteps: DriveStep[] = [
     element: '[data-tour-quick-note]',
     popover: {
       title: 'FIELD NOTES',
-      description: 'A good detective keeps notes. Theories, hunches, patterns—jot them down before they vanish like smoke in the night.',
+      description: 'A good detective keeps notes. Theories, hunches, patterns - jot them down before they vanish like smoke in the night.',
       side: 'left',
       align: 'center',
     },
@@ -57,7 +57,7 @@ export const tourSteps: DriveStep[] = [
     element: '[data-tour-investigation-board]',
     popover: {
       title: 'THE BOARD',
-      description: 'This is where it all comes together. Pin your evidence, draw connections. The red string never lies—follow it to the truth.',
+      description: 'This is where it all comes together. Pin your evidence, draw connections. The red string never lies, follow it to the truth.',
       side: 'bottom',
       align: 'center',
     },
