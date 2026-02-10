@@ -5,12 +5,11 @@ import { useGameState } from '@/lib/hooks/useGameState'
 import { ChevronDown } from 'lucide-react'
 
 const checklistItems = [
-  { key: 'viewedObjective' as const, label: 'Viewed Objective' },
   { key: 'viewedSuspect' as const, label: 'Review Suspect Dossier' },
-  { key: 'chattedWithSuspect' as const, label: 'Chatted with a Suspect' },
-  { key: 'viewedDocument' as const, label: 'Reviewed Documents' },
-  { key: 'viewedScene' as const, label: 'Reviewed Scenes' },
-  { key: 'madeNote' as const, label: 'Made a Note' },
+  { key: 'chattedWithSuspect' as const, label: 'Chat with a Suspect' },
+  { key: 'viewedDocument' as const, label: 'Review Documents' },
+  { key: 'viewedScene' as const, label: 'Investigate a Scene' },
+  { key: 'madeNote' as const, label: 'Make a Note' },
   { key: 'viewedInvestigationBoard' as const, label: 'Viewed Investigation Board' },
 ]
 

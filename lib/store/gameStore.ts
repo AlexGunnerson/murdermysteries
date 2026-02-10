@@ -44,7 +44,6 @@ export interface RevealedContent {
 }
 
 export interface ChecklistProgress {
-  viewedObjective: boolean
   viewedSuspect: boolean
   chattedWithSuspect: boolean
   viewedDocument: boolean
@@ -171,7 +170,6 @@ const initialState = {
   tutorialStep: 0,
   tutorialDismissedAt: null,
   checklistProgress: {
-    viewedObjective: false,
     viewedSuspect: false,
     chattedWithSuspect: false,
     viewedDocument: false,

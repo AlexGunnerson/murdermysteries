@@ -35,9 +35,6 @@ export default function OnboardingTour() {
         
         // Update checklist progress based on step
         switch (currentIndex) {
-          case 0:
-            updateChecklistProgress('viewedObjective', true)
-            break
           case 1:
             updateChecklistProgress('viewedSuspect', true)
             break
