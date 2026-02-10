@@ -64,7 +64,7 @@ export const ColinBlackmailScenePage1 = () => (
 export const ColinBlackmailScenePage2 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "var(--font-covered-by-your-grace)", fontSize: '18px' }}>
       <p>
         Uncle Thomas's old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes — Charles spotted it in their catalog and rang me up.
       </p>

@@ -53,7 +53,7 @@ export const MartinBlackmailPage1 = () => (
 )
 
 export const MartinBlackmailPage2 = () => (
-  <div className="bg-[#fff8e7] p-6 border-l-4 border-[#8b7355] leading-relaxed text-base" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+  <div className="bg-[#fff8e7] p-6 border-l-4 border-[#8b7355] leading-relaxed" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '24px' }}>
     <p className="mb-4">Martin,</p>
     
     <p className="mb-4">
@@ -75,7 +75,7 @@ export const MartinBlackmailPage2 = () => (
 export const MartinBlackmailPage3 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
       <p className="mb-4">
         Martin's affair with Clara — a maid, no less — could have ruined us all. Instead of showing restraint, he compounds his sin by paying her off. Now this woman will bleed him — and by extension, this family — dry. He lacks the spine to handle his own messes, so I must keep yet another shameful secret. Another moral lapse, another stain on the Ashcombe name. How many more, Martin? How many more?
       </p>

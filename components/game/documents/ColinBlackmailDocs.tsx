@@ -62,7 +62,7 @@ export const ColinBlackmailPage1 = () => (
 export const ColinBlackmailPage2 = () => (
   <div>
     <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-base text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
       <p>
         My mother's ring. The one piece of her I treasured above all else. Colin — my trusted estate manager, my right hand for thirty years — tried to sell it at auction like some common trinket.
       </p>
