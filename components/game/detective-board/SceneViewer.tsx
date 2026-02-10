@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { X, ChevronLeft, ChevronRight, Camera, ArrowLeft, Repeat } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface SceneViewerProps {
   sceneName: string
@@ -17,6 +18,7 @@ interface SceneViewerProps {
 }
 
 export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneId, initialIndex = 0, unlockedContent = [], photoType = 'investigation', annotations }: SceneViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -24,6 +26,11 @@ export function SceneViewer({ sceneName, images, onClose, onOpenDocument, sceneI
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Track tutorial progress when scene is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedScene', true)
+  }, [updateChecklistProgress])
   
   // Check if current image has annotations (gala photos)
   const hasAnnotations = !!annotations

@@ -43,6 +43,18 @@ export interface RevealedContent {
   scenes: Set<string>
 }
 
+export interface ChecklistProgress {
+  viewedObjective: boolean
+  viewedSuspect: boolean
+  chattedWithSuspect: boolean
+  viewedDocument: boolean
+  viewedScene: boolean
+  madeNote: boolean
+  viewedInvestigationBoard: boolean
+  submittedEvidence: boolean
+  viewedHint: boolean
+}
+
 export interface GameState {
   // Game session info
   caseId: string | null
@@ -75,6 +87,13 @@ export interface GameState {
   finalPhaseWhoViewedClues: string[]  // Ordered array of viewed Who clues
   finalPhaseMotiveViewedClues: string[]  // Ordered array of viewed Motive clues
   finalPhaseWhereViewedClues: string[]  // Ordered array of viewed Where clues
+  
+  // Tutorial state
+  tutorialStarted: boolean
+  tutorialCompleted: boolean
+  tutorialStep: number
+  tutorialDismissedAt: number | null
+  checklistProgress: ChecklistProgress
   
   // Loading states
   isLoading: boolean
@@ -109,6 +128,14 @@ export interface GameState {
   addFinalPhaseMotiveClue: (clueText: string) => void
   addFinalPhaseWhereClue: (clueText: string) => void
   
+  startTutorial: () => void
+  setTutorialStep: (step: number) => void
+  completeTutorial: () => void
+  skipTutorial: () => void
+  dismissTutorial: () => void
+  resumeTutorial: () => void
+  updateChecklistProgress: (item: keyof ChecklistProgress, completed: boolean) => void
+  
   setLoading: (loading: boolean) => void
   setSyncing: (syncing: boolean) => void
 }
@@ -141,6 +168,21 @@ const initialState = {
   finalPhaseWhoViewedClues: [],
   finalPhaseMotiveViewedClues: [],
   finalPhaseWhereViewedClues: [],
+  tutorialStarted: false,
+  tutorialCompleted: false,
+  tutorialStep: 0,
+  tutorialDismissedAt: null,
+  checklistProgress: {
+    viewedObjective: false,
+    viewedSuspect: false,
+    chattedWithSuspect: false,
+    viewedDocument: false,
+    viewedScene: false,
+    madeNote: false,
+    viewedInvestigationBoard: false,
+    submittedEvidence: false,
+    viewedHint: false,
+  },
   isLoading: false,
   isSyncing: false,
 }
@@ -560,6 +602,57 @@ export const useGameStore = create<GameState>()(
         addFinalPhaseWhereClue: (clueText: string) => {
           set((state) => ({
             finalPhaseWhereViewedClues: [...state.finalPhaseWhereViewedClues, clueText]
+          }))
+        },
+
+        startTutorial: () => {
+          set({
+            tutorialStarted: true,
+            tutorialStep: 0,
+            tutorialDismissedAt: null,
+          })
+        },
+
+        setTutorialStep: (step: number) => {
+          set({ tutorialStep: step })
+        },
+
+        completeTutorial: () => {
+          set({
+            tutorialCompleted: true,
+            tutorialStarted: false,
+            tutorialStep: 0,
+          })
+        },
+
+        skipTutorial: () => {
+          set({
+            tutorialCompleted: true,
+            tutorialStarted: false,
+            tutorialStep: 0,
+          })
+        },
+
+        dismissTutorial: () => {
+          set({
+            tutorialStarted: false,
+            tutorialDismissedAt: Date.now(),
+          })
+        },
+
+        resumeTutorial: () => {
+          set({
+            tutorialStarted: true,
+            tutorialDismissedAt: null,
+          })
+        },
+
+        updateChecklistProgress: (item: keyof ChecklistProgress, completed: boolean) => {
+          set((state) => ({
+            checklistProgress: {
+              ...state.checklistProgress,
+              [item]: completed,
+            },
           }))
         },
 

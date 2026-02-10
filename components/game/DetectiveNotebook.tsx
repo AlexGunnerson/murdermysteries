@@ -38,6 +38,9 @@ import { QuickNoteButton } from "./QuickNoteButton"
 import { GetClueModal } from "./GetClueModal"
 import { LoadingModal } from "./LoadingModal"
 import { TheoryResultModal } from "./detective-board/TheoryResultModal"
+import OnboardingTour from "./tutorial/OnboardingTour"
+import ProgressChecklist from "./tutorial/ProgressChecklist"
+import TourPromptModal from "./tutorial/TourPromptModal"
 
 interface Suspect {
   id: string
@@ -504,6 +507,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         <div className="max-w-7xl mx-auto">
         {/* Objective Banner */}
         <div 
+          data-tour-objective
           className="relative bg-[#fef8e0] p-8 mb-6 shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
           style={{ 
             transform: 'rotate(-0.8deg)',
@@ -572,7 +576,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             {suspects.length === 0 ? (
               <p className="text-gray-600 text-center py-8 italic">Loading suspects...</p>
             ) : (
-              <div className="flex flex-wrap justify-center gap-x-8 gap-y-16 py-8">
+              <div data-tour-suspects className="flex flex-wrap justify-center gap-x-8 gap-y-16 py-8">
                 {suspects.slice(0, 5).map((suspect, idx) => {
                   // Special handling for Dr. Vale to show "Dr. Vale" instead of just "Vale"
                   let displayName = suspect.name.split(' ')[0]
@@ -602,6 +606,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           <div className="flex flex-col items-center gap-4" style={{ marginTop: '-380px' }}>
             <TypewrittenLabel text="DOCUMENTS" rotating={1} />
             <DocumentStack
+              data-tour-documents
               viewedDocuments={viewedDocuments}
               isOpen={documentStackMenuOpen}
               onOpenChange={setDocumentStackMenuOpen}
@@ -694,7 +699,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                 No scenes investigated yet.
               </p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-6xl mx-auto">
+              <div data-tour-scenes className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-6xl mx-auto">
                 {unlockedScenes.map((scene, idx) => (
                   <PolaroidPhoto
                     key={scene.id}
@@ -1565,6 +1570,11 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       {showLoadingModal && (
         <LoadingModal message={loadingMessage} />
       )}
+
+      {/* Tour Components */}
+      {hasReadVeronicaLetter && <TourPromptModal />}
+      <OnboardingTour />
+      <ProgressChecklist />
     </>
   )
 }

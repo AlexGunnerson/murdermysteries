@@ -449,6 +449,7 @@ export function BoardHeader({
           onClick={onOpenInvestigationBoard}
           title="Open Investigation Board"
           disabled={isLoadingInvestigation}
+          data-tour-investigation-board
         >
           {isLoadingInvestigation ? (
             <>
@@ -464,6 +465,7 @@ export function BoardHeader({
           className="btn-clue" 
           onClick={onGetClue}
           title="Get Clue"
+          data-tour-hint
         >
           Get Clue
         </button>

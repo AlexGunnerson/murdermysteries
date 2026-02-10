@@ -1,0 +1,335 @@
+/* Custom Driver.js Tour Styling - Gold Accent Theme (matching chat) */
+
+/* Override default driver.js styles */
+.driver-popover {
+  background: #1a1a1a !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 2px !important;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.9),
+    0 0 40px rgba(212, 175, 55, 0.15) !important;
+  max-width: 420px !important;
+  font-family: 'Courier Prime', monospace !important;
+}
+
+/* Film grain overlay on popover */
+.driver-popover::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E") !important;
+  opacity: 0.4 !important;
+  mix-blend-mode: overlay !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  border-radius: 2px !important;
+}
+
+/* Scanlines effect */
+.driver-popover::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.03) 2px,
+    rgba(255, 255, 255, 0.03) 4px
+  ) !important;
+  opacity: 0.1 !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  border-radius: 2px !important;
+}
+
+/* Popover arrow */
+.driver-popover-arrow {
+  border-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.driver-popover-arrow-side-top .driver-popover-arrow {
+  border-top-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.driver-popover-arrow-side-bottom .driver-popover-arrow {
+  border-bottom-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.driver-popover-arrow-side-left .driver-popover-arrow {
+  border-left-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+.driver-popover-arrow-side-right .driver-popover-arrow {
+  border-right-color: rgba(212, 175, 55, 0.2) !important;
+}
+
+/* Title */
+.driver-popover-title {
+  color: #d4af37 !important;
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  font-family: 'Playfair Display', serif !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  padding: 16px 20px 12px !important;
+  background: #121212 !important;
+  border-bottom: 1px solid transparent !important;
+  border-image: linear-gradient(to right, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.2)) 1 !important;
+  margin-bottom: 0 !important;
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.3) !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* Description */
+.driver-popover-description {
+  color: #dcd0b8 !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.7 !important;
+  padding: 16px 20px !important;
+  font-family: 'Courier Prime', monospace !important;
+  position: relative !important;
+  z-index: 3 !important;
+  background: #1a1a1a !important;
+}
+
+/* Footer (buttons container) */
+.driver-popover-footer {
+  background: #121212 !important;
+  border-top: 1px solid transparent !important;
+  border-image: linear-gradient(to right, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.2)) 1 !important;
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* Progress text */
+.driver-popover-progress-text {
+  color: #c5a065 !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  font-family: 'Courier Prime', monospace !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 0 4px rgba(197, 160, 101, 0.2) !important;
+}
+
+/* Button group */
+.driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+/* All buttons base style - Gold primary button */
+.driver-popover-btn {
+  background: #d4af37 !important;
+  color: #1a1a1a !important;
+  border: none !important;
+  padding: 10px 20px !important;
+  border-radius: 2px !important;
+  font-weight: 700 !important;
+  font-size: 0.8125rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  font-family: 'Courier Prime', monospace !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3) !important;
+}
+
+.driver-popover-btn:hover {
+  background: #c5a065 !important;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4) !important;
+}
+
+.driver-popover-btn:active {
+  transform: scale(0.98) !important;
+}
+
+/* Previous button specific - Transparent with gold border */
+.driver-popover-prev-btn {
+  background: transparent !important;
+  color: #c5a065 !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  box-shadow: none !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background: rgba(212, 175, 55, 0.1) !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
+  color: #d4af37 !important;
+}
+
+.driver-popover-prev-btn:active {
+  background: rgba(212, 175, 55, 0.05) !important;
+}
+
+/* Close button */
+.driver-popover-close-btn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: rgba(212, 175, 55, 0.1) !important;
+  color: #c5a065 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  z-index: 10 !important;
+}
+
+.driver-popover-close-btn:hover {
+  background: rgba(212, 175, 55, 0.2) !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  color: #d4af37 !important;
+}
+
+.driver-popover-close-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Overlay - Completely transparent, darkness comes from stage shadow */
+.driver-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+}
+
+/* Stage element creates the dark overlay AROUND itself using box-shadow */
+/* The stage area itself remains completely clear */
+[id^="driver-highlighted-element-stage"] {
+  background: transparent !important;
+  box-shadow: 
+    0 0 0 9999px rgba(0, 0, 0, 0.70),
+    0 0 40px rgba(212, 175, 55, 0.6),
+    0 0 80px rgba(212, 175, 55, 0.4) !important;
+  border: 4px solid rgba(212, 175, 55, 0.9) !important;
+  border-radius: 4px !important;
+  backdrop-filter: none !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  overflow: visible !important;
+}
+
+/* Make documents highlight area taller - expand the actual DocumentStack element */
+[data-tour-documents].driver-active-element {
+  display: block !important;
+  position: relative !important;
+  max-width: 420px !important;
+}
+
+/* Add an invisible pseudo-element to extend the bounding box downward */
+[data-tour-documents].driver-active-element::after {
+  content: '' !important;
+  display: block !important;
+  height: 80px !important;
+  width: 100% !important;
+  pointer-events: none !important;
+}
+
+/* Highlighted element - Must render exactly as normal */
+.driver-active-element {
+  /* Don't add ANY styling that could affect rendering */
+}
+
+/* Force normal rendering state - but preserve images and their positioning */
+.driver-active-element,
+.driver-active-element *:not(img):not([class*="Image"]),
+[id^="driver-highlighted-element-stage"] > *:not(img):not([class*="Image"]) {
+  mix-blend-mode: normal !important;
+  clip-path: none !important;
+  mask: none !important;
+  -webkit-mask: none !important;
+}
+
+/* Allow images to maintain their necessary transforms and positioning */
+.driver-active-element img,
+.driver-active-element [class*="Image"],
+[id^="driver-highlighted-element-stage"] img,
+[id^="driver-highlighted-element-stage"] [class*="Image"] {
+  /* Preserve image rendering - don't override anything */
+}
+
+/* Prevent scrolling when tour is active */
+body:has(.driver-overlay) {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+/* Also prevent scrolling on the main content area */
+body:has(.driver-overlay) #game-board,
+body:has(.driver-overlay) .overflow-auto,
+body:has(.driver-overlay) [data-scroll-container] {
+  overflow: hidden !important;
+}
+
+
+/* Ensure content is above effects */
+.driver-popover-title,
+.driver-popover-description,
+.driver-popover-footer {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .driver-popover {
+    max-width: 90vw !important;
+    margin: 16px !important;
+  }
+
+  .driver-popover-title {
+    font-size: 1.125rem !important;
+    padding: 12px 16px 8px !important;
+  }
+
+  .driver-popover-description {
+    font-size: 0.9375rem !important;
+    padding: 0 16px 12px !important;
+  }
+
+  .driver-popover-footer {
+    padding: 10px 12px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .driver-popover-navigation-btns {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .driver-popover-btn {
+    flex: 1 !important;
+    padding: 10px 12px !important;
+    font-size: 0.8125rem !important;
+  }
+}
+
+/* Animation for popover entrance */
+@keyframes driver-popover-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.driver-popover {
+  animation: driver-popover-fade-in 0.3s ease-out !important;
+}

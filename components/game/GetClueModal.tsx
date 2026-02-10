@@ -139,6 +139,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     addActIIClue,
     addFinalPhaseWhoClue,
     addFinalPhaseMotiveClue,
+    updateChecklistProgress,
     addFinalPhaseWhereClue,
     unlockedContent,
     chatHistory
@@ -149,6 +150,13 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
   const [selectedCategory, setSelectedCategory] = useState<FinalPhaseCategory>(null)
   const [error, setError] = useState<string | null>(null)
   const isMountedRef = useRef(isOpen)
+  
+  // Track tutorial progress when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      updateChecklistProgress('viewedHint', true)
+    }
+  }, [isOpen, updateChecklistProgress])
 
   // Ensure currentStage has a valid value
   const safeCurrentStage = currentStage || 'start'

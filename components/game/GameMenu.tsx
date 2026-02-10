@@ -14,7 +14,7 @@ interface GameMenuProps {
 export function GameMenu({ isOpen, onClose }: GameMenuProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
-  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, markGameAsCompleted, caseId } = useGameState()
+  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, markGameAsCompleted, caseId, resumeTutorial } = useGameState()
 
   if (!isOpen) return null
 
@@ -425,6 +425,29 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
               }}
             >
               Settings
+            </button>
+
+            <button
+              onClick={() => {
+                resumeTutorial()
+                onClose()
+              }}
+              className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
+              style={{
+                color: '#d4af37',
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+                backgroundColor: 'rgba(212, 175, 55, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+              }}
+            >
+              Replay Tutorial
             </button>
 
             <div 

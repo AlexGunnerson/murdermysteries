@@ -10,7 +10,7 @@ interface Document {
   onClick: () => void
 }
 
-interface DocumentStackProps {
+interface DocumentStackProps extends React.HTMLAttributes<HTMLDivElement> {
   documents: Document[]
   viewedDocuments?: Set<string>
   rotating?: number
@@ -18,7 +18,7 @@ interface DocumentStackProps {
   onOpenChange?: (open: boolean) => void
 }
 
-export function DocumentStack({ documents, viewedDocuments = new Set(), rotating = 0, isOpen: controlledIsOpen, onOpenChange }: DocumentStackProps) {
+export function DocumentStack({ documents, viewedDocuments = new Set(), rotating = 0, isOpen: controlledIsOpen, onOpenChange, ...props }: DocumentStackProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false)
   
   // Use controlled state if provided, otherwise use internal state
@@ -35,7 +35,7 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
   const unviewedCount = documents.filter(doc => !viewedDocuments.has(doc.id)).length
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" {...props}>
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Permanent+Marker&display=swap');
         

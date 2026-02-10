@@ -74,7 +74,7 @@ export function ChatInterfaceWithAttachments({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const router = useRouter()
 
-  const { addChatMessage, discoveredFacts, addDiscoveredFact, unlockedContent, sessionId, fetchGameState, markGameAsCompleted, isGameCompleted, caseId } = useGameState()
+  const { addChatMessage, discoveredFacts, addDiscoveredFact, unlockedContent, sessionId, fetchGameState, markGameAsCompleted, isGameCompleted, caseId, updateChecklistProgress } = useGameState()
   const chatHistory = useSuspectChatHistory(suspectId)
 
   // Load available items from game state
@@ -242,6 +242,12 @@ export function ChatInterfaceWithAttachments({
 
     const userMessage = inputMessage.trim()
     const messageAttachments = [...attachedItems]
+    
+    // Track tutorial progress
+    updateChecklistProgress('chattedWithSuspect', true)
+    if (messageAttachments.length > 0) {
+      updateChecklistProgress('submittedEvidence', true)
+    }
     
     setInputMessage('')
     setAttachedItems([])

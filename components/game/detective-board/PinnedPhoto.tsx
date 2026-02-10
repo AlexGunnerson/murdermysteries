@@ -11,9 +11,10 @@ interface PinnedPhotoProps {
   isRevealed?: boolean
   pushpinColor?: 'red' | 'black' | 'blue' | 'green'
   priority?: boolean
+  'data-tutorial-suspect'?: string
 }
 
-export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, isRevealed = true, pushpinColor = 'red', priority = false }: PinnedPhotoProps) {
+export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, isRevealed = true, pushpinColor = 'red', priority = false, 'data-tutorial-suspect': dataTutorialSuspect }: PinnedPhotoProps) {
   const pushpinColors = {
     red: 'radial-gradient(circle at 30% 30%, #ff6b6b, #cc4545)',
     black: 'radial-gradient(circle at 30% 30%, #4a4a4a, #1a1a1a)',
@@ -27,6 +28,7 @@ export function PinnedPhoto({ imageUrl, name, subtitle, onClick, rotating = 0, i
       style={{
         transform: `rotate(${rotating}deg)`,
       }}
+      data-tutorial-suspect={dataTutorialSuspect}
     >
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');

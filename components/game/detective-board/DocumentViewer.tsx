@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface DocumentViewerProps {
   documentName: string
@@ -13,6 +14,7 @@ interface DocumentViewerProps {
 }
 
 export function DocumentViewer({ documentName, images, onClose, initialIndex = 0, annotations }: DocumentViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [isZoomed, setIsZoomed] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -20,6 +22,11 @@ export function DocumentViewer({ documentName, images, onClose, initialIndex = 0
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
   
   // Check if current image has annotations (gala photos)
   const hasAnnotations = !!annotations

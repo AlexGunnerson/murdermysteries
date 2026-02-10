@@ -78,6 +78,7 @@ export function QuickNoteButton() {
     <>
       {/* Quick Note Button */}
       <button
+        data-tour-quick-note
         onClick={(e) => {
           e.stopPropagation()
           setIsModalOpen(true)

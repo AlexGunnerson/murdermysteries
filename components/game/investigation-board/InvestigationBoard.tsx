@@ -78,13 +78,18 @@ function InvestigationBoardContent({
   victim,
 }: InvestigationBoardContentProps) {
   const reactFlowInstance = useReactFlow()
-  const { unlockedContent } = useGameState()
+  const { unlockedContent, updateChecklistProgress } = useGameState()
   const {
     loadState,
     saveState,
     applyStoredPositions,
     getStoredEdges,
   } = useInvestigationBoardStore(caseId)
+  
+  // Track tutorial progress when board loads
+  useEffect(() => {
+    updateChecklistProgress('viewedInvestigationBoard', true)
+  }, [updateChecklistProgress])
   
   // Board state (mode removed - always in select/interact mode)
   const [nodes, setNodes, onNodesChangeBase] = useNodesState([] as Node[])
@@ -741,6 +746,7 @@ function InvestigationBoardContent({
       }
       
       setNodes(prev => [...prev, newNote])
+      updateChecklistProgress('madeNote', true)
       return
     }
     

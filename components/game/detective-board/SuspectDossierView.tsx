@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Search, Lock } from "lucide-react"
 import Image from "next/image"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { ChatInterfaceWithAttachments } from "../ChatInterfaceWithAttachments"
 import { useGameState } from "@/lib/hooks/useGameState"
 
@@ -43,8 +43,13 @@ export function SuspectDossierView({
   onUnlocksQueued,
   onActIIComplete
 }: SuspectDossierViewProps) {
-  const { unlockedContent } = useGameState()
+  const { unlockedContent, updateChecklistProgress } = useGameState()
   const queuedUnlocksRef = useRef<UnlockData[]>([])
+  
+  // Track that user viewed a suspect dossier
+  useEffect(() => {
+    updateChecklistProgress('viewedSuspect', true)
+  }, [updateChecklistProgress])
   
   // Check if this is the victim (deceased - cannot be questioned)
   const isVictim = suspect.id.startsWith('victim_')
