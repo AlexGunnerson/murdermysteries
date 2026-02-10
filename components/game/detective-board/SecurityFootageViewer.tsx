@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, ChevronLeft, ChevronRight, Camera } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface SecurityFootageViewerProps {
   images: string[]
@@ -10,8 +11,14 @@ interface SecurityFootageViewerProps {
 }
 
 export function SecurityFootageViewer({ images, onClose }: SecurityFootageViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const [currentIndex, setCurrentIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
 
   // Auto-focus the container for keyboard navigation
   useEffect(() => {

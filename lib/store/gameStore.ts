@@ -51,8 +51,6 @@ export interface ChecklistProgress {
   viewedScene: boolean
   madeNote: boolean
   viewedInvestigationBoard: boolean
-  submittedEvidence: boolean
-  viewedHint: boolean
 }
 
 export interface GameState {
@@ -180,8 +178,6 @@ const initialState = {
     viewedScene: false,
     madeNote: false,
     viewedInvestigationBoard: false,
-    submittedEvidence: false,
-    viewedHint: false,
   },
   isLoading: false,
   isSyncing: false,
@@ -648,12 +644,19 @@ export const useGameStore = create<GameState>()(
         },
 
         updateChecklistProgress: (item: keyof ChecklistProgress, completed: boolean) => {
-          set((state) => ({
-            checklistProgress: {
+          console.log('[GAME STORE] updateChecklistProgress called:', { item, completed })
+          set((state) => {
+            console.log('[GAME STORE] Current checklist progress:', state.checklistProgress)
+            const newProgress = {
               ...state.checklistProgress,
               [item]: completed,
-            },
-          }))
+            }
+            console.log('[GAME STORE] New checklist progress:', newProgress)
+            return {
+              checklistProgress: newProgress,
+            }
+          })
+          console.log('[GAME STORE] Progress update complete')
         },
 
         setLoading: (loading: boolean) => {

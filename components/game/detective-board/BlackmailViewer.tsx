@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X, ArrowLeft } from "lucide-react"
 import { DocumentHTMLViewer } from "./DocumentHTMLViewer"
 import { MartinBlackmailPage1, MartinBlackmailPage2, MartinBlackmailPage3 } from "../documents/MartinBlackmailDocs"
 import { ColinBlackmailPage1, ColinBlackmailPage2 } from "../documents/ColinBlackmailDocs"
 import { LydiaBlackmailPage1, LydiaBlackmailPage2, LydiaBlackmailPage3 } from "../documents/LydiaBlackmailDocs"
 import { ValeBlackmailPage1, ValeBlackmailPage2, ValeBlackmailPage3, ValeBlackmailPage4, ValeBlackmailPage5 } from "../documents/ValeBlackmailDocs"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface BlackmailViewerProps {
   onClose: () => void
@@ -24,7 +25,13 @@ interface SuspectDocs {
 }
 
 export function BlackmailViewer({ onClose, suspectId, onSuspectClick }: BlackmailViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const [selectedSuspect, setSelectedSuspect] = useState<string | null>(suspectId || null)
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
 
   const suspects: SuspectDocs[] = [
     {

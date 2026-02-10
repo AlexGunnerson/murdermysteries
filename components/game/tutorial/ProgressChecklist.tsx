@@ -2,29 +2,22 @@
 
 import { useState, useMemo } from 'react'
 import { useGameState } from '@/lib/hooks/useGameState'
-import { X, ChevronUp, ChevronDown, RotateCcw } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 
 const checklistItems = [
   { key: 'viewedObjective' as const, label: 'Viewed Objective' },
-  { key: 'viewedSuspect' as const, label: 'Met the Suspects' },
+  { key: 'viewedSuspect' as const, label: 'Review Suspect Dossier' },
   { key: 'chattedWithSuspect' as const, label: 'Chatted with a Suspect' },
   { key: 'viewedDocument' as const, label: 'Reviewed Documents' },
   { key: 'viewedScene' as const, label: 'Reviewed Scenes' },
   { key: 'madeNote' as const, label: 'Made a Note' },
   { key: 'viewedInvestigationBoard' as const, label: 'Viewed Investigation Board' },
-  { key: 'submittedEvidence' as const, label: 'Submitted Evidence' },
-  { key: 'viewedHint' as const, label: 'Used a Hint' },
 ]
 
 export default function ProgressChecklist() {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [isDismissed, setIsDismissed] = useState(false)
   const {
     checklistProgress,
-    tutorialCompleted,
-    tutorialStarted,
-    tutorialDismissedAt,
-    resumeTutorial,
   } = useGameState()
 
   // Calculate progress percentage
@@ -38,13 +31,10 @@ export default function ProgressChecklist() {
   // Check if all items are complete
   const allComplete = progress === 100
 
-  // Hide widget if dismissed or all complete
-  if (isDismissed || allComplete) {
+  // Hide widget if all complete
+  if (allComplete) {
     return null
   }
-
-  // Show "Resume Tour" button if tutorial was dismissed but not completed
-  const canResumeTour = tutorialDismissedAt && !tutorialCompleted && !tutorialStarted
 
   return (
     <div className="fixed bottom-6 right-6 z-40">
@@ -122,22 +112,13 @@ export default function ProgressChecklist() {
                 Case Progress
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsExpanded(false)}
-                className="p-1 hover:bg-[#d4af37]/10 rounded-sm transition-colors text-[#c5a065]"
-                aria-label="Collapse checklist"
-              >
-                <ChevronDown className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setIsDismissed(true)}
-                className="p-1 hover:bg-[#d4af37]/10 rounded-sm transition-colors text-[#c5a065]"
-                aria-label="Close checklist"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="p-1 hover:bg-[#d4af37]/10 rounded-sm transition-colors text-[#c5a065]"
+              aria-label="Collapse checklist"
+            >
+              <ChevronDown className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Progress bar */}
@@ -219,31 +200,6 @@ export default function ProgressChecklist() {
               })}
             </ul>
           </div>
-
-          {/* Resume Tour button */}
-          {canResumeTour && (
-            <div 
-              className="px-4 py-3 bg-[#121212] border-t"
-              style={{
-                borderImage: 'linear-gradient(to right, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.2)) 1',
-              }}
-            >
-              <button
-                onClick={() => {
-                  resumeTutorial()
-                  setIsExpanded(false)
-                }}
-                className="w-full bg-[#d4af37] hover:bg-[#c5a065] text-[#1a1a1a] font-semibold py-2 px-4 rounded-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wider"
-                style={{ 
-                  fontFamily: "'Courier Prime', monospace",
-                  boxShadow: '0 0 20px rgba(212, 175, 55, 0.3)',
-                }}
-              >
-                <RotateCcw className="w-4 h-4" />
-                Resume Briefing
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>

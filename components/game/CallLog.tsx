@@ -1,12 +1,21 @@
 "use client"
 
+import { useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface CallLogProps {
   onClose: () => void
 }
 
 export function CallLog({ onClose }: CallLogProps) {
+  const { updateChecklistProgress } = useGameState()
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
+
   return (
     <div 
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"

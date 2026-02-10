@@ -52,9 +52,11 @@ export default function OnboardingTour() {
         driverObj.moveNext()
       },
       onPrevClick: (element, step, options) => {
-        const currentIndex = step.popover?.currentStep ?? 0
-        setTutorialStep(Math.max(0, currentIndex - 1))
-        driverObj.movePrevious()
+        const currentIndex = options.state.activeIndex ?? 0
+        if (currentIndex > 0) {
+          setTutorialStep(currentIndex - 1)
+          driverObj.movePrevious()
+        }
       },
       onCloseClick: () => {
         dismissTutorial()

@@ -8,7 +8,7 @@ import { useInvestigationBoardStore } from './investigation-board/useInvestigati
 
 export function QuickNoteButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { caseId } = useGameState()
+  const { caseId, updateChecklistProgress } = useGameState()
   const caseIdFromPath = (() => {
     if (typeof window === 'undefined') return null
     const match = window.location.pathname.match(/\/game\/([^/]+)/)
@@ -32,8 +32,9 @@ export function QuickNoteButton() {
   }
 
   const handleSaveNote = (content: string) => {
+    console.log('[QUICK NOTE] Starting handleSaveNote')
     if (!effectiveCaseId) {
-      console.error('No caseId available')
+      console.error('[QUICK NOTE] No caseId available')
       return
     }
 
@@ -43,6 +44,7 @@ export function QuickNoteButton() {
     
     // Create new note node
     const noteId = `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    console.log('[QUICK NOTE] Created note with ID:', noteId)
     
     const newNote = {
       id: noteId,
@@ -67,11 +69,19 @@ export function QuickNoteButton() {
       updatedEdges as any,
       viewport
     )
+    console.log('[QUICK NOTE] Saved note to board store')
 
-    // Dispatch custom event to notify Investigation Board
+    // Track progress immediately when note is created
+    console.log('[QUICK NOTE] Updating checklist progress for madeNote')
+    updateChecklistProgress('madeNote', true)
+    console.log('[QUICK NOTE] Checklist progress updated')
+
+    // Dispatch custom event to notify Investigation Board (if it's open)
+    console.log('[QUICK NOTE] Dispatching quickNoteAdded event')
     window.dispatchEvent(new CustomEvent('quickNoteAdded', { 
       detail: { noteId, caseId: effectiveCaseId } 
     }))
+    console.log('[QUICK NOTE] Event dispatched successfully')
   }
 
   return (

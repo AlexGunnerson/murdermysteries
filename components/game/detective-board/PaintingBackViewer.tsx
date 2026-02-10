@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import Image from "next/image"
 import { ArrowLeft, FileText } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface PaintingBackViewerProps {
   imagePath: string
@@ -11,7 +12,13 @@ interface PaintingBackViewerProps {
 }
 
 export function PaintingBackViewer({ imagePath, onClose, onOpenBlackmail }: PaintingBackViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
 
   // Auto-focus the container for keyboard navigation
   useEffect(() => {

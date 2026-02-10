@@ -257,23 +257,24 @@ function InvestigationBoardContent({
   // Listen for external note additions (from QuickNote button)
   useEffect(() => {
     const handleQuickNoteAdded = (e?: Event) => {
-      console.log('=== QUICK NOTE ADDED EVENT RECEIVED ===')
-      console.log('Event detail:', e ? (e as CustomEvent).detail : 'N/A')
-      console.log('isInitialized:', isInitialized)
-      console.log('Current nodes count:', nodes.length)
+      console.log('[INVESTIGATION BOARD] === QUICK NOTE ADDED EVENT RECEIVED ===')
+      console.log('[INVESTIGATION BOARD] Event detail:', e ? (e as CustomEvent).detail : 'N/A')
+      console.log('[INVESTIGATION BOARD] isInitialized:', isInitialized)
+      console.log('[INVESTIGATION BOARD] Current nodes count:', nodes.length)
+      console.log('[INVESTIGATION BOARD] updateChecklistProgress function:', typeof updateChecklistProgress)
       
       if (!isInitialized) {
-        console.log('Board not initialized yet, skipping')
+        console.log('[INVESTIGATION BOARD] Board not initialized yet, skipping')
         return
       }
       
       // Reload notes from storage
       const storedState = loadState()
-      console.log('Loaded state:', storedState)
-      console.log('Stored nodes:', storedState?.nodes?.length || 0)
+      console.log('[INVESTIGATION BOARD] Loaded state:', storedState)
+      console.log('[INVESTIGATION BOARD] Stored nodes:', storedState?.nodes?.length || 0)
       
       const existingNodeIds = new Set(nodes.map(n => n.id))
-      console.log('Existing node IDs:', Array.from(existingNodeIds))
+      console.log('[INVESTIGATION BOARD] Existing node IDs:', Array.from(existingNodeIds))
       
       // Find new notes that don't exist yet
       const newNotes = storedState?.nodes
@@ -294,20 +295,24 @@ function InvestigationBoardContent({
           },
         })) || []
       
-      console.log('New notes to add:', newNotes.length)
-      console.log('New notes:', newNotes)
+      console.log('[INVESTIGATION BOARD] New notes to add:', newNotes.length)
+      console.log('[INVESTIGATION BOARD] New notes:', newNotes)
       
       if (newNotes.length > 0) {
-        console.log('Adding notes to board...')
+        console.log('[INVESTIGATION BOARD] Adding notes to board...')
         setNodes(prev => {
           const updated = [...prev, ...newNotes]
-          console.log('Updated nodes count:', updated.length)
+          console.log('[INVESTIGATION BOARD] Updated nodes count:', updated.length)
           return updated
         })
+        // Track tutorial progress when note is created via quick note button
+        console.log('[INVESTIGATION BOARD] Calling updateChecklistProgress with madeNote=true')
+        updateChecklistProgress('madeNote', true)
+        console.log('[INVESTIGATION BOARD] updateChecklistProgress called successfully')
       } else {
-        console.log('No new notes to add')
+        console.log('[INVESTIGATION BOARD] No new notes to add')
       }
-      console.log('=== END EVENT HANDLER ===')
+      console.log('[INVESTIGATION BOARD] === END EVENT HANDLER ===')
     }
     
     const handleStorageChange = (e: StorageEvent) => {
@@ -324,7 +329,7 @@ function InvestigationBoardContent({
       window.removeEventListener('quickNoteAdded', handleQuickNoteAdded)
       window.removeEventListener('storage', handleStorageChange)
     }
-  }, [caseId, isInitialized, nodes, loadState, handleUpdateNote, handleDeleteNote, handleColorChange, setNodes])
+  }, [caseId, isInitialized, nodes, loadState, handleUpdateNote, handleDeleteNote, handleColorChange, setNodes, updateChecklistProgress])
   
   // Check for new notes when board becomes initialized
   useEffect(() => {

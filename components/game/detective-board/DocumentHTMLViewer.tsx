@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface DocumentPage {
   label: string
@@ -15,8 +16,14 @@ interface DocumentHTMLViewerProps {
 }
 
 export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTMLViewerProps) {
+  const { updateChecklistProgress } = useGameState()
   const [currentIndex, setCurrentIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
 
   // Auto-focus the container for keyboard navigation
   useEffect(() => {

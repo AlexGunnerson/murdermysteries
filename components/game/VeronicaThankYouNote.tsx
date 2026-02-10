@@ -1,14 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
+import { useGameState } from "@/lib/hooks/useGameState"
 
 interface VeronicaThankYouNoteProps {
   onClose: () => void
 }
 
 export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
+  const { updateChecklistProgress } = useGameState()
   const [isFlipped, setIsFlipped] = useState(false)
+
+  // Track tutorial progress when document is viewed
+  useEffect(() => {
+    updateChecklistProgress('viewedDocument', true)
+  }, [updateChecklistProgress])
 
   return (
     <div 

@@ -4,10 +4,10 @@ import { useGameState } from '@/lib/hooks/useGameState'
 import { Compass, X } from 'lucide-react'
 
 export default function TourPromptModal() {
-  const { startTutorial, skipTutorial, tutorialStarted, tutorialCompleted } = useGameState()
+  const { startTutorial, skipTutorial, tutorialStarted, tutorialCompleted, tutorialDismissedAt } = useGameState()
 
-  // Don't show if tutorial already started or completed
-  if (tutorialStarted || tutorialCompleted) {
+  // Don't show if tutorial already started, completed, or dismissed
+  if (tutorialStarted || tutorialCompleted || tutorialDismissedAt) {
     return null
   }
 

@@ -63,20 +63,20 @@ export const tourSteps: DriveStep[] = [
     },
   },
   {
-    popover: {
-      title: 'MAKE THEM TALK',
-      description: 'When you\'re questioning suspects, show them what you\'ve got. Attach documents and photos to back up your accusations. That\'s how you break them.',
-      side: 'top',
-      align: 'center',
-    },
-  },
-  {
     element: '[data-tour-hint]',
     popover: {
       title: 'NEED A LEAD?',
       description: 'Sometimes you hit a dead end. Click here when the trail goes cold and you need a nudge in the right direction.',
       side: 'bottom',
       align: 'end',
+    },
+  },
+  {
+    popover: {
+      title: 'MAKE THEM TALK',
+      description: 'When you\'re questioning suspects, show them what you\'ve got. Attach documents and photos to back up your accusations. That\'s how you break them.',
+      side: 'top',
+      align: 'center',
     },
   },
 ]
