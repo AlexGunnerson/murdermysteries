@@ -21,15 +21,24 @@ export function QuickNoteButton() {
   const boardStore = useInvestigationBoardStore(effectiveCaseId)
 
   const getTopRightPosition = (storedState: any) => {
-    const margin = 40
     const noteWidth = 180
     const noteHeight = 120
     
-    // Simple fixed position in top-right area of board
-    // React Flow coordinates: 0,0 is top-left of the canvas
-    // Top-right would be around x: 1200-1400, y: 100-200
-    const x = 1200
-    const y = 100
+    // Base position in top-right area of board
+    const baseX = 1200
+    const baseY = 100
+    
+    // Stagger offset for each additional note (like a pile of sticky notes)
+    const staggerX = 24
+    const staggerY = 20
+    
+    // Count existing note nodes to offset the new one
+    const existingNoteCount = (storedState?.nodes || []).filter(
+      (n: any) => n?.id?.startsWith('note_')
+    ).length
+    
+    const x = baseX + existingNoteCount * staggerX
+    const y = baseY + existingNoteCount * staggerY
 
     return { x, y, width: noteWidth, height: noteHeight }
   }
