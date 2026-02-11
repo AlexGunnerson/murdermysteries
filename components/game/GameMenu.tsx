@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { X } from "lucide-react"
 import { useGameState } from "@/lib/hooks/useGameState"
+import { HowToPlayModal } from "./HowToPlayModal"
 
 interface GameMenuProps {
   isOpen: boolean
@@ -14,7 +15,9 @@ interface GameMenuProps {
 export function GameMenu({ isOpen, onClose }: GameMenuProps) {
   const router = useRouter()
   const [showConfirm, setShowConfirm] = useState(false)
-  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, markGameAsCompleted, caseId, resumeTutorial } = useGameState()
+  const [showRestartConfirm, setShowRestartConfirm] = useState(false)
+  const [showHowToPlay, setShowHowToPlay] = useState(false)
+  const { resetGame, unlockSuspect, unlockScene, unlockRecord, setCurrentStage, markGameAsCompleted, caseId } = useGameState()
 
   if (!isOpen) return null
 
@@ -24,6 +27,16 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
 
   const confirmExit = () => {
     router.push("/")
+    onClose()
+  }
+
+  const handleRestartCase = () => {
+    setShowRestartConfirm(true)
+  }
+
+  const confirmRestart = () => {
+    handleResetToGameStart()
+    setShowRestartConfirm(false)
     onClose()
   }
 
@@ -48,8 +61,14 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
         throw new Error(errorData.error || 'Failed to reset game state')
       }
 
+      // Clear localStorage to ensure persisted state is removed
+      localStorage.removeItem('murder-mystery-game-storage')
+      
       // Reset local state
       resetGame()
+      
+      // Small delay to ensure localStorage is cleared before reload
+      await new Promise(resolve => setTimeout(resolve, 100))
       
       // Reload page to fetch fresh state
       window.location.reload()
@@ -428,10 +447,7 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
             </button>
 
             <button
-              onClick={() => {
-                resumeTutorial()
-                onClose()
-              }}
+              onClick={() => setShowHowToPlay(true)}
               className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
               style={{
                 color: '#d4af37',
@@ -447,7 +463,67 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
                 e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
               }}
             >
-              Replay Tutorial
+              How To Play
+            </button>
+
+            <button
+              onClick={handleExitCase}
+              className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
+              style={{
+                color: '#d4af37',
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+                backgroundColor: 'rgba(212, 175, 55, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+              }}
+            >
+              Exit Case
+            </button>
+
+            <button
+              onClick={handleSignOut}
+              className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
+              style={{
+                color: '#ef4444',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                backgroundColor: 'rgba(239, 68, 68, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+              }}
+            >
+              Sign Out
+            </button>
+
+            <button
+              onClick={handleRestartCase}
+              className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
+              style={{
+                color: '#ef4444',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                backgroundColor: 'rgba(239, 68, 68, 0.05)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+              }}
+            >
+              Restart Case
             </button>
 
             <div 
@@ -555,77 +631,36 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
                 </button>
               </div>
             </div>
-
-            <div 
-              className="pt-4 mt-4"
-              style={{ borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}
-            >
-              <button
-                onClick={handleExitCase}
-                className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide mb-2"
-                style={{
-                  color: '#d4af37',
-                  border: '1px solid rgba(212, 175, 55, 0.2)',
-                  backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                }}
-              >
-                Exit Case
-              </button>
-
-              <button
-                onClick={handleSignOut}
-                className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
-                style={{
-                  color: '#ef4444',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.15)'
-                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.05)'
-                  e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
-                }}
-              >
-                Sign Out
-              </button>
-            </div>
           </div>
 
           {/* Footer */}
           <div 
-            className="p-6 border-t text-xs"
+            className="p-6 border-t"
             style={{
-              borderColor: 'rgba(212, 175, 55, 0.2)',
-              color: 'rgba(212, 175, 55, 0.5)'
+              borderColor: 'rgba(212, 175, 55, 0.2)'
             }}
           >
-            <p className="font-mono">MurderMysteries.AI v0.1</p>
             <button
               onClick={() => {
                 // TODO: Implement feedback form
                 console.log("Open feedback")
                 onClose()
               }}
-              className="mt-2 transition-colors"
+              className="px-4 py-2.5 text-sm font-semibold tracking-wide transition-colors rounded-sm"
               style={{
-                color: '#d4af37'
+                color: '#d4af37',
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+                backgroundColor: 'rgba(212, 175, 55, 0.05)'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = '#f4d478'
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color = '#d4af37'
+                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
               }}
             >
               Send Feedback
@@ -724,6 +759,105 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
           </div>
         </>
       )}
+
+      {/* Restart Case Confirmation Dialog */}
+      {showRestartConfirm && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black/90 z-[150] flex items-center justify-center p-4"
+            onClick={() => setShowRestartConfirm(false)}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`
+            }}
+          >
+            <div 
+              className="bg-[#1a1a1a] rounded-sm p-6 max-w-md w-full relative"
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                boxShadow: `
+                  0 20px 60px rgba(0, 0, 0, 0.9),
+                  0 0 40px rgba(239, 68, 68, 0.15),
+                  inset 0 0 1px rgba(239, 68, 68, 0.3)
+                `
+              }}
+            >
+            {/* Film grain overlay */}
+            <div 
+              className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-35 rounded-sm z-[5]"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                backgroundSize: '120px 120px',
+              }}
+            />
+            
+            <div className="relative z-[20]">
+              <h3 
+                className="text-xl font-bold mb-4 tracking-wider uppercase"
+                style={{
+                  color: '#ef4444',
+                  textShadow: '0 0 8px rgba(239, 68, 68, 0.3)'
+                }}
+              >
+                Restart Case?
+              </h3>
+              <p 
+                className="mb-6"
+                style={{ color: 'rgba(239, 68, 68, 0.8)' }}
+              >
+                <strong>Warning:</strong> This will erase all your progress and reset the case to the beginning. This action cannot be undone.
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={confirmRestart}
+                  className="flex-1 px-4 py-2 rounded-sm transition-all font-semibold tracking-wide"
+                  style={{
+                    color: '#ef4444',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)'
+                    e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)'
+                  }}
+                >
+                  Restart Case
+                </button>
+                <button
+                  onClick={() => setShowRestartConfirm(false)}
+                  className="flex-1 px-4 py-2 rounded-sm transition-all font-semibold tracking-wide"
+                  style={{
+                    color: '#d4af37',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* How To Play Modal */}
+      <HowToPlayModal 
+        isOpen={showHowToPlay} 
+        onClose={() => setShowHowToPlay(false)} 
+      />
     </>
   )
 }

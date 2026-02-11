@@ -227,13 +227,14 @@
   display: block !important;
   position: relative !important;
   max-width: 420px !important;
+  overflow: visible !important;
 }
 
-/* Add an invisible pseudo-element to extend the bounding box downward */
+/* Add an invisible pseudo-element to extend the bounding box downward so the full clipboard is visible */
 [data-tour-documents].driver-active-element::after {
   content: '' !important;
   display: block !important;
-  height: 80px !important;
+  height: 110px !important;
   width: 100% !important;
   pointer-events: none !important;
 }

@@ -269,7 +269,7 @@ export function VeronicaLetter({ onBeginInvestigation, isFirstView = true }: Ver
                 <p>
                   Your name was the first mentioned when I asked for the finest investigator 
                   in the field, and I pray your skills are as sharp as they say. The countryside is awash with news of 
-                  Reginald&apos;s death. The constable calls it a &quot;misfortune&quot; — a drunken 
+                  Reginald&apos;s death. The constable calls it a &quot;misfortune&quot; - a drunken 
                   slip of the foot. <span className="font-bold" style={{ color: '#202020' }}>
                   I call it impossible.</span>
                 </p>

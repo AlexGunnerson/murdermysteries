@@ -72,7 +72,7 @@ export const ValeNotesPage1 = () => (
     <div className="entry">
       <div className="entry-date">07 Apr 1986</div>
       <div className="entry-text">
-        V.A. — Stress headaches are back. Typical society hostess tension. Adjusted the meds. Needs more rest than he'll ever get.
+        V.A. — Stress headaches are back. Typical society hostess tension. Adjusted the meds. Needs more rest than she'll ever get.
       </div>
     </div>
 
@@ -80,7 +80,7 @@ export const ValeNotesPage1 = () => (
     <div className="entry">
       <div className="entry-date">05 Mar 1986</div>
       <div className="entry-text">
-        V.A. — Quick check on her. Feeling quite well, sleeping fine. No complaints. Good to see him taking better care of himself.
+        V.A. — Quick check on her. Feeling quite well, sleeping fine. No complaints. Good to see her taking better care of herself.
       </div>
     </div>
 

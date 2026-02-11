@@ -218,7 +218,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     // For Act I, use static clues
     if (isActI) {
       if (availableNewActIClues.length === 0) {
-        setError('No more clues available')
+        setError('No more hints available')
         return
       }
       
@@ -236,7 +236,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     }
 
     if (availableNewActIIClues.length === 0) {
-      setError('No more clues available for your current progress')
+      setError('No more hints available for your current progress')
       return
     }
 
@@ -438,7 +438,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                   </>
                 ) : (
                   <>
-                    {/* Regular Phase: Single Get Clue Button */}
+                    {/* Regular Phase: Single Get Hint Button */}
                     <div className="flex justify-center mb-5">
                       <button
                         onClick={handleGetClue}
@@ -451,7 +451,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                         style={{ fontFamily: "'Courier Prime', monospace" }}
                       >
                         <Lightbulb className="w-5 h-5" />
-                        {isLoading ? 'Thinking...' : 'Get Clue'}
+                        {isLoading ? 'Thinking...' : 'Get Hint'}
                       </button>
                     </div>
 
@@ -469,7 +469,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
               </>
             ) : (
               <>
-                {/* Clue Header */}
+                {/* Hint Header */}
                 <div className="flex items-center gap-3 mb-5">
                   <Lightbulb className="w-5 h-5 text-[#d4af37]" />
                   <span 
@@ -479,13 +479,13 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                     {selectedCategory ? (
                       selectedCategory === 'who' ? 'Who Did It?' :
                       selectedCategory === 'motive' ? 'Motive' :
-                      selectedCategory === 'where' ? 'Where' : 'Clue'
-                    ) : 'Clue'}
+                      selectedCategory === 'where' ? 'Where' : 'Hint'
+                    ) : 'Hint'}
                   </span>
                   <div className="flex-1 h-px bg-[#d4af37]/20"></div>
                 </div>
 
-                {/* Clue Text */}
+                {/* Hint Text */}
                 <div className="mb-6 p-5 bg-black/20 border-l-2 border-[#d4af37]/30">
                   <p 
                     className="text-[#e8e4da]/90 text-lg leading-relaxed"
@@ -510,9 +510,9 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                     <div></div>
                   )}
                   
-                  {/* Next or New Clue Button */}
+                  {/* Next or New Hint Button */}
                   {isOnLastViewedClue ? (
-                    /* New Clue Button - shown when on last viewed clue */
+                    /* New Hint Button - shown when on last viewed clue */
                     <button
                       onClick={handleNewClue}
                       disabled={
@@ -532,7 +532,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                       className="px-5 py-2 text-base uppercase tracking-wider transition-colors duration-200 border border-[#d4af37]/30 hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 text-[#d4af37]/80 hover:text-[#d4af37] disabled:opacity-40 disabled:cursor-not-allowed"
                       style={{ fontFamily: "'Courier Prime', monospace" }}
                     >
-                      New Clue
+                      New Hint
                     </button>
                   ) : (
                     /* Next Button - shown when not on last viewed clue */

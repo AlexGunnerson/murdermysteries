@@ -10,7 +10,7 @@ const checklistItems = [
   { key: 'viewedDocument' as const, label: 'Review Documents' },
   { key: 'viewedScene' as const, label: 'Investigate a Scene' },
   { key: 'madeNote' as const, label: 'Make a Note' },
-  { key: 'viewedInvestigationBoard' as const, label: 'Viewed Investigation Board' },
+  { key: 'viewedInvestigationBoard' as const, label: 'View Investigation Board' },
 ]
 
 export default function ProgressChecklist() {
@@ -42,7 +42,7 @@ export default function ProgressChecklist() {
         <button
           onClick={() => setIsExpanded(true)}
           className="relative w-16 h-16 rounded-full bg-[#1a1a1a] shadow-2xl hover:bg-[#2a2520] transition-all border-2 border-[#d4af37]/30 backdrop-blur-sm"
-          aria-label="Open progress checklist"
+          aria-label="Open getting started checklist"
           style={{
             boxShadow: '0 0 20px rgba(212, 175, 55, 0.2), inset 0 0 10px rgba(212, 175, 55, 0.05)',
           }}
@@ -74,7 +74,7 @@ export default function ProgressChecklist() {
             />
           </svg>
           
-          {/* Percentage text */}
+          {/* Fraction text */}
           <span 
             className="relative text-[#d4af37] text-sm font-bold" 
             style={{ 
@@ -82,7 +82,7 @@ export default function ProgressChecklist() {
               textShadow: '0 0 8px rgba(212, 175, 55, 0.5)' 
             }}
           >
-            {progress}%
+            {checklistItems.filter((item) => checklistProgress[item.key]).length}/{checklistItems.length}
           </span>
         </button>
       ) : (
@@ -108,7 +108,7 @@ export default function ProgressChecklist() {
                   textShadow: '0 0 12px rgba(212, 175, 55, 0.3)',
                 }}
               >
-                Case Progress
+                Getting Started
               </span>
             </div>
             <button
@@ -135,10 +135,7 @@ export default function ProgressChecklist() {
                   textShadow: '0 0 8px rgba(212, 175, 55, 0.2)',
                 }}
               >
-                {progress}% Complete
-              </span>
-              <span className="text-xs text-[#c5a065]" style={{ fontFamily: "'Courier Prime', monospace" }}>
-                {checklistItems.filter((item) => checklistProgress[item.key]).length} / {checklistItems.length}
+                {checklistItems.filter((item) => checklistProgress[item.key]).length}/{checklistItems.length}
               </span>
             </div>
             <div className="w-full bg-[#2a2520] rounded-full h-2 overflow-hidden">

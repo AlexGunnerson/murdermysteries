@@ -57,7 +57,7 @@ export function DocumentHTMLViewer({ documentName, pages, onClose }: DocumentHTM
       tabIndex={0}
     >
       <div 
-        className="w-full max-w-4xl h-full pt-2 pb-8 overflow-y-auto"
+        className="w-full max-w-4xl h-full pt-2 pb-8"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="max-w-[900px] mx-auto mt-2 mb-8" onClick={(e) => e.stopPropagation()}>

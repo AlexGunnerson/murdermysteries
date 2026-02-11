@@ -464,10 +464,10 @@ export function BoardHeader({
         <button 
           className="btn-clue" 
           onClick={onGetClue}
-          title="Get Clue"
-          data-tour-hint
+title="Get Hint"
+        data-tour-hint
         >
-          Get Clue
+          Get Hint
         </button>
 
         <button 

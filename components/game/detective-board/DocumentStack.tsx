@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import Image from "next/image"
 
 interface Document {
@@ -30,9 +31,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
       setInternalIsOpen(open)
     }
   }
-  
-  // Calculate number of unviewed documents
-  const unviewedCount = documents.filter(doc => !viewedDocuments.has(doc.id)).length
 
   return (
     <div className="relative inline-block" {...props}>
@@ -71,41 +69,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
           z-index: -1;
         }
         
-        /* Notification Badge positioned on clipboard */
-        .clipboard-notification-badge {
-          position: absolute;
-          top: 50px;
-          left: 50%;
-          --tx: 85px;
-          transform: translateX(var(--tx));
-          background: #8b1d1d;
-          color: #f4e8d8;
-          border-radius: 50%;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Courier Prime', monospace;
-          font-weight: 700;
-          font-size: 1.1rem;
-          box-shadow: 0 0 10px rgba(139, 29, 29, 0.4),
-                      0 2px 4px rgba(0,0,0,0.5),
-                      inset 0 0 4px rgba(0,0,0,0.3);
-          animation: pulse-notification 2.5s infinite ease-in-out;
-          z-index: 10;
-        }
-
-        @keyframes pulse-notification {
-          0%, 100% { 
-            opacity: 1;
-            transform: translateX(var(--tx)) scale(1);
-          }
-          50% { 
-            opacity: 0.7;
-            transform: translateX(var(--tx)) scale(0.9);
-          }
-        }
         
         .paper-count {
           font-family: 'Permanent Marker', cursive;
@@ -227,16 +190,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
             height: 420px;
             top: -55px;
           }
-          
-          .clipboard-notification-badge {
-            top: 40px;
-            left: 50%;
-            --tx: 70px;
-            transform: translateX(var(--tx));
-            width: 28px;
-            height: 28px;
-            font-size: 0.95rem;
-          }
         }
       `}</style>
 
@@ -246,13 +199,6 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
         onClick={() => setIsOpen(true)}
         style={{ transform: `rotate(${rotating}deg)`, position: 'relative' }}
       >
-        {/* Notification Badge for Unviewed Documents - positioned on clipboard */}
-        {unviewedCount > 0 && (
-          <div className="clipboard-notification-badge">
-            {unviewedCount}
-          </div>
-        )}
-        
         {/* Clipboard Image */}
         <div className="clipboard-container">
           <Image
@@ -271,7 +217,7 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
       </div>
 
       {/* Document Selection Menu */}
-      {isOpen && (
+      {isOpen && typeof document !== 'undefined' && createPortal(
         <>
           <div className="menu-backdrop" onClick={() => setIsOpen(false)} />
           <div className="document-menu" onClick={(e) => e.stopPropagation()}>
@@ -302,7 +248,8 @@ export function DocumentStack({ documents, viewedDocuments = new Set(), rotating
               })}
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   )

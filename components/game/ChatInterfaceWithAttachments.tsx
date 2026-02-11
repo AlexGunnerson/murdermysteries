@@ -785,7 +785,7 @@ export function ChatInterfaceWithAttachments({
                           className={`relative aspect-square rounded border overflow-hidden transition-all ${
                             attachedItems.some(i => i.id === item.id)
                               ? 'border-[#d4af37] opacity-50 cursor-not-allowed'
-                              : 'border-gray-700 hover:border-[#d4af37]/50'
+                              : 'border-gray-700 hover:border-[#d4af37]/50 hover:opacity-80'
                           }`}
                         >
                           {item.thumbnailUrl && (
@@ -797,9 +797,6 @@ export function ChatInterfaceWithAttachments({
                               sizes="100px"
                             />
                           )}
-                          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                            <ImageIcon className="h-6 w-6 text-white" />
-                          </div>
                         </button>
                       ))}
                     </div>

@@ -260,14 +260,14 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
                 <p>To the Inquiry Agent,</p>
 
                 <p>
-                  Thank you. I cannot express what it means to have my suspicions confirmed. You were right—Reginald 
+                  Thank you. I cannot express what it means to have my suspicions confirmed. You were right, Reginald 
                   didn&apos;t simply fall. Someone <span className="font-bold" style={{ color: '#202020' }}>staged</span> his 
                   death to look like an accident.
                 </p>
 
                 <p>
-                  The thought turns my blood to ice. One of them-someone who called themselves 
-                  family—murdered my husband with such calculated cruelty.
+                  The thought turns my blood to ice. One of them, someone who called themselves 
+                  family, murdered my husband with such calculated cruelty.
                 </p>
 
                 <p>
@@ -280,7 +280,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
                 </p>
 
                 <p>
-                  I made a choice in that moment. I gathered them up and hid them away—deliberately. The 
+                  I made a choice in that moment. I gathered them up and hid them away, deliberately. The 
                   official ruling was an accident. As long as everyone believed it was just a tragic fall, I saw no reason 
                   to expose these secrets and destroy the reputations of people who might well be innocent.
                 </p>

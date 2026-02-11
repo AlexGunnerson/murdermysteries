@@ -40,7 +40,6 @@ import { LoadingModal } from "./LoadingModal"
 import { TheoryResultModal } from "./detective-board/TheoryResultModal"
 import OnboardingTour from "./tutorial/OnboardingTour"
 import ProgressChecklist from "./tutorial/ProgressChecklist"
-import TourPromptModal from "./tutorial/TourPromptModal"
 
 interface Suspect {
   id: string
@@ -95,7 +94,7 @@ interface DetectiveNotebookProps {
 
 export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookProps) {
   const router = useRouter()
-  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, hasSeenBlackmailCommentary, markBlackmailCommentaryAsSeen, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId, isGameCompleted } = useGameState()
+  const { discoveredFacts, theoryHistory, chatHistory, unlockedContent, revealedContent, markLetterAsRead, hasReadVeronicaLetter, hasSeenBlackmailCommentary, markBlackmailCommentaryAsSeen, revealSuspect, revealScene, addDiscoveredFact, viewedDocuments, markDocumentAsViewed, currentStage, sessionId, fetchGameState, caseId, isGameCompleted, startTutorial, tutorialStarted, tutorialCompleted, tutorialDismissedAt } = useGameState()
   const [showLetterNotification, setShowLetterNotification] = useState(false)
   const [showVeronicaLetter, setShowVeronicaLetter] = useState(false)
   const [showThankYouNoteNotification, setShowThankYouNoteNotification] = useState(false)
@@ -149,6 +148,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
   const [footageUnlocked, setFootageUnlocked] = useState(false)
   const [showLoadingModal, setShowLoadingModal] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState("Loading...")
+  const [zoomLevel, setZoomLevel] = useState(100) // Zoom percentage (100 = 100%)
 
   // Navigation stack for context-aware returns
   type ViewerContext = {
@@ -291,10 +291,53 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
     }
   }, [hasReadVeronicaLetter, loading])
 
+  // Auto-start onboarding tour when player has read Veronica's letter (mandatory, 1.5s delay after letter closes)
+  useEffect(() => {
+    if (
+      hasReadVeronicaLetter &&
+      !tutorialStarted &&
+      !tutorialCompleted &&
+      !tutorialDismissedAt &&
+      !loading
+    ) {
+      const timer = setTimeout(() => {
+        startTutorial()
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [hasReadVeronicaLetter, tutorialStarted, tutorialCompleted, tutorialDismissedAt, loading, startTutorial])
+
   // Debug: Monitor showThankYouNoteNotification state
   useEffect(() => {
     console.log('[THANK-YOU-NOTE-NOTIFICATION] State changed:', showThankYouNoteNotification)
   }, [showThankYouNoteNotification])
+
+  // Zoom keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Command (Mac) or Ctrl (Windows/Linux)
+      const isModifierPressed = e.metaKey || e.ctrlKey
+      
+      if (isModifierPressed) {
+        if (e.key === '=' || e.key === '+') {
+          // Zoom in
+          e.preventDefault()
+          setZoomLevel(prev => Math.min(prev + 10, 150)) // Max 150%
+        } else if (e.key === '-' || e.key === '_') {
+          // Zoom out
+          e.preventDefault()
+          setZoomLevel(prev => Math.max(prev - 10, 50)) // Min 50%
+        } else if (e.key === '0') {
+          // Reset zoom
+          e.preventDefault()
+          setZoomLevel(100)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // Preload security footage when study scene is opened
   useEffect(() => {
@@ -504,7 +547,12 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
           backgroundRepeat: 'repeat'
         }}
       >
-        <div className="max-w-7xl mx-auto">
+        <div 
+          className="max-w-7xl mx-auto transition-transform duration-200 origin-top"
+          style={{
+            transform: `scale(${zoomLevel / 100})`,
+          }}
+        >
         {/* Objective Banner */}
         <div 
           data-tour-objective
@@ -544,7 +592,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
             ) : (
               <>
                 Veronica Ashcombe believes her husband&apos;s death was <span className="font-bold text-red-700">not an accident</span>. 
-                Your task is to investigate and provide <span className="font-bold text-blue-800">evidence or develop a theory</span> that 
+                Your task is to investigate and provide <span className="font-bold text-blue-800">evidence</span> that 
                 supports her suspicion of foul play.
               </>
             )}
@@ -1555,7 +1603,7 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
         </>
       )}
 
-      {/* Get Clue Modal */}
+      {/* Get Hint Modal */}
       <GetClueModal
         isOpen={showClueModal}
         onClose={() => setShowClueModal(false)}
@@ -1572,9 +1620,30 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
       )}
 
       {/* Tour Components */}
-      {hasReadVeronicaLetter && <TourPromptModal />}
       <OnboardingTour />
       <ProgressChecklist />
+
+      {/* Zoom Indicator */}
+      {zoomLevel !== 100 && (
+        <div 
+          className="fixed bottom-6 right-6 z-50 bg-black/80 text-[#d4af37] px-4 py-2 rounded-sm border border-[#d4af37]/40 shadow-lg"
+          style={{
+            fontFamily: "'Courier Prime', monospace",
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold">Zoom: {zoomLevel}%</span>
+            <button
+              onClick={() => setZoomLevel(100)}
+              className="text-xs px-2 py-1 bg-[#d4af37]/20 hover:bg-[#d4af37]/30 rounded-sm transition-colors"
+              title="Reset zoom (Cmd/Ctrl + 0)"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
