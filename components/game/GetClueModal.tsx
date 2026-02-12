@@ -13,7 +13,7 @@ interface GetClueModalProps {
 
 // Static clues for Act I
 const ACT_I_CLUES = [
-  "Review each of the documents carefully — what are the facts? Do any of the photos contradict these 'facts'?",
+  "Review each of the documents carefully, what are the facts? Do any of the photos contradict these 'facts'?",
   "A man's habits are recorded somewhere. Do his final moments match those habits?",
   "The family physician keeps detailed records. What do those records say about Reginald's health?"
 ]
@@ -149,6 +149,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
   const [viewMode, setViewMode] = useState<'viewing' | 'initial'>('initial')
   const [selectedCategory, setSelectedCategory] = useState<FinalPhaseCategory>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showConfirmation, setShowConfirmation] = useState(false)
   const isMountedRef = useRef(isOpen)
   
   // Track tutorial progress when modal opens
@@ -321,6 +322,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     // Reset state when closing (but keep viewed clues in store)
     setSelectedCategory(null)
     setError(null)
+    setShowConfirmation(false)
     onClose()
   }
 
@@ -332,12 +334,38 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     setCurrentClueIndex(prev => Math.min(currentViewedClues.length - 1, prev + 1))
   }
 
+  // Calculate remaining hints
+  const getRemainingHints = (): number => {
+    if (inFinalPhase && selectedCategory) {
+      switch (selectedCategory) {
+        case 'who': return FINAL_PHASE_WHO_CLUES.filter(c => !finalPhaseWhoViewedClues.includes(c)).length
+        case 'motive': return FINAL_PHASE_MOTIVE_CLUES.filter(c => !finalPhaseMotiveViewedClues.includes(c)).length
+        case 'where': return FINAL_PHASE_WHERE_CLUES.filter(c => !finalPhaseWhereViewedClues.includes(c)).length
+        default: return 0
+      }
+    } else if (isActI) {
+      return availableNewActIClues.length
+    } else {
+      return availableNewActIIClues.length
+    }
+  }
+
   const handleNewClue = () => {
+    // Show confirmation dialog instead of immediately revealing
+    setShowConfirmation(true)
+  }
+
+  const handleConfirmNewClue = () => {
+    setShowConfirmation(false)
     if (inFinalPhase && selectedCategory) {
       handleFinalPhaseClue(selectedCategory)
     } else {
       handleGetClue()
     }
+  }
+
+  const handleCancelNewClue = () => {
+    setShowConfirmation(false)
   }
 
   // Check if we're on the last viewed clue
@@ -550,6 +578,65 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmation && (
+        <div 
+          className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={handleCancelNewClue}
+        >
+          <div 
+            className="relative w-full max-w-md mx-auto rounded-sm overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.8)',
+              border: '1px solid rgba(212, 175, 55, 0.15)',
+            }}
+          >
+            <div className="bg-[#1a1a1a] p-8">
+              {/* Title */}
+              <h3 
+                className="text-xl uppercase tracking-wider text-[#d4af37] mb-4 text-center"
+                style={{ fontFamily: "'Courier Prime', monospace" }}
+              >
+                Reveal Another Hint?
+              </h3>
+
+              {/* Message */}
+              <p 
+                className="text-[#e8e4da]/80 text-base leading-relaxed mb-6 text-center"
+                style={{ fontFamily: "'Courier Prime', monospace" }}
+              >
+                {getRemainingHints() > 1 
+                  ? `You've got ${getRemainingHints()} hints left for this ${inFinalPhase ? 'category' : 'phase'}. Reveal another?`
+                  : getRemainingHints() === 1
+                  ? `This is your last hint for this ${inFinalPhase ? 'category' : 'phase'}. Reveal it?`
+                  : 'No more hints available.'}
+              </p>
+
+              {/* Buttons */}
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={handleCancelNewClue}
+                  className="px-6 py-2 text-base uppercase tracking-wider transition-colors duration-200 border border-[#d4af37]/30 hover:border-[#d4af37]/50 hover:bg-[#d4af37]/5 text-[#d4af37]/80 hover:text-[#d4af37]"
+                  style={{ fontFamily: "'Courier Prime', monospace" }}
+                >
+                  Not Yet
+                </button>
+                {getRemainingHints() > 0 && (
+                  <button
+                    onClick={handleConfirmNewClue}
+                    className="px-6 py-2 text-base uppercase tracking-wider transition-colors duration-200 border border-[#d4af37]/50 bg-[#d4af37]/10 hover:bg-[#d4af37]/20 text-[#d4af37] hover:text-[#d4af37]"
+                    style={{ fontFamily: "'Courier Prime', monospace" }}
+                  >
+                    Reveal Hint
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

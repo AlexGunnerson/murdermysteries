@@ -55,10 +55,6 @@ export default function OnboardingTour() {
           driverObj.movePrevious()
         }
       },
-      onCloseClick: () => {
-        dismissTutorial()
-        driverObj.destroy()
-      },
       onDestroyed: (element, step, options) => {
         const currentIndex = step?.popover?.currentStep ?? 0
         const totalSteps = tourSteps.length

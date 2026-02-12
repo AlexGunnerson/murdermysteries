@@ -299,7 +299,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
             <div className="parchment parchment-back relative rounded-sm pt-[45px] px-[40px] pb-[70px]">
               <div className="ink-text">
                 <p>
-                  Reginald kept these records as leverage—as incentive for the inner circle to straighten out 
+                  Reginald kept these records as leverage, as incentive for the inner circle to straighten out 
                   their lives and mend their relationships with one another. Until they did, the papers served 
                   as blackmail, plain and simple. But Reginald&apos;s hope was always that they would improve, that 
                   they would become better people. He promised to burn the evidence when that day finally came.
@@ -312,7 +312,7 @@ export function VeronicaThankYouNote({ onClose }: VeronicaThankYouNoteProps) {
 
                 <p>
                   But now that you&apos;ve proven this was murder, everything changes. These papers are no longer 
-                  just shameful secrets—they are <span className="font-bold" style={{ color: '#202020' }}>evidence</span>. 
+                  just shameful secrets, they are <span className="font-bold" style={{ color: '#202020' }}>evidence</span>. 
                   One of these people had reason enough to kill him, and these documents may reveal why.
                 </p>
 

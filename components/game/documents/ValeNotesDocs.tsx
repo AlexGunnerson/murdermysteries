@@ -163,7 +163,7 @@ export const ValeNotesPage2 = () => (
     <div className="entry">
       <div className="entry-date">04 Nov 1985</div>
       <div className="entry-text">
-        R.A. — Tried that awful Bordeaux tonight. Immediate histamine flare—face like a tomato, head pounding 15 min. in. Told him to stick to the whites only, absolutely zero reds from now on. Fine by him, thankfully—said the estate's Sauvignon Blanc is better, anyway. Good, less fuss for me.
+        R.A. — Tried that awful Bordeaux tonight. Immediate histamine flare, face like a tomato, head pounding 15 min. in. Told him to stick to the whites only, absolutely zero reds from now on. Fine by him, thankfully, said the estate's Sauvignon Blanc is better, anyway. Good, less fuss for me.
       </div>
     </div>
 

@@ -168,36 +168,9 @@
   background: rgba(212, 175, 55, 0.05) !important;
 }
 
-/* Close button */
+/* Close button - Hidden to force users to complete the onboarding */
 .driver-popover-close-btn {
-  position: absolute !important;
-  top: 12px !important;
-  right: 12px !important;
-  background: rgba(212, 175, 55, 0.1) !important;
-  color: #c5a065 !important;
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 2px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  transition: all 0.2s !important;
-  border: 1px solid rgba(212, 175, 55, 0.2) !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  z-index: 10 !important;
-}
-
-.driver-popover-close-btn:hover {
-  background: rgba(212, 175, 55, 0.2) !important;
-  border-color: rgba(212, 175, 55, 0.4) !important;
-  color: #d4af37 !important;
-}
-
-.driver-popover-close-btn svg {
-  width: 16px !important;
-  height: 16px !important;
+  display: none !important;
 }
 
 /* Overlay - Completely transparent, darkness comes from stage shadow */

@@ -32,7 +32,7 @@ export const ColinBlackmailPage1 = () => (
 
     <div className="leading-relaxed text-justify space-y-4">
       <p>
-        A museum-quality example of Victorian craftsmanship, circa 1880s. The ring features an extraordinary 8-carat natural Burma sapphire of exceptional cornflower blue coloration with remarkable clarity—stones of this caliber and provenance are exceedingly rare. Surrounded by twenty-four old-cut diamonds totaling approximately 4 carats. Set in platinum with elaborate filigree work and hand-engraved details characteristic of the finest period jewelers.
+        A museum-quality example of Victorian craftsmanship, circa 1880s. The ring features an extraordinary 8-carat natural Burma sapphire of exceptional cornflower blue coloration with remarkable clarity, stones of this caliber and provenance are exceedingly rare. Surrounded by twenty-four old-cut diamonds totaling approximately 4 carats. Set in platinum with elaborate filigree work and hand-engraved details characteristic of the finest period jewelers.
       </p>
 
       <p>
@@ -64,23 +64,23 @@ export const ColinBlackmailPage2 = () => (
     <p className="font-bold mb-4">Reginald's Note:</p>
     <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
       <p>
-        My mother's ring. The one piece of her I treasured above all else. Colin — my trusted estate manager, my right hand for thirty years — tried to sell it at auction like some common trinket.
+        My mother's ring. The one piece of her I treasured above all else. Colin, my trusted estate manager, my right hand for ten years, tried to sell it at auction like some common trinket.
       </p>
 
       <p>
-        Charles was browsing Marshall & Hayes' preview catalog and recognized it immediately. "E.A. 1887" — Elizabeth Ashcombe, my grandmother's name and the year she married. He telephoned me straightaway, furious on my behalf.
+        Charles was browsing Marshall & Hayes' preview catalog and recognized it immediately. "E.A. 1887", Elizabeth Ashcombe, my grandmother's name and the year she married. He telephoned me straightaway, furious on my behalf.
       </p>
 
       <p>
-        I confronted Colin before the auction could proceed. He claimed "desperate circumstances," gambling debts he'd hidden from me. Desperation doesn't excuse theft. Desperation doesn't excuse betraying three decades of trust.
+        I confronted Colin before the auction could proceed. He claimed "desperate circumstances," gambling debts he'd hidden from me. Desperation doesn't excuse theft. Desperation doesn't excuse betraying a decade of trust.
       </p>
 
       <p>
-        I've kept him on because dismissing him would raise too many questions about why. But my trust is shattered. He manages my affairs, handles my accounts, has keys to everything — and this is how he repays loyalty?
+        I've kept him on because dismissing him would raise too many questions about why. But my trust is shattered. He manages my affairs, handles my accounts, has keys to everything, and this is how he repays loyalty?
       </p>
 
       <p>
-        He knows I know. That knowledge keeps him in line, for now. But a man who would steal his employer's most precious heirloom — what else is he capable of when cornered?
+        He knows I know. That knowledge keeps him in line, for now. But a man who would steal his employer's most precious heirloom, what else is he capable of when cornered?
       </p>
 
       <p className="mt-4">— R.A., June 1963</p>

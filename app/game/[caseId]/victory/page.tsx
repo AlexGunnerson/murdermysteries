@@ -301,13 +301,13 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                     Years ago, I made a mistake. I needed money desperately, and I... I tried to sell Dorothy Ashcombe&apos;s ring. The most precious family heirloom. Reginald&apos;s grandmother&apos;s ring. I thought I could do it quietly, that no one would ever know. But Reginald found out. He kept proof as black his safe.
                   </p>
                   <p>
-                    After he discovered Lydia&apos;s embezzlement, Reginald changed. He stopped trusting anyone. He started managing the major donors personally, keeping their confidential files in that safe. Every gala night, like clockwork, he&apos;d review those files before greeting the VIPs—leaving the safe unlocked, accessible. I knew the pattern. I knew I&apos;d have my chance.
+                    After he discovered Lydia&apos;s embezzlement, Reginald changed. He stopped trusting anyone. He started managing the major donors personally, keeping their confidential files in that safe. Every gala night, like clockwork, he&apos;d review those files before greeting the VIPs, leaving the safe unlocked, accessible. I knew the pattern. I knew I&apos;d have my chance.
                   </p>
                   <p>
-                    During the gala presentation, I went to the study. I had to swap that page. I couldn&apos;t simply remove it—others in the family knew Reginald kept something on me, though not what it was. Removing it entirely would be too suspicious. But if I replaced it with something less damaging—Uncle Charles&apos;s pocket watch instead of Dorothy&apos;s ring—no one would know the difference. Reginald wasn&apos;t actively reviewing the files, and after his death, the truth would remain buried.
+                    During the gala presentation, I went to the study. I had to swap that page. I couldn&apos;t simply remove it, others in the family knew Reginald kept something on me, though not what it was. Removing it entirely would be too suspicious. But if I replaced it with something less damaging, Uncle Charles&apos;s pocket watch instead of Dorothy&apos;s ring, no one would know the difference. Reginald wasn&apos;t actively reviewing the files, and after his death, the truth would remain buried.
                   </p>
                   <p>
-                    But Reginald... he walked in. He caught me at the safe. We argued. He was furious—said I&apos;d betrayed the family&apos;s trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I&apos;ll never forget that sound.
+                    But Reginald... he walked in. He caught me at the safe. We argued. He was furious, said I&apos;d betrayed the family&apos;s trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I&apos;ll never forget that sound.
                   </p>
                   <p>
                     I panicked. I checked for a pulse, but he was gone. I couldn&apos;t think straight. I staged it at the staircase to look like an accident. The wine glass, the positioning... I thought if it looked like he&apos;d slipped after drinking, no one would ask questions. I even took Dr. Vale&apos;s blackmail page to create a false lead.
@@ -343,15 +343,15 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#d4af37] mt-1 text-lg">•</span>
-                      <span><strong className="text-[#d4af37]">Study Struggle Evidence:</strong> The displaced rug, Reginald&apos;s pocket square on the floor, and the open safe revealed a confrontation took place in the study—not at the staircase where the body was found.</span>
+                      <span><strong className="text-[#d4af37]">Study Struggle Evidence:</strong> The displaced rug, Reginald&apos;s pocket square on the floor, and the open safe revealed a confrontation took place in the study, not at the staircase where the body was found.</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#d4af37] mt-1 text-lg">•</span>
-                      <span><strong className="text-[#d4af37]">Colin&apos;s Blackmail - Near Body:</strong> A fake blackmail page showing Uncle Charles&apos;s pocket watch—the less damaging evidence Colin tried to swap in to protect his reputation.</span>
+                      <span><strong className="text-[#d4af37]">Colin&apos;s Blackmail - Near Body:</strong> A fake blackmail page showing Uncle Charles&apos;s pocket watch, the less damaging evidence Colin tried to swap in to protect his reputation.</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="text-[#d4af37] mt-1 text-lg">•</span>
-                      <span><strong className="text-[#d4af37]">Colin&apos;s Blackmail - Behind Painting:</strong> The real blackmail page found hidden behind Elizabeth&apos;s painting revealed Colin&apos;s attempt to sell Dorothy Ashcombe&apos;s ring—the beloved family heirloom and the true motive for the confrontation.</span>
+                      <span><strong className="text-[#d4af37]">Colin&apos;s Blackmail - Behind Painting:</strong> The real blackmail page found hidden behind Elizabeth&apos;s painting revealed Colin&apos;s attempt to sell Dorothy Ashcombe&apos;s ring, the beloved family heirloom and the true motive for the confrontation.</span>
                     </li>
                   </ul>
                 </div>

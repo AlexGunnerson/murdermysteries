@@ -1,0 +1,30 @@
+---
+description: Writing style preferences for narrative content
+alwaysApply: true
+---
+
+# Writing Style Preferences
+
+## Punctuation: Avoid Em-Dashes
+
+Use commas instead of em-dashes (—) in narrative text.
+
+### Examples
+
+```
+❌ BAD: "He was furious—said I'd betrayed the family's trust"
+✅ GOOD: "He was furious, said I'd betrayed the family's trust"
+
+❌ BAD: "This is theft—from scholarships for deserving students"
+✅ GOOD: "This is theft, from scholarships for deserving students"
+
+❌ BAD: "Colin—my trusted estate manager—tried to sell it"
+✅ GOOD: "Colin, my trusted estate manager, tried to sell it"
+```
+
+### Exceptions
+
+Em-dashes are acceptable for:
+- **Signatures and attributions**: "— R.A." or "— Veronica Ashcombe"
+- **Formal document headers**: "ANALYSIS — Q1 1963"
+- **Medical notation styles**: "R.A. — 9:10 PM" (professional formatting convention)

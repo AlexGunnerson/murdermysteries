@@ -66,19 +66,19 @@ export const ColinBlackmailScenePage2 = () => (
     <p className="font-bold mb-4">Reginald's Note:</p>
     <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "var(--font-covered-by-your-grace)", fontSize: '18px' }}>
       <p>
-        Uncle Thomas's old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes — Charles spotted it in their catalog and rang me up.
+        Uncle Thomas's old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes, Charles spotted it in their catalog and rang me up.
       </p>
 
       <p>
-        When I asked Colin about it, he admitted to gambling debts. Said he thought I wouldn't miss it since it was broken anyway. I suppose he's not entirely wrong — it's been sitting in a drawer for years. Still, it wasn't his to take.
+        When I asked Colin about it, he admitted to gambling debts. Said he thought I wouldn't miss it since it was broken anyway. I suppose he's not entirely wrong, it's been sitting in a drawer for years. Still, it wasn't his to take.
       </p>
 
       <p>
-        The watch itself? Not particularly important. But the principle troubles me. Thirty years working together, and he couldn't simply ask if he needed money. Instead he goes behind my back for what amounts to pocket change.
+        The watch itself? Not particularly important. But the principle troubles me. Ten years working together, and he couldn't simply ask if he needed money. Instead he goes behind my back for what amounts to pocket change.
       </p>
 
       <p>
-        It reveals a desperation I hadn't seen in him before. A man who steals £150 from his employer is either very desperate or very foolish. I suspect Colin is the former. I've decided to keep him on — he's competent at his work, and replacing him would be a headache. But I'll be watching more carefully now.
+        It reveals a desperation I hadn't seen in him before. A man who steals £150 from his employer is either very desperate or very foolish. I suspect Colin is the former. I've decided to keep him on, he's competent at his work, and replacing him would be a headache. But I'll be watching more carefully now.
       </p>
 
       <p className="mt-4">— R.A., June 1963</p>

@@ -752,7 +752,7 @@ function InvestigationBoardContent({
         bio: 'Patriarch of the Ashcombe Estate and host of the annual charity gala. Found dead at the bottom of the grand staircase on the night of May 10th, 1986. The official ruling was accidental death, but his widow suspects murder.',
         portraitUrl: '/cases/case01/images/portraits/reginald.jpg',
         avatarUrl: '/cases/case01/images/portraits/reginald.jpg',
-        veronicaNote: 'My husband. A man of high standards and unwavering principles. He believed in accountability and legacy above all else. His death was no accident—I know it in my bones.',
+        veronicaNote: 'My husband. A man of high standards and unwavering principles. He believed in accountability and legacy above all else. His death was no accident, I know it in my bones.',
         age: 0,
       })
       return

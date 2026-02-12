@@ -514,7 +514,7 @@ export const useGameStore = create<GameState>()(
               },
               {
                 id: `fact_letter_${Date.now()}_3`,
-                content: "The official ruling by the constable is that the death was an accident—a slip after too much wine and celebration.",
+                content: "The official ruling by the constable is that the death was an accident, a slip after too much wine and celebration.",
                 source: 'record',
                 sourceId: 'veronica_letter',
                 discoveredAt: new Date(),

@@ -137,15 +137,15 @@ export const LydiaBlackmailPage3 = () => (
       </p>
 
       <p>
-        I've reviewed the receipt — her signature, her acknowledgment of fifty thousand pounds. Yet somehow only ten thousand makes it into the official records. Where did the other forty thousand go? Into the Foundation's accounts, or into Lydia's?
+        I've reviewed the receipt, her signature, her acknowledgment of fifty thousand pounds. Yet somehow only ten thousand makes it into the official records. Where did the other forty thousand go? Into the Foundation's accounts, or into Lydia's?
       </p>
 
       <p>
-        This is not a clerical error. This is theft. Theft from a charity, no less — from scholarships for deserving students, from preservation of our cultural heritage. All while Lydia presents herself as the paragon of philanthropic virtue at every gala and fundraising event.
+        This is not a clerical error. This is theft. Theft from a charity, no less, from scholarships for deserving students, from preservation of our cultural heritage. All while Lydia presents herself as the paragon of philanthropic virtue at every gala and fundraising event.
       </p>
 
       <p>
-        How many other donations has she underreported? How long has this been happening? The Foundation's reputation — my family's reputation — built on fraud.
+        How many other donations has she underreported? How long has this been happening? The Foundation's reputation, my family's reputation, built on fraud.
       </p>
 
       <p>

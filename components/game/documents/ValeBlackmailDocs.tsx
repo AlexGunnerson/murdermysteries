@@ -220,15 +220,15 @@ export const ValeBlackmailPage5 = () => (
       </p>
 
       <p>
-        Vale bills us for 450 doses of "wellness tonics" — the pharmacy confirms only 165 were actually dispensed to our staff. The same pattern repeats across every category. He's billing us for nearly triple what the staff actually receives.
+        Vale bills us for 450 doses of "wellness tonics", the pharmacy confirms only 165 were actually dispensed to our staff. The same pattern repeats across every category. He's billing us for nearly triple what the staff actually receives.
       </p>
 
       <p>
-        Where are these extra medications going? The prescriptions all share the same authorization code (VMP-1963-A) — three different patients, three different dates, identical codes. No legitimate doctor would reuse authorization codes like this. These are falsified.
+        Where are these extra medications going? The prescriptions all share the same authorization code (VMP-1963-A), three different patients, three different dates, identical codes. No legitimate doctor would reuse authorization codes like this. These are falsified.
       </p>
 
       <p>
-        Vale has been exploiting my staff — people who trust him for their health — and using the estate as cover for what amounts to drug trafficking. The staff believe they're receiving proper medical care. They have no idea their prescriptions are fraudulent, or that Vale is profiting from their dependence while selling the excess to his wealthy private clients.
+        Vale has been exploiting my staff, people who trust him for their health, and using the estate as cover for what amounts to drug trafficking. The staff believe they're receiving proper medical care. They have no idea their prescriptions are fraudulent, or that Vale is profiting from their dependence while selling the excess to his wealthy private clients.
       </p>
 
       <p>
