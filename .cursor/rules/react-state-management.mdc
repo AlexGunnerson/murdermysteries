@@ -1,0 +1,143 @@
+# React & State Management Best Practices
+
+## useEffect Dependency Management
+
+### Problem: Component Re-creating Expensive Resources
+When using `useEffect` to initialize expensive resources (third-party libraries, drivers, etc.), be careful about dependency arrays causing unnecessary re-initialization.
+
+**Bad Example:**
+```typescript
+useEffect(() => {
+  const driver = initializeDriver({
+    onNext: () => {
+      setStep(step + 1) // Updates state
+    }
+  })
+  return () => driver.destroy()
+}, [step]) // ❌ Driver recreates every time step changes!
+```
+
+**Good Example:**
+```typescript
+const stepRef = useRef(0)
+
+useEffect(() => {
+  const driver = initializeDriver({
+    onNext: () => {
+      stepRef.current += 1 // Updates ref, no re-render
+      setStep(stepRef.current) // Optional: update state without recreating driver
+    }
+  })
+  return () => driver.destroy()
+}, []) // ✅ Driver only created once
+```
+
+### Key Lessons:
+1. **Use refs for values that shouldn't trigger re-renders** - especially when callbacks need to read/update state without causing the effect to re-run
+2. **Remove state variables from dependencies if they cause unwanted re-initialization**
+3. **Be cautious with function dependencies** - functions from stores (Zustand, etc.) may be stable, but always verify
+
+## Third-Party Library Integration
+
+### Problem: Unreliable API Parameters
+Don't blindly trust third-party library callbacks to provide accurate state. Always verify in testing.
+
+**Example from driver.js bug:**
+```typescript
+// ❌ BAD: Trusting library parameter that was always 0
+onNextClick: (element, step) => {
+  const currentIndex = step.popover?.currentStep // Always returned 0!
+  if (currentIndex === lastStep) {
+    complete()
+  }
+}
+
+// ✅ GOOD: Track state yourself
+const stepRef = useRef(0)
+onNextClick: () => {
+  const currentIndex = stepRef.current
+  if (currentIndex === lastStep) {
+    complete()
+  }
+  stepRef.current += 1
+}
+```
+
+### Key Lessons:
+1. **Don't rely solely on library-provided state** - validate it works as expected
+2. **Use refs to track critical state** that needs to persist across renders
+3. **Test edge cases** - especially completion/final step logic
+
+## Zustand State Persistence
+
+### Problem: State Lost During Navigation
+When using Zustand with persistence, state can be lost if initialization logic doesn't preserve persisted values.
+
+**Bad Example:**
+```typescript
+initializeGame: async (caseId: string) => {
+  set({
+    caseId,
+    sessionId: data.session.id,
+    // ❌ Missing: tutorial state is reset!
+  })
+}
+```
+
+**Good Example:**
+```typescript
+initializeGame: async (caseId: string) => {
+  const currentState = get()
+  set({
+    caseId,
+    sessionId: data.session.id,
+    // ✅ Preserve tutorial state
+    tutorialCompleted: currentState.tutorialCompleted,
+    tutorialStarted: currentState.tutorialStarted,
+    tutorialStep: currentState.tutorialStep,
+  })
+}
+```
+
+### Key Lessons:
+1. **Always preserve UI-only state** (tutorials, onboarding, preferences) during reinitialization
+2. **Test navigation flows** - state should persist when navigating between pages
+3. **Document which state should persist** vs which should reset
+
+## Testing Navigation & State Persistence
+
+### Critical Test Cases:
+1. Complete a flow (e.g., tutorial) → Navigate away → Navigate back → Verify state persisted
+2. Refresh page → Verify persisted state loads correctly
+3. Initialize game multiple times → Verify state doesn't reset unexpectedly
+
+### Example Test Flow:
+```typescript
+// 1. Complete tutorial
+await completeTutorialSteps()
+expect(store.tutorialCompleted).toBe(true)
+
+// 2. Navigate to different page
+router.push('/investigation')
+await waitForNavigation()
+
+// 3. Navigate back
+router.push('/game')
+await waitForNavigation()
+
+// 4. Verify tutorial doesn't restart
+expect(store.tutorialCompleted).toBe(true)
+expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+```
+
+## Summary Checklist
+
+When implementing stateful features with third-party libraries:
+
+- [ ] Use refs for values that shouldn't trigger effect re-runs
+- [ ] Remove state from useEffect dependencies if it causes unwanted re-initialization
+- [ ] Don't trust third-party library parameters without verification
+- [ ] Preserve UI state during reinitialization (especially with Zustand)
+- [ ] Test navigation flows to ensure state persists
+- [ ] Test completion/edge cases thoroughly
+- [ ] Document what state should persist vs reset

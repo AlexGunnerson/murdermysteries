@@ -200,109 +200,140 @@ function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) 
         }}
       />
       
-      {/* Connection handles - invisible but functionally active */}
+      {/* Connection handles - optimized for better snap detection */}
+      {/* Top */}
       <Handle
         type="source"
         position={Position.Top}
         id="top-source"
-        className="!w-2 !h-2 !rounded-full"
         style={{ 
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
           opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
           border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 1
+          zIndex: 1,
+          transform: 'translate(-50%, -50%)'
         }}
       />
       <Handle
         type="target"
         position={Position.Top}
         id="top-target"
-        className="!w-8 !h-8 !rounded-full"
         style={{ 
+          width: '1px',
+          height: '1px',
+          borderRadius: '50%',
           opacity: 0,
-          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          backgroundColor: 'rgba(239, 68, 68, 1)',
           border: 'none',
-          pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 10
+          pointerEvents: 'auto',
+          zIndex: 10,
+          transform: 'translate(-50%, -50%)'
         }}
       />
+      
+      {/* Bottom */}
       <Handle
         type="source"
         position={Position.Bottom}
         id="bottom-source"
-        className="!w-2 !h-2 !rounded-full"
         style={{ 
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
           opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
           border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 1
+          zIndex: 1,
+          transform: 'translate(-50%, 50%)'
         }}
       />
       <Handle
         type="target"
         position={Position.Bottom}
         id="bottom-target"
-        className="!w-8 !h-8 !rounded-full"
         style={{ 
+          width: '1px',
+          height: '1px',
+          borderRadius: '50%',
           opacity: 0,
-          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          backgroundColor: 'rgba(239, 68, 68, 1)',
           border: 'none',
-          pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 10
+          pointerEvents: 'auto',
+          zIndex: 10,
+          transform: 'translate(-50%, 50%)'
         }}
       />
+      
+      {/* Left */}
       <Handle
         type="source"
         position={Position.Left}
         id="left-source"
-        className="!w-2 !h-2 !rounded-full"
         style={{ 
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
           opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
           border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 1
+          zIndex: 1,
+          transform: 'translate(-50%, -50%)'
         }}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="left-target"
-        className="!w-8 !h-8 !rounded-full"
         style={{ 
+          width: '1px',
+          height: '1px',
+          borderRadius: '50%',
           opacity: 0,
-          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          backgroundColor: 'rgba(239, 68, 68, 1)',
           border: 'none',
-          pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 10
+          pointerEvents: 'auto',
+          zIndex: 10,
+          transform: 'translate(-50%, -50%)'
         }}
       />
+      
+      {/* Right */}
       <Handle
         type="source"
         position={Position.Right}
         id="right-source"
-        className="!w-2 !h-2 !rounded-full"
         style={{ 
+          width: '20px',
+          height: '20px',
+          borderRadius: '50%',
           opacity: 0,
           backgroundColor: 'rgba(59, 130, 246, 0.5)',
           border: 'none',
           pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 1
+          zIndex: 1,
+          transform: 'translate(50%, -50%)'
         }}
       />
       <Handle
         type="target"
         position={Position.Right}
         id="right-target"
-        className="!w-8 !h-8 !rounded-full"
         style={{ 
+          width: '1px',
+          height: '1px',
+          borderRadius: '50%',
           opacity: 0,
-          backgroundColor: 'rgba(239, 68, 68, 0.5)',
+          backgroundColor: 'rgba(239, 68, 68, 1)',
           border: 'none',
-          pointerEvents: data.isConnecting ? 'none' : 'auto',
-          zIndex: 10
+          pointerEvents: 'auto',
+          zIndex: 10,
+          transform: 'translate(50%, -50%)'
         }}
       />
 

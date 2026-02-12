@@ -1087,6 +1087,7 @@ function InvestigationBoardContent({
         elevateEdgesOnSelect={true}
         edgesReconnectable={true}
         reconnectRadius={20}
+        connectionRadius={50}
         panOnDrag={[1, 2]}
         selectionOnDrag={true}
         selectNodesOnDrag={false}

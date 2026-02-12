@@ -10,6 +10,7 @@ import { tourConfig } from '@/lib/tour/tourConfig'
 
 export default function OnboardingTour() {
   const driverRef = useRef<Driver | null>(null)
+  const currentStepRef = useRef<number>(0) // Track current step with a ref
   const {
     tutorialStarted,
     tutorialStep,
@@ -25,13 +26,12 @@ export default function OnboardingTour() {
     if (tutorialCompleted || !tutorialStarted) {
       return
     }
-
     // Initialize driver.js
     const driverObj = driver({
       ...tourConfig,
       onNextClick: (element, step, options) => {
-        const currentIndex = step.popover?.currentStep ?? 0
-        setTutorialStep(currentIndex + 1)
+        const totalSteps = tourSteps.length
+        const currentIndex = currentStepRef.current
         
         // Update checklist progress based on step
         switch (currentIndex) {
@@ -46,21 +46,31 @@ export default function OnboardingTour() {
             break
         }
         
+        // If on the last step and clicking "Finish", complete the tutorial
+        if (currentIndex === totalSteps - 1) {
+          completeTutorial()
+        }
+        
+        // Increment the step counter AFTER checking for completion
+        currentStepRef.current = currentIndex + 1
+        setTutorialStep(currentIndex + 1)
+        
         driverObj.moveNext()
       },
       onPrevClick: (element, step, options) => {
-        const currentIndex = options.state.activeIndex ?? 0
+        const currentIndex = currentStepRef.current
         if (currentIndex > 0) {
+          currentStepRef.current = currentIndex - 1
           setTutorialStep(currentIndex - 1)
           driverObj.movePrevious()
         }
       },
       onDestroyed: (element, step, options) => {
-        const currentIndex = step?.popover?.currentStep ?? 0
         const totalSteps = tourSteps.length
+        const currentIndex = currentStepRef.current
         
         // If completed all steps, mark tutorial as complete
-        if (currentIndex === totalSteps - 1) {
+        if (currentIndex >= totalSteps) {
           completeTutorial()
         }
       },
@@ -68,18 +78,15 @@ export default function OnboardingTour() {
 
     driverRef.current = driverObj
 
+    // Reset step counter
+    currentStepRef.current = 0
+
     // Scroll to top instantly to ensure objective is in correct position
     window.scrollTo({ top: 0, behavior: 'auto' })
 
-    // Start the tour with steps
+    // Start the tour with steps from the beginning
     driverObj.setSteps(tourSteps)
-    
-    // Resume from saved step if applicable
-    if (tutorialStep > 0 && tutorialStep < tourSteps.length) {
-      driverObj.drive(tutorialStep)
-    } else {
-      driverObj.drive()
-    }
+    driverObj.drive()
 
     // Cleanup
     return () => {
@@ -90,7 +97,7 @@ export default function OnboardingTour() {
   }, [
     tutorialStarted,
     tutorialCompleted,
-    tutorialStep,
+    // Removed tutorialStep from dependencies to prevent driver from being recreated on each step
     setTutorialStep,
     completeTutorial,
     dismissTutorial,

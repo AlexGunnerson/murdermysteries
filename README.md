@@ -75,6 +75,12 @@ murdermysteries/
 
 See `tasks/tasks-prd-murdermysteries-v1.md` for the complete task list and implementation plan.
 
+## Development Documentation
+
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Best practices, patterns, and lessons learned
+- **[.cursor/rules/react-state-management.mdc](./.cursor/rules/react-state-management.mdc)** - React & Zustand guidelines for AI coding assistant
+- **[components/game/tutorial/ONBOARDING_IMPLEMENTATION.md](./components/game/tutorial/ONBOARDING_IMPLEMENTATION.md)** - Onboarding tour architecture and debugging guide
+
 ## License
 
 Private - All Rights Reserved

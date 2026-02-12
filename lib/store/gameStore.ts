@@ -190,6 +190,7 @@ export const useGameStore = create<GameState>()(
         initializeGame: async (caseId: string, forceReinitialize = false) => {
           // Check if we already have a session for this case
           const currentState = get()
+          
           if (!forceReinitialize && currentState.caseId === caseId && currentState.sessionId) {
             // Verify the session is still valid
             try {
@@ -231,6 +232,9 @@ export const useGameStore = create<GameState>()(
 
             const data = await response.json()
             
+            // Get current tutorial state before updating
+            const currentState = get()
+            
             // Set the state with the real database session ID
             set({
               caseId,
@@ -251,6 +255,12 @@ export const useGameStore = create<GameState>()(
               isCompleted: data.session.is_completed || false,
               isSolvedCorrectly: data.session.is_solved_correctly || null,
               isLoading: false,
+              // Preserve tutorial state
+              tutorialStarted: currentState.tutorialStarted,
+              tutorialCompleted: currentState.tutorialCompleted,
+              tutorialStep: currentState.tutorialStep,
+              tutorialDismissedAt: currentState.tutorialDismissedAt,
+              checklistProgress: currentState.checklistProgress,
             })
 
             // Load existing game state if session already exists
@@ -278,7 +288,7 @@ export const useGameStore = create<GameState>()(
             }
           } catch (error) {
             console.error('Error initializing game:', error)
-            // Get current revealed content before resetting
+            // Get current revealed content and tutorial state before resetting
             const currentState = get()
             
             // Fallback to local-only mode if API fails
@@ -298,6 +308,12 @@ export const useGameStore = create<GameState>()(
               isCompleted: false,
               isSolvedCorrectly: null,
               isLoading: false,
+              // Preserve tutorial state
+              tutorialStarted: currentState.tutorialStarted,
+              tutorialCompleted: currentState.tutorialCompleted,
+              tutorialStep: currentState.tutorialStep,
+              tutorialDismissedAt: currentState.tutorialDismissedAt,
+              checklistProgress: currentState.checklistProgress,
             })
           }
         },

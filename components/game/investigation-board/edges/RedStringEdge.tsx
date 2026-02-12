@@ -80,14 +80,14 @@ function RedStringEdge({
         <marker
           id={`arrow-${id}`}
           viewBox="0 0 10 10"
-          refX="3"
+          refX="8"
           refY="5"
           markerWidth="6"
           markerHeight="6"
           orient="auto"
         >
           <path
-            d="M 10 0 L 0 5 L 10 10 z"
+            d="M 0 0 L 10 5 L 0 10 z"
             fill={typeConfig.color}
             stroke="none"
           />
@@ -134,7 +134,7 @@ function RedStringEdge({
         style={{
           pointerEvents: 'none',
         }}
-        markerStart={`url(#arrow-${id})`}
+        markerEnd={`url(#arrow-${id})`}
       />
       
       {/* Highlight when selected */}
