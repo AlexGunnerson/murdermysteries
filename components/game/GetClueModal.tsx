@@ -13,9 +13,9 @@ interface GetClueModalProps {
 
 // Static clues for Act I
 const ACT_I_CLUES = [
-  "Review each of the documents carefully, what are the facts? Do any of the photos contradict these 'facts'?",
   "A man's habits are recorded somewhere. Do his final moments match those habits?",
-  "The family physician keeps detailed records. What do those records say about Reginald's health?"
+  "The family physician keeps detailed records. What do those records say about Reginald's health?",
+  "Red wine was found near Reginald's body, but Dr. Vale's medical notes state that Reginald cannot drink red wine. This suggests the death was staged. Show Veronica proof of this contradiction to progress the story."
 ]
 
 // Act II Clues by Phase

@@ -505,7 +505,20 @@ export const useGameStore = create<GameState>()(
         },
 
         resetGame: () => {
-          set(initialState)
+          // Reset to initial state, including checklist progress
+          const resetState = {
+            ...initialState,
+            // Explicitly reset checklist progress to ensure it's cleared
+            checklistProgress: {
+              viewedSuspect: false,
+              chattedWithSuspect: false,
+              viewedDocument: false,
+              viewedScene: false,
+              madeNote: false,
+              viewedInvestigationBoard: false,
+            },
+          }
+          set(resetState)
         },
 
         markLetterAsRead: () => {

@@ -18,7 +18,6 @@ export default function OnboardingTour() {
     setTutorialStep,
     completeTutorial,
     dismissTutorial,
-    updateChecklistProgress,
   } = useGameState()
 
   useEffect(() => {
@@ -32,19 +31,6 @@ export default function OnboardingTour() {
       onNextClick: (element, step, options) => {
         const totalSteps = tourSteps.length
         const currentIndex = currentStepRef.current
-        
-        // Update checklist progress based on step
-        switch (currentIndex) {
-          case 1:
-            updateChecklistProgress('viewedSuspect', true)
-            break
-          case 2:
-            updateChecklistProgress('viewedDocument', true)
-            break
-          case 3:
-            updateChecklistProgress('viewedScene', true)
-            break
-        }
         
         // If on the last step and clicking "Finish", complete the tutorial
         if (currentIndex === totalSteps - 1) {
@@ -101,7 +87,6 @@ export default function OnboardingTour() {
     setTutorialStep,
     completeTutorial,
     dismissTutorial,
-    updateChecklistProgress,
   ])
 
   // This component doesn't render anything visible

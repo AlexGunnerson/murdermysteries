@@ -182,6 +182,40 @@ if (shouldComplete) {
 **Root Cause:** Unreliable library parameters, logic in wrong callback
 **Solution:** Track state manually, implement redundant completion checks
 
+## Code Investigation & Change Verification
+
+### Always Trace Implementation First
+
+Before making changes based on assumptions, trace through the actual code implementation.
+
+**❌ DON'T:**
+```
+1. See config file with hints
+2. Assume hints are loaded from config
+3. Make changes to config file
+4. Changes don't work because hints are hardcoded elsewhere
+```
+
+**✅ DO:**
+```
+1. Search codebase for related functionality (Grep for "hint", "clue", etc.)
+2. Read relevant components to understand data flow
+3. Verify where active data is actually stored/pulled from
+4. Make changes to correct location
+```
+
+### Common Traps
+- **Configuration files** may be outdated or unused
+- **Documentation** may not reflect current implementation
+- **Database schemas** may have changed since initialization
+- **Component props** may be ignored in favor of hardcoded values
+
+### Verification Strategy
+1. **Search**: Use Grep/Glob to find where feature is actually implemented
+2. **Read**: Read the active code paths, not just config files
+3. **Trace**: Follow data flow from source to display
+4. **Verify**: Confirm your understanding before making changes
+
 ## Code Review Checklist
 
 When reviewing state-related code:
@@ -194,6 +228,13 @@ When reviewing state-related code:
 - [ ] Is there navigation testing for stateful features?
 - [ ] Are completion/edge cases handled?
 - [ ] Are debug logs removed?
+
+When making changes to existing features:
+
+- [ ] Have you traced the actual implementation path?
+- [ ] Have you verified where data is actually loaded from?
+- [ ] Have you checked if config/docs match current code?
+- [ ] Have you confirmed changes will affect the active code path?
 
 ## Resources
 

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { CheckCircle2, Home, RotateCcw } from 'lucide-react'
 import { useGameStore } from '@/lib/store/gameStore'
+import { useInvestigationBoardStore } from '@/components/game/investigation-board/useInvestigationBoardStore'
 
 export default function VictoryPage({ params }: { params: Promise<{ caseId: string }> }) {
   const { caseId } = use(params)
@@ -17,9 +18,12 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
     actIIViewedClues,
     finalPhaseWhoViewedClues,
     finalPhaseMotiveViewedClues,
-    finalPhaseWhereViewedClues
+    finalPhaseWhereViewedClues,
+    resetGame
   } = useGameStore()
+  const { clearState: clearBoardState } = useInvestigationBoardStore(caseId)
   const [isVisible, setIsVisible] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
   
   // Calculate total hints used
   const totalHintsUsed = 
@@ -45,8 +49,36 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
   }
 
   const handleReplayCase = async () => {
-    // TODO: Implement replay functionality - reset game session
-    router.push(`/game/${caseId}`)
+    if (isResetting) return
+    
+    try {
+      setIsResetting(true)
+      
+      // 1. Reset backend game session
+      const response = await fetch(`/api/game/state?caseId=${caseId}`, {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        console.error('Failed to reset game session on backend')
+        // Continue anyway to reset local state
+      }
+      
+      // 2. Clear investigation board state (notes, photos, connections)
+      clearBoardState()
+      
+      // 3. Reset game store to initial state
+      resetGame()
+      
+      // 4. Navigate to game start page
+      router.push(`/game/${caseId}`)
+    } catch (error) {
+      console.error('Error resetting game:', error)
+      // Still navigate even if there was an error
+      router.push(`/game/${caseId}`)
+    } finally {
+      setIsResetting(false)
+    }
   }
 
   if (!isGameCompleted) {
@@ -298,7 +330,7 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                     I... I didn&apos;t mean to kill him. You have to believe me, Detective. It was an accident. A terrible, tragic accident.
                   </p>
                   <p>
-                    Years ago, I made a mistake. I needed money desperately, and I... I tried to sell Dorothy Ashcombe&apos;s ring. The most precious family heirloom. Reginald&apos;s grandmother&apos;s ring. I thought I could do it quietly, that no one would ever know. But Reginald found out. He kept proof as black his safe.
+                    Years ago, I made a mistake. I needed money desperately, and I... I tried to sell Dorothy Ashcombe&apos;s ring. The most precious family heirloom. Reginald&apos;s grandmother&apos;s ring. I thought I could do it quietly, that no one would ever know. But Reginald found out. He kept proof as blackmail his safe.
                   </p>
                   <p>
                     After he discovered Lydia&apos;s embezzlement, Reginald changed. He stopped trusting anyone. He started managing the major donors personally, keeping their confidential files in that safe. Every gala night, like clockwork, he&apos;d review those files before greeting the VIPs, leaving the safe unlocked, accessible. I knew the pattern. I knew I&apos;d have my chance.
@@ -451,7 +483,8 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
             </button>
             <button
               onClick={handleReplayCase}
-              className="group px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center gap-3"
+              disabled={isResetting}
+              className="group px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 backgroundColor: 'transparent',
                 color: '#d4af37',
@@ -460,16 +493,20 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
                 fontFamily: "'Courier Prime', monospace",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.1)'
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(212, 175, 55, 0.5)'
+                if (!isResetting) {
+                  e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.1)'
+                  e.currentTarget.style.boxShadow = '0 0 30px rgba(212, 175, 55, 0.5)'
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.3)'
+                if (!isResetting) {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                  e.currentTarget.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.3)'
+                }
               }}
             >
-              <RotateCcw className="w-5 h-5" />
-              Replay Case
+              <RotateCcw className={`w-5 h-5 ${isResetting ? 'animate-spin' : ''}`} />
+              {isResetting ? 'Resetting...' : 'Replay Case'}
             </button>
           </div>
         </div>

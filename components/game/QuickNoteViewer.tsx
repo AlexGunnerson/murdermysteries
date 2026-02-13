@@ -13,6 +13,18 @@ interface QuickNoteViewerProps {
   onNoteCreated: () => void
 }
 
+interface ViewerDimensions {
+  width: number
+  height: number
+  leftPanelWidth: number
+}
+
+const DEFAULT_DIMENSIONS: ViewerDimensions = {
+  width: 700,
+  height: 500,
+  leftPanelWidth: 250
+}
+
 export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: QuickNoteViewerProps) {
   const [notes, setNotes] = useState<QuickNote[]>([])
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
@@ -20,9 +32,29 @@ export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: Quic
   const [isShaking, setIsShaking] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [dimensions, setDimensions] = useState<ViewerDimensions>(DEFAULT_DIMENSIONS)
+  const [isResizing, setIsResizing] = useState(false)
+  const [resizeType, setResizeType] = useState<'corner-tl' | 'corner-tr' | 'corner-bl' | 'corner-br' | 'divider' | null>(null)
   const draggableRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const resizeStartRef = useRef<{ x: number; y: number; width: number; height: number; leftPanelWidth: number } | null>(null)
   const boardStore = useInvestigationBoardStore(caseId)
+
+  // Load dimensions from localStorage
+  useEffect(() => {
+    if (isOpen) {
+      const storageKey = `quickNoteViewerSize_${caseId}`
+      const stored = localStorage.getItem(storageKey)
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored) as ViewerDimensions
+          setDimensions(parsed)
+        } catch (e) {
+          console.error('Failed to parse stored dimensions:', e)
+        }
+      }
+    }
+  }, [isOpen, caseId])
 
   // Load notes when viewer opens
   useEffect(() => {
@@ -156,6 +188,88 @@ export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: Quic
     return content.substring(0, maxLength) + '...'
   }
 
+  // Save dimensions to localStorage
+  const saveDimensions = (dims: ViewerDimensions) => {
+    const storageKey = `quickNoteViewerSize_${caseId}`
+    localStorage.setItem(storageKey, JSON.stringify(dims))
+  }
+
+  // Handle resize start
+  const handleResizeStart = (e: React.MouseEvent, type: 'corner-tl' | 'corner-tr' | 'corner-bl' | 'corner-br' | 'divider') => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsResizing(true)
+    setResizeType(type)
+    resizeStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      width: dimensions.width,
+      height: dimensions.height,
+      leftPanelWidth: dimensions.leftPanelWidth
+    }
+  }
+
+  // Handle resize move
+  useEffect(() => {
+    if (!isResizing || !resizeStartRef.current) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!resizeStartRef.current) return
+
+      const deltaX = e.clientX - resizeStartRef.current.x
+      const deltaY = e.clientY - resizeStartRef.current.y
+
+      if (resizeType === 'divider') {
+        // Resize left panel width
+        const newLeftPanelWidth = Math.max(100, resizeStartRef.current.leftPanelWidth + deltaX)
+        setDimensions(prev => ({
+          ...prev,
+          leftPanelWidth: newLeftPanelWidth
+        }))
+      } else if (resizeType?.startsWith('corner-')) {
+        // Resize modal from corners
+        let newWidth = resizeStartRef.current.width
+        let newHeight = resizeStartRef.current.height
+
+        if (resizeType === 'corner-tl') {
+          newWidth = resizeStartRef.current.width - deltaX
+          newHeight = resizeStartRef.current.height - deltaY
+        } else if (resizeType === 'corner-tr') {
+          newWidth = resizeStartRef.current.width + deltaX
+          newHeight = resizeStartRef.current.height - deltaY
+        } else if (resizeType === 'corner-bl') {
+          newWidth = resizeStartRef.current.width - deltaX
+          newHeight = resizeStartRef.current.height + deltaY
+        } else if (resizeType === 'corner-br') {
+          newWidth = resizeStartRef.current.width + deltaX
+          newHeight = resizeStartRef.current.height + deltaY
+        }
+
+        setDimensions(prev => ({
+          ...prev,
+          width: Math.max(400, newWidth),
+          height: Math.max(300, newHeight)
+        }))
+      }
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      setResizeType(null)
+      resizeStartRef.current = null
+      // Save dimensions to localStorage
+      saveDimensions(dimensions)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isResizing, resizeType, dimensions])
+
   if (!isOpen) return null
 
   const selectedNote = notes.find(n => n.id === selectedNoteId)
@@ -190,17 +304,18 @@ export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: Quic
         handle=".drag-handle"
         bounds="parent"
         defaultPosition={{ x: 0, y: -100 }}
+        disabled={isResizing}
       >
         <div
           ref={draggableRef}
           className="fixed z-[90]"
           style={{
-            width: '700px',
-            height: '500px',
+            width: `${dimensions.width}px`,
+            height: `${dimensions.height}px`,
             top: '50%',
             left: '50%',
-            marginLeft: '-350px',
-            marginTop: '-250px',
+            marginLeft: `-${dimensions.width / 2}px`,
+            marginTop: `-${dimensions.height / 2}px`,
           }}
           onClick={(e) => e.stopPropagation()}
         >
@@ -238,12 +353,35 @@ export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: Quic
               </button>
             </div>
 
+            {/* Corner Resize Zones */}
+            {/* Top-left corner */}
+            <div
+              className="absolute top-0 left-0 w-4 h-4 cursor-nwse-resize z-10"
+              onMouseDown={(e) => handleResizeStart(e, 'corner-tl')}
+            />
+            {/* Top-right corner */}
+            <div
+              className="absolute top-0 right-0 w-4 h-4 cursor-nesw-resize z-10"
+              onMouseDown={(e) => handleResizeStart(e, 'corner-tr')}
+            />
+            {/* Bottom-left corner */}
+            <div
+              className="absolute bottom-0 left-0 w-4 h-4 cursor-nesw-resize z-10"
+              onMouseDown={(e) => handleResizeStart(e, 'corner-bl')}
+            />
+            {/* Bottom-right corner */}
+            <div
+              className="absolute bottom-0 right-0 w-4 h-4 cursor-nwse-resize z-10"
+              onMouseDown={(e) => handleResizeStart(e, 'corner-br')}
+            />
+
             {/* Two-Panel Layout */}
             <div className="flex flex-1 overflow-hidden">
               {/* Left Panel - Note List */}
               <div 
-                className="w-[250px] flex-shrink-0 flex flex-col"
+                className="flex-shrink-0 flex flex-col"
                 style={{
+                  width: `${dimensions.leftPanelWidth}px`,
                   borderRight: '1px solid #3d3d3d',
                 }}
               >
@@ -291,6 +429,16 @@ export function QuickNoteViewer({ isOpen, caseId, onClose, onNoteCreated }: Quic
                   )}
                 </div>
               </div>
+
+              {/* Vertical Divider Resize Handle */}
+              <div
+                className="w-1 cursor-col-resize hover:bg-[#d4af37]/30 transition-colors relative flex-shrink-0"
+                onMouseDown={(e) => handleResizeStart(e, 'divider')}
+                style={{
+                  marginLeft: '-1px',
+                  zIndex: 5
+                }}
+              />
 
               {/* Right Panel - Note Detail */}
               <div className="flex-1 flex flex-col p-4">
