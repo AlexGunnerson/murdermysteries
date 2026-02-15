@@ -22,7 +22,7 @@ export interface Location {
   }
 }
 
-export interface Record {
+export interface GameRecord {
   id: string
   name: string
   description: string
@@ -43,7 +43,7 @@ export interface CaseMetadata {
   estimatedTime: string
   suspects: Suspect[]
   locations: Location[]
-  records: Record[]
+  records: GameRecord[]
 }
 
 export interface Fact {
@@ -125,7 +125,7 @@ export class StoryService {
         throw new Error(`Failed to load case metadata: ${response.statusText}`)
       }
       this.metadata = await response.json()
-      return this.metadata
+      return this.metadata!
     } catch (error) {
       console.error('Error loading case metadata:', error)
       throw new Error(`Case ${this.caseId} not found`)
@@ -146,7 +146,7 @@ export class StoryService {
         throw new Error(`Failed to load story config: ${response.statusText}`)
       }
       this.storyConfig = await response.json()
-      return this.storyConfig
+      return this.storyConfig!
     } catch (error) {
       console.error('Error loading story config:', error)
       throw new Error(`Story config for ${this.caseId} not found`)
@@ -188,7 +188,7 @@ export class StoryService {
   /**
    * Get all records for this case
    */
-  async getRecords(): Promise<Record[]> {
+  async getRecords(): Promise<GameRecord[]> {
     const metadata = await this.loadMetadata()
     return metadata.records
   }
@@ -196,7 +196,7 @@ export class StoryService {
   /**
    * Get a specific record by ID
    */
-  async getRecord(recordId: string): Promise<Record | null> {
+  async getRecord(recordId: string): Promise<GameRecord | null> {
     const records = await this.getRecords()
     return records.find(r => r.id === recordId) || null
   }

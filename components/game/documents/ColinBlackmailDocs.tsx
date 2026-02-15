@@ -36,7 +36,7 @@ export const ColinBlackmailPage1 = () => (
       </p>
 
       <p>
-        The interior of the band bears the engraved inscription "E.A. 1887," suggesting this was a significant commemorative piece, likely marking a marriage or anniversary within a distinguished family.
+        The interior of the band bears the engraved inscription &quot;E.A. 1887,&quot; suggesting this was a significant commemorative piece, likely marking a marriage or anniversary within a distinguished family.
       </p>
 
       <p>
@@ -49,7 +49,7 @@ export const ColinBlackmailPage1 = () => (
     </div>
 
     <div className="mt-5 p-4 bg-[#f9f9f9] border-l-4 border-[#333]">
-      <p><strong>PROVENANCE:</strong> English noble estate (name withheld by consignor's request)</p>
+      <p><strong>PROVENANCE:</strong> English noble estate (name withheld by consignor&apos;s request)</p>
     </div>
 
     <div className="text-xs mt-6 pt-4 border-t border-[#ccc] text-[#555]">
@@ -61,26 +61,26 @@ export const ColinBlackmailPage1 = () => (
 
 export const ColinBlackmailPage2 = () => (
   <div>
-    <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
+    <p className="font-bold mb-4">Reginald&apos;s Note:</p>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "\"Bradley Hand\", cursive", fontSize: "20px" }}>
       <p>
-        My mother's ring. The one piece of her I treasured above all else. Colin, my trusted estate manager, my right hand for ten years, tried to sell it at auction like some common trinket.
+        My mother&apos;s ring. The one piece of her I treasured above all else. Colin, my trusted estate manager, my right hand for ten years, tried to sell it at auction like some common trinket.
       </p>
 
       <p>
-        Charles was browsing Marshall & Hayes' preview catalog and recognized it immediately. "E.A. 1887", Elizabeth Ashcombe, my grandmother's name and the year she married. He telephoned me straightaway, furious on my behalf.
+        Charles was browsing Marshall & Hayes&apos; preview catalog and recognized it immediately. &quot;E.A. 1887&quot;, Elizabeth Ashcombe, my grandmother&apos;s name and the year she married. He telephoned me straightaway, furious on my behalf.
       </p>
 
       <p>
-        I confronted Colin before the auction could proceed. He claimed "desperate circumstances," gambling debts he'd hidden from me. Desperation doesn't excuse theft. Desperation doesn't excuse betraying a decade of trust.
+        I confronted Colin before the auction could proceed. He claimed &quot;desperate circumstances,&quot; gambling debts he&apos;d hidden from me. Desperation doesn&apos;t excuse theft. Desperation doesn&apos;t excuse betraying a decade of trust.
       </p>
 
       <p>
-        I've kept him on because dismissing him would raise too many questions about why. But my trust is shattered. He manages my affairs, handles my accounts, has keys to everything, and this is how he repays loyalty?
+        I&apos;ve kept him on because dismissing him would raise too many questions about why. But my trust is shattered. He manages my affairs, handles my accounts, has keys to everything, and this is how he repays loyalty?
       </p>
 
       <p>
-        He knows I know. That knowledge keeps him in line, for now. But a man who would steal his employer's most precious heirloom, what else is he capable of when cornered?
+        He knows I know. That knowledge keeps him in line, for now. But a man who would steal his employer&apos;s most precious heirloom, what else is he capable of when cornered?
       </p>
 
       <p className="mt-4">— R.A., June 1963</p>

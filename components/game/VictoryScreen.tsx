@@ -133,7 +133,7 @@ export function VictoryScreen() {
                     textShadow: '0 0 10px rgba(212, 175, 55, 0.3)',
                   }}
                 >
-                  Colin Dorsey's Confession
+                  Colin Dorsey&apos;s Confession
                 </h2>
                 <div 
                   className="text-[#e8d7b5] leading-relaxed space-y-4"
@@ -143,25 +143,25 @@ export function VictoryScreen() {
                   }}
                 >
                   <p>
-                    "I... I didn't mean to kill him. You have to believe me, Detective. It was an accident. A terrible, tragic accident."
+                    &quot;I... I didn&apos;t mean to kill him. You have to believe me, Detective. It was an accident. A terrible, tragic accident.&quot;
                   </p>
                   <p>
-                    "Years ago, I made a mistake. I needed money desperately, and I... I tried to sell Dorothy Ashcombe's ring. The most precious family heirloom. Reginald's grandmother's ring. I thought I could do it quietly, that no one would ever know. But Reginald found out. He kept proof, blackmail, in his safe."
+                    &quot;Years ago, I made a mistake. I needed money desperately, and I... I tried to sell Dorothy Ashcombe&apos;s ring. The most precious family heirloom. Reginald&apos;s grandmother&apos;s ring. I thought I could do it quietly, that no one would ever know. But Reginald found out. He kept proof, blackmail, in his safe.&quot;
                   </p>
                   <p>
-                    "After he discovered Lydia's embezzlement, Reginald changed. He stopped trusting anyone. He started managing the major donors personally, keeping their confidential files in that safe. Every gala night, like clockwork, he'd review those files before greeting the VIPs, leaving the safe unlocked, accessible. I knew the pattern. I knew I'd have my chance."
+                    &quot;After he discovered Lydia&apos;s embezzlement, Reginald changed. He stopped trusting anyone. He started managing the major donors personally, keeping their confidential files in that safe. Every gala night, like clockwork, he&apos;d review those files before greeting the VIPs, leaving the safe unlocked, accessible. I knew the pattern. I knew I&apos;d have my chance.&quot;
                   </p>
                   <p>
-                    "During the gala presentation, I went to the study. I had to swap that page. I couldn't let anyone see what I'd done, not to Dorothy's ring. I thought I could replace it with something less damaging. Uncle Charles's pocket watch seemed like a better scandal than selling the greatest Ashcombe treasure."
+                    &quot;During the gala presentation, I went to the study. I had to swap that page. I couldn&apos;t let anyone see what I&apos;d done, not to Dorothy&apos;s ring. I thought I could replace it with something less damaging. Uncle Charles&apos;s pocket watch seemed like a better scandal than selling the greatest Ashcombe treasure.&quot;
                   </p>
                   <p>
-                    "But Reginald... he walked in. He caught me at the safe with my gloves on. We argued. He was furious, said I'd betrayed the family's trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I'll never forget that sound."
+                    &quot;But Reginald... he walked in. He caught me at the safe with my gloves on. We argued. He was furious, said I&apos;d betrayed the family&apos;s trust for the last time. We struggled. The rug shifted beneath us. He fell... struck his head on the corner of the desk. The sound... I&apos;ll never forget that sound.&quot;
                   </p>
                   <p>
-                    "I panicked. I checked for a pulse, but he was gone. I couldn't think straight. I staged it at the staircase to look like an accident. The wine glass, the positioning... I thought if it looked like he'd slipped after drinking, no one would ask questions. I even took Dr. Vale's blackmail page to create a false lead."
+                    &quot;I panicked. I checked for a pulse, but he was gone. I couldn&apos;t think straight. I staged it at the staircase to look like an accident. The wine glass, the positioning... I thought if it looked like he&apos;d slipped after drinking, no one would ask questions. I even took Dr. Vale&apos;s blackmail page to create a false lead.&quot;
                   </p>
                   <p>
-                    "I've been carrying this guilt every moment since. When you showed me both blackmail documents and those photographs from the study... I knew it was over. I knew you'd figured it all out. I'm... I'm so sorry."
+                    &quot;I&apos;ve been carrying this guilt every moment since. When you showed me both blackmail documents and those photographs from the study... I knew it was over. I knew you&apos;d figured it all out. I&apos;m... I&apos;m so sorry.&quot;
                   </p>
                 </div>
               </div>
@@ -185,19 +185,19 @@ export function VictoryScreen() {
                 <ul className="space-y-3 text-[#e8d7b5]">
                   <li className="flex items-start gap-3">
                     <span className="text-[#d4af37] mt-1">•</span>
-                    <span><strong>White Glove in Study:</strong> Colin's white gala glove with a distinctive tear was found on top of Reginald's desk, proving he was in the study during the murder. Photographs from the ballroom show Colin wearing matching gloves with the same tear.</span>
+                    <span><strong>White Glove in Study:</strong> Colin&apos;s white gala glove with a distinctive tear was found on top of Reginald&apos;s desk, proving he was in the study during the murder. Photographs from the ballroom show Colin wearing matching gloves with the same tear.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-[#d4af37] mt-1">•</span>
-                    <span><strong>Study Struggle Evidence:</strong> The displaced rug, Reginald's pocket square on the floor, and the open safe revealed a confrontation took place in the study, not at the staircase where the body was found.</span>
+                    <span><strong>Study Struggle Evidence:</strong> The displaced rug, Reginald&apos;s pocket square on the floor, and the open safe revealed a confrontation took place in the study, not at the staircase where the body was found.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-[#d4af37] mt-1">•</span>
-                    <span><strong>Colin's Blackmail - Near Body:</strong> A fake blackmail page showing Uncle Charles's pocket watch, the less damaging evidence Colin tried to swap in to protect his reputation.</span>
+                    <span><strong>Colin&apos;s Blackmail - Near Body:</strong> A fake blackmail page showing Uncle Charles&apos;s pocket watch, the less damaging evidence Colin tried to swap in to protect his reputation.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-[#d4af37] mt-1">•</span>
-                    <span><strong>Colin's Blackmail - Behind Painting:</strong> The real blackmail page found hidden behind Elizabeth's painting revealed Colin's attempt to sell Dorothy Ashcombe's ring, the beloved family heirloom and the true motive for the confrontation.</span>
+                    <span><strong>Colin&apos;s Blackmail - Behind Painting:</strong> The real blackmail page found hidden behind Elizabeth&apos;s painting revealed Colin&apos;s attempt to sell Dorothy Ashcombe&apos;s ring, the beloved family heirloom and the true motive for the confrontation.</span>
                   </li>
                 </ul>
               </div>

@@ -26,7 +26,6 @@ export const tourSteps: DriveStep[] = [
       description: 'The truth hides in the fine print. These documents hold the keys to cracking the case wide open, review them carefully.',
       side: 'left',
       align: 'start',
-      popoverOffset: 20,
     },
     onHighlightStarted: (element) => {
       // Scroll the element into view instantly to avoid glitches

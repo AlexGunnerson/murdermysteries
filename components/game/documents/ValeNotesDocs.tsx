@@ -64,7 +64,7 @@ export const ValeNotesPage1 = () => (
     <div className="entry">
       <div className="entry-date">10 May 1986</div>
       <div className="entry-text">
-        R.A. — 9:10 PM. Found him. My God, what a tragedy. Dead at the foot of the Grand Stairs. Awful, terrible sight. Temple injury was instant, I'd say. Poor Reginald, and God help Veronica.
+        R.A. — 9:10 PM. Found him. My God, what a tragedy. Dead at the foot of the Grand Stairs. Awful, terrible sight. Temple injury was instant, I&apos;d say. Poor Reginald, and God help Veronica.
       </div>
     </div>
 
@@ -72,7 +72,7 @@ export const ValeNotesPage1 = () => (
     <div className="entry">
       <div className="entry-date">07 Apr 1986</div>
       <div className="entry-text">
-        V.A. — Stress headaches are back. Typical society hostess tension. Adjusted the meds. Needs more rest than she'll ever get.
+        V.A. — Stress headaches are back. Typical society hostess tension. Adjusted the meds. Needs more rest than she&apos;ll ever get.
       </div>
     </div>
 
@@ -88,7 +88,7 @@ export const ValeNotesPage1 = () => (
     <div className="entry">
       <div className="entry-date">05 Feb 1986</div>
       <div className="entry-text">
-        R.A. — Routine check-in. Claims he's sleeping better. BP still too high (145/95). Told him again: drop the weight, less worry.
+        R.A. — Routine check-in. Claims he&apos;s sleeping better. BP still too high (145/95). Told him again: drop the weight, less worry.
       </div>
     </div>
     
@@ -163,7 +163,7 @@ export const ValeNotesPage2 = () => (
     <div className="entry">
       <div className="entry-date">04 Nov 1985</div>
       <div className="entry-text">
-        R.A. — Tried that awful Bordeaux tonight. Immediate histamine flare, face like a tomato, head pounding 15 min. in. Told him to stick to the whites only, absolutely zero reds from now on. Fine by him, thankfully, said the estate's Sauvignon Blanc is better, anyway. Good, less fuss for me.
+        R.A. — Tried that awful Bordeaux tonight. Immediate histamine flare, face like a tomato, head pounding 15 min. in. Told him to stick to the whites only, absolutely zero reds from now on. Fine by him, thankfully, said the estate&apos;s Sauvignon Blanc is better, anyway. Good, less fuss for me.
       </div>
     </div>
 
@@ -171,7 +171,7 @@ export const ValeNotesPage2 = () => (
     <div className="entry">
       <div className="entry-date">05 Oct 1985</div>
       <div className="entry-text">
-        R.A. — Routine check. He's still worried about the merger. Nothing much to report on the physical side. Fine.
+        R.A. — Routine check. He&apos;s still worried about the merger. Nothing much to report on the physical side. Fine.
       </div>
     </div>
 

@@ -490,7 +490,7 @@ export function SuspectDossierView({
                       }}
                     >
                       {suspect.name} is not yet available for questioning. 
-                      You'll need to prove this was murder before Veronica allows you access to the inner circle.
+                      You&apos;ll need to prove this was murder before Veronica allows you access to the inner circle.
                     </p>
                   </div>
                 </div>

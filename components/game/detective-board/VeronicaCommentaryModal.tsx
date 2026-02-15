@@ -167,7 +167,7 @@ export function VeronicaCommentaryModal({
               }}
             >
               <p>
-                "{displayedText}"
+                &quot;{displayedText}&quot;
                 {!isComplete && <span className="typing-cursor" />}
               </p>
             </div>

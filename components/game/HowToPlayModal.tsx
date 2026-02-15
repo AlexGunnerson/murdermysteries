@@ -21,7 +21,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
       title: "QUESTION SUSPECTS",
       description: (
         <>
-          Each member of Reginald's inner circle has secrets. Click their image to review their dossier and interrogate them. <strong>Important:</strong> Suspects will lie to protect themselves. Submit documents and photos that contradict their stories to expose the truth.
+          Each member of Reginald&apos;s inner circle has secrets. Click their image to review their dossier and interrogate them. <strong>Important:</strong> Suspects will lie to protect themselves. Submit documents and photos that contradict their stories to expose the truth.
         </>
       )
     },
@@ -105,7 +105,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
                 className="text-[#e8e4da]/80 text-center mt-3 text-base"
                 style={{ fontFamily: "'Courier Prime', monospace" }}
               >
-                Welcome, detective. Here's how to crack the case.
+                  Welcome, detective. Here&apos;s how to crack the case.
               </p>
             </div>
 
@@ -146,7 +146,7 @@ export function HowToPlayModal({ isOpen, onClose }: HowToPlayModalProps) {
                   style={{ fontFamily: "'Courier Prime', monospace" }}
                 >
                   Remember detective, every detail matters. The killer always leaves a trail. 
-                  Trust your instincts, follow the evidence, and don't be afraid to challenge the suspects.
+                  Trust your instincts, follow the evidence, and don&apos;t be afraid to challenge the suspects.
                 </p>
               </div>
             </div>

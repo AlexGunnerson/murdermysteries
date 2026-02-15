@@ -36,7 +36,7 @@ export const ColinBlackmailScenePage1 = () => (
       </p>
 
       <p>
-        The interior of the case bears the engraved inscription "T.A. 1896," suggesting this was a personal piece.
+        The interior of the case bears the engraved inscription &quot;T.A. 1896,&quot; suggesting this was a personal piece.
       </p>
 
       <p>
@@ -51,7 +51,7 @@ export const ColinBlackmailScenePage1 = () => (
     </div>
 
     <div className="mt-5 p-4 bg-[#f9f9f9] border-l-4 border-[#333]">
-      <p><strong>PROVENANCE:</strong> English noble estate (name withheld by consignor's request)</p>
+      <p><strong>PROVENANCE:</strong> English noble estate (name withheld by consignor&apos;s request)</p>
     </div>
 
     <div className="text-xs mt-6 pt-4 border-t border-[#ccc] text-[#555]">
@@ -63,22 +63,22 @@ export const ColinBlackmailScenePage1 = () => (
 
 export const ColinBlackmailScenePage2 = () => (
   <div>
-    <p className="font-bold mb-4">Reginald's Note:</p>
-    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "var(--font-covered-by-your-grace)", fontSize: '18px' }}>
+    <p className="font-bold mb-4">Reginald&apos;s Note:</p>
+    <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: 'var(--font-covered-by-your-grace)', fontSize: '18px' }}>
       <p>
-        Uncle Thomas's old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes, Charles spotted it in their catalog and rang me up.
+        Uncle Thomas&apos;s old pocket watch. Broken, tarnished, worth perhaps £150 at auction. Colin tried to sell it at Marshall & Hayes, Charles spotted it in their catalog and rang me up.
       </p>
 
       <p>
-        When I asked Colin about it, he admitted to gambling debts. Said he thought I wouldn't miss it since it was broken anyway. I suppose he's not entirely wrong, it's been sitting in a drawer for years. Still, it wasn't his to take.
+        When I asked Colin about it, he admitted to gambling debts. Said he thought I wouldn&apos;t miss it since it was broken anyway. I suppose he&apos;s not entirely wrong, it&apos;s been sitting in a drawer for years. Still, it wasn&apos;t his to take.
       </p>
 
       <p>
-        The watch itself? Not particularly important. But the principle troubles me. Ten years working together, and he couldn't simply ask if he needed money. Instead he goes behind my back for what amounts to pocket change.
+        The watch itself? Not particularly important. But the principle troubles me. Ten years working together, and he couldn&apos;t simply ask if he needed money. Instead he goes behind my back for what amounts to pocket change.
       </p>
 
       <p>
-        It reveals a desperation I hadn't seen in him before. A man who steals £150 from his employer is either very desperate or very foolish. I suspect Colin is the former. I've decided to keep him on, he's competent at his work, and replacing him would be a headache. But I'll be watching more carefully now.
+        It reveals a desperation I hadn&apos;t seen in him before. A man who steals £150 from his employer is either very desperate or very foolish. I suspect Colin is the former. I&apos;ve decided to keep him on, he&apos;s competent at his work, and replacing him would be a headache. But I&apos;ll be watching more carefully now.
       </p>
 
       <p className="mt-4">— R.A., June 1963</p>

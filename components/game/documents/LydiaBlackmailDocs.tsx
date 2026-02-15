@@ -29,7 +29,7 @@ export const LydiaBlackmailPage1 = () => (
     <p className="mb-6"><strong>Tax Receipt Issued:</strong> Yes (Form 1979-GH-847)</p>
 
     <p className="mt-8 mb-8">
-      This donation will support the Foundation's ongoing work in educational scholarships and cultural preservation.
+      This donation will support the Foundation&apos;s ongoing work in educational scholarships and cultural preservation.
     </p>
 
     <div className="mt-10 pt-5 border-t border-[#999]">
@@ -98,7 +98,7 @@ export const LydiaBlackmailPage2 = () => (
           </tr>
           <tr className="bg-[#f9f9f9]">
             <td className="p-2 border-b border-[#ccc]">29 Nov 1979</td>
-            <td className="p-2 border-b border-[#ccc]">Wickham Women's League</td>
+            <td className="p-2 border-b border-[#ccc]">Wickham Women&apos;s League</td>
             <td className="p-2 border-b border-[#ccc]">1,200</td>
             <td className="p-2 border-b border-[#ccc]">Cheque</td>
             <td className="p-2 border-b border-[#ccc]">Scholarship</td>
@@ -126,18 +126,18 @@ export const LydiaBlackmailPage2 = () => (
 
 export const LydiaBlackmailPage3 = () => (
   <div>
-    <p className="font-bold mb-4">Reginald's Note:</p>
+    <p className="font-bold mb-4">Reginald&apos;s Note:</p>
     <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
       <p>
-        Geoffrey telephoned me last week to express his pleasure at supporting the Foundation with his £50,000 donation. I congratulated him on his generosity. It was only later that I thought to check Lydia's quarterly report.
+        Geoffrey telephoned me last week to express his pleasure at supporting the Foundation with his £50,000 donation. I congratulated him on his generosity. It was only later that I thought to check Lydia&apos;s quarterly report.
       </p>
 
       <p>
-        The ledger shows Geoffrey's donation as £10,000. Not £50,000. Ten thousand.
+        The ledger shows Geoffrey&apos;s donation as £10,000. Not £50,000. Ten thousand.
       </p>
 
       <p>
-        I've reviewed the receipt, her signature, her acknowledgment of fifty thousand pounds. Yet somehow only ten thousand makes it into the official records. Where did the other forty thousand go? Into the Foundation's accounts, or into Lydia's?
+        I&apos;ve reviewed the receipt, her signature, her acknowledgment of fifty thousand pounds. Yet somehow only ten thousand makes it into the official records. Where did the other forty thousand go? Into the Foundation&apos;s accounts, or into Lydia&apos;s?
       </p>
 
       <p>
@@ -145,11 +145,11 @@ export const LydiaBlackmailPage3 = () => (
       </p>
 
       <p>
-        How many other donations has she underreported? How long has this been happening? The Foundation's reputation, my family's reputation, built on fraud.
+        How many other donations has she underreported? How long has this been happening? The Foundation&apos;s reputation, my family&apos;s reputation, built on fraud.
       </p>
 
       <p>
-        I must confront her, but carefully. If word gets out, the scandal could destroy everything we've built.
+        I must confront her, but carefully. If word gets out, the scandal could destroy everything we&apos;ve built.
       </p>
 
       <p className="mt-4">— R.A., January 1980</p>

@@ -120,7 +120,7 @@ export function ChatInterfaceWithAttachments({
             // Also load gala photos if they exist
             const galaPhotos = (scene.galaImages || []).map((imageUrl: string, idx: number) => {
               const filename = imageUrl.split('/').pop()
-              const photoTitle = scene.galaAnnotations?.[filename] 
+              const photoTitle = (filename && scene.galaAnnotations?.[filename])
                 ? `${scene.name} - Gala Photo ${idx + 1}` 
                 : `${scene.name} - Gala Photo ${idx + 1}`
               return {
@@ -245,9 +245,6 @@ export function ChatInterfaceWithAttachments({
     
     // Track tutorial progress
     updateChecklistProgress('chattedWithSuspect', true)
-    if (messageAttachments.length > 0) {
-      updateChecklistProgress('submittedEvidence', true)
-    }
     
     setInputMessage('')
     setAttachedItems([])

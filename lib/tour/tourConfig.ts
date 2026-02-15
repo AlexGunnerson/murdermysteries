@@ -3,7 +3,6 @@ import { Config } from 'driver.js'
 export const tourConfig: Config = {
   showProgress: true,
   allowClose: false, // Prevent closing the tour, force users to complete it
-  overlayClickNext: false, // Prevent clicking overlay from closing or advancing
   smoothScroll: false, // Disable smooth scrolling to prevent misalignment
   animate: true,
   doneBtnText: 'Finish',

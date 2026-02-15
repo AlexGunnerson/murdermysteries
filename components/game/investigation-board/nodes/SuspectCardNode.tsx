@@ -2,14 +2,15 @@
 
 import { memo } from 'react'
 import React from 'react'
-import { Handle, Position, NodeProps } from '@xyflow/react'
+import { Handle, Position } from '@xyflow/react'
 import Image from 'next/image'
 import { SuspectNodeData } from '../types'
 
-interface SuspectCardNodeProps extends NodeProps {
+interface SuspectCardNodeProps {
   data: SuspectNodeData & {
     isConnecting?: boolean
   }
+  selected?: boolean
 }
 
 function SuspectCardNode({ data, selected }: SuspectCardNodeProps) {

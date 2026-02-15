@@ -2,7 +2,7 @@ export const CoronerReportPage1 = () => (
   <div className="bg-white border-2 border-[#333] p-8 font-mono text-sm">
     {/* Header */}
     <div className="text-center border-b-2 border-[#333] pb-4 mb-6">
-      <div className="text-xs text-gray-600 mb-2">ENGLAND • COUNTY CORONER'S OFFICE</div>
+      <div className="text-xs text-gray-600 mb-2">ENGLAND • COUNTY CORONER&apos;S OFFICE</div>
       <h1 className="text-xl font-bold text-[#2a2520] mb-1">POST-MORTEM EXAMINATION REPORT</h1>
       <div className="text-xs text-gray-600">WICKHAM DISTRICT • CASE NO. 1986-0510-ASH</div>
     </div>
@@ -114,7 +114,7 @@ export const CoronerReportPage2 = () => (
       </div>
 
       <div className="bg-[#fff3cd] border-l-4 border-[#856404] p-3 text-xs italic">
-        <p className="font-bold mb-1">PATHOLOGIST'S OBSERVATION:</p>
+        <p className="font-bold mb-1">PATHOLOGIST&apos;S OBSERVATION:</p>
         <p>The injury pattern is consistent with an accidental fall. The single-point head trauma indicates the deceased likely lost balance and fell, striking his head on a hard surface. The absence of defensive wounds suggests the fall was unexpected and the deceased was unable to break his fall.</p>
       </div>
     </div>
@@ -172,14 +172,14 @@ export const CoronerReportPage3 = () => (
       </div>
 
       <div className="mt-4 bg-[#e8f4f8] border border-[#0c5460] p-3 text-xs">
-        <p className="font-bold mb-1">ATTENDING PHYSICIAN'S STATEMENT (Dr. Leonard Vale):</p>
-        <p className="italic">"I examined the deceased at approximately 9:10 PM GMT. He had no pulse and showed fixed, dilated pupils. Based on the nature of the injury and circumstances, death appeared to be the result of an accidental fall."</p>
+        <p className="font-bold mb-1">ATTENDING PHYSICIAN&apos;S STATEMENT (Dr. Leonard Vale):</p>
+        <p className="italic">&quot;I examined the deceased at approximately 9:10 PM GMT. He had no pulse and showed fixed, dilated pupils. Based on the nature of the injury and circumstances, death appeared to be the result of an accidental fall.&quot;</p>
       </div>
     </div>
 
     {/* Opinion */}
     <div className="mb-6">
-      <h2 className="font-bold text-sm mb-3 text-[#2a2520]">VII. PATHOLOGIST'S OPINION</h2>
+      <h2 className="font-bold text-sm mb-3 text-[#2a2520]">VII. PATHOLOGIST&apos;S OPINION</h2>
       
       <p className="mb-3">Based on the post-mortem examination, scene investigation, and toxicology results:</p>
       
@@ -202,7 +202,7 @@ export const CoronerReportPage3 = () => (
 
     {/* Footer */}
     <div className="mt-8 text-center text-xs text-gray-500 border-t border-gray-300 pt-2">
-      OFFICIAL DOCUMENT • WICKHAM COUNTY CORONER'S OFFICE • CONFIDENTIAL
+      OFFICIAL DOCUMENT • WICKHAM COUNTY CORONER&apos;S OFFICE • CONFIDENTIAL
     </div>
   </div>
 )

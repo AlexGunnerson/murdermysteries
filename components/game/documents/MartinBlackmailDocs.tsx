@@ -11,7 +11,7 @@ export const MartinBlackmailPage1 = () => (
     </div>
 
     <p className="mb-4">
-      <strong>This Agreement</strong> is entered into on the 14th day of March, 1951, between Martin Ashcombe (hereinafter "Party A") and Clara Whitmore (hereinafter "Party B").
+      <strong>This Agreement</strong> is entered into on the 14th day of March, 1951, between Martin Ashcombe (hereinafter &quot;Party A&quot;) and Clara Whitmore (hereinafter &quot;Party B&quot;).
     </p>
 
     <p className="mb-4">
@@ -57,11 +57,11 @@ export const MartinBlackmailPage2 = () => (
     <p className="mb-4">Martin,</p>
     
     <p className="mb-4">
-      The quarterly payment is late again. I've kept my silence, but my circumstances have changed. I'll need another payment soon, something more substantial this time, or people will start asking questions about where I've been getting my income.
+      The quarterly payment is late again. I&apos;ve kept my silence, but my circumstances have changed. I&apos;ll need another payment soon, something more substantial this time, or people will start asking questions about where I&apos;ve been getting my income.
     </p>
     
     <p className="mb-4">
-      I'm sure you understand my position. I never wanted it to come to this, but a woman must look after herself.
+      I&apos;m sure you understand my position. I never wanted it to come to this, but a woman must look after herself.
     </p>
     
     <p className="mb-4">
@@ -74,10 +74,10 @@ export const MartinBlackmailPage2 = () => (
 
 export const MartinBlackmailPage3 = () => (
   <div>
-    <p className="font-bold mb-4">Reginald's Note:</p>
+    <p className="font-bold mb-4">Reginald&apos;s Note:</p>
     <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-[#1a1510] leading-relaxed" style={{ fontFamily: "'Bradley Hand', cursive", fontSize: '20px' }}>
       <p className="mb-4">
-        Martin's affair with Clara, a maid, no less, could have ruined us all. Instead of showing restraint, he compounds his sin by paying her off. Now this woman will bleed him, and by extension, this family, dry. He lacks the spine to handle his own messes, so I must keep yet another shameful secret. Another moral lapse, another stain on the Ashcombe name. How many more, Martin? How many more?
+        Martin&apos;s affair with Clara, a maid, no less, could have ruined us all. Instead of showing restraint, he compounds his sin by paying her off. Now this woman will bleed him, and by extension, this family, dry. He lacks the spine to handle his own messes, so I must keep yet another shameful secret. Another moral lapse, another stain on the Ashcombe name. How many more, Martin? How many more?
       </p>
       <p className="mt-4">— R.A., April 1952</p>
     </div>

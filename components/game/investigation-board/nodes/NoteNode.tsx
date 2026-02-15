@@ -47,7 +47,7 @@ const colorStyles = {
   },
 }
 
-function NoteNode({ data, selected, xPos, yPos, width, height }: NoteNodeProps) {
+function NoteNode({ data, selected }: NoteNodeProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [content, setContent] = useState(data.content)
   const [wasSelected, setWasSelected] = useState(false)

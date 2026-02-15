@@ -262,7 +262,7 @@ export function BlackmailViewer({ onClose, suspectId, onSuspectClick }: Blackmai
                     className="text-sm leading-relaxed"
                     style={{ color: '#c5a065' }}
                   >
-                    These documents were found hidden behind a painting that Reginald's mother Elizabeth had painted, which hangs in the master bedroom. Each contains incriminating evidence that Reginald had collected on the suspects.
+                    These documents were found hidden behind a painting that Reginald&apos;s mother Elizabeth had painted, which hangs in the master bedroom. Each contains incriminating evidence that Reginald had collected on the suspects.
                   </p>
                 </div>
               </div>

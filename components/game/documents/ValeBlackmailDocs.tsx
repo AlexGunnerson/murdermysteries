@@ -167,14 +167,14 @@ export const ValeBlackmailPage5 = () => (
     <div className="bg-white border-2 border-[#333] p-6 font-mono">
       <div className="text-center text-base font-bold mb-5 underline">
         DISCREPANCY ANALYSIS — Q1 1963<br />
-        Vale's Billing vs. Actual Pharmacy Records
+        Vale&apos;s Billing vs. Actual Pharmacy Records
       </div>
 
       <table className="w-full border-collapse my-4">
         <thead>
           <tr>
             <th className="bg-[#d0d0d0] p-2 text-left border border-[#333] font-bold">Item Category</th>
-            <th className="bg-[#d0d0d0] p-2 text-left border border-[#333] font-bold">Vale's Billed Quantity</th>
+            <th className="bg-[#d0d0d0] p-2 text-left border border-[#333] font-bold">Vale&apos;s Billed Quantity</th>
             <th className="bg-[#d0d0d0] p-2 text-left border border-[#333] font-bold">Ashcombe Pharmacy Confirms</th>
             <th className="bg-[#d0d0d0] p-2 text-left border border-[#333] font-bold">Discrepancy</th>
           </tr>
@@ -183,7 +183,7 @@ export const ValeBlackmailPage5 = () => (
           <tr>
             <td className="p-2 border border-[#666]">
               Stimulant Medications<br />
-              ("Wellness Tonics")
+              (&quot;Wellness Tonics&quot;)
             </td>
             <td className="p-2 border border-[#666]">450 doses</td>
             <td className="p-2 border border-[#666] bg-[#ffcccc] font-bold">165 doses</td>
@@ -192,7 +192,7 @@ export const ValeBlackmailPage5 = () => (
           <tr>
             <td className="p-2 border border-[#666]">
               Sedative Medications<br />
-              ("Sleep Aids")
+              (&quot;Sleep Aids&quot;)
             </td>
             <td className="p-2 border border-[#666]">320 doses</td>
             <td className="p-2 border border-[#666] bg-[#ffcccc] font-bold">120 doses</td>
@@ -201,7 +201,7 @@ export const ValeBlackmailPage5 = () => (
           <tr>
             <td className="p-2 border border-[#666]">
               General Supplements<br />
-              ("Restoratives")
+              (&quot;Restoratives&quot;)
             </td>
             <td className="p-2 border border-[#666]">380 doses</td>
             <td className="p-2 border border-[#666] bg-[#ffcccc] font-bold">140 doses</td>
@@ -213,14 +213,14 @@ export const ValeBlackmailPage5 = () => (
       <p className="mt-5 font-bold">TOTAL OVERBILLING: £2,137.50</p>
     </div>
 
-    <p className="font-bold mt-6 mb-2">Reginald's Note:</p>
+    <p className="font-bold mt-6 mb-2">Reginald&apos;s Note:</p>
     <div className="bg-[#e8dcc8] p-5 border border-[#8b7355] italic text-lg text-[#1a1510] leading-relaxed space-y-4" style={{ fontFamily: "'Bradley Hand', cursive" }}>
       <p>
-        I've reviewed Vale's invoices against the actual pharmacy records from Ashcombe Pharmacy. The numbers don't match. Not even close.
+        I&apos;ve reviewed Vale&apos;s invoices against the actual pharmacy records from Ashcombe Pharmacy. The numbers don&apos;t match. Not even close.
       </p>
 
       <p>
-        Vale bills us for 450 doses of "wellness tonics", the pharmacy confirms only 165 were actually dispensed to our staff. The same pattern repeats across every category. He's billing us for nearly triple what the staff actually receives.
+        Vale bills us for 450 doses of &quot;wellness tonics&quot;, the pharmacy confirms only 165 were actually dispensed to our staff. The same pattern repeats across every category. He&apos;s billing us for nearly triple what the staff actually receives.
       </p>
 
       <p>
@@ -228,11 +228,11 @@ export const ValeBlackmailPage5 = () => (
       </p>
 
       <p>
-        Vale has been exploiting my staff, people who trust him for their health, and using the estate as cover for what amounts to drug trafficking. The staff believe they're receiving proper medical care. They have no idea their prescriptions are fraudulent, or that Vale is profiting from their dependence while selling the excess to his wealthy private clients.
+        Vale has been exploiting my staff, people who trust him for their health, and using the estate as cover for what amounts to drug trafficking. The staff believe they&apos;re receiving proper medical care. They have no idea their prescriptions are fraudulent, or that Vale is profiting from their dependence while selling the excess to his wealthy private clients.
       </p>
 
       <p>
-        A man who sat at our dinner table. And this is what he's been doing under our roof.
+        A man who sat at our dinner table. And this is what he&apos;s been doing under our roof.
       </p>
 
       <p>
