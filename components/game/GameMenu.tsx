@@ -423,30 +423,6 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
           {/* Menu Items */}
           <div className="flex-1 p-6 space-y-2 overflow-y-auto">
             <button
-              onClick={() => {
-                // TODO: Implement settings
-                console.log("Open settings")
-                onClose()
-              }}
-              className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
-              style={{
-                color: '#d4af37',
-                border: '1px solid rgba(212, 175, 55, 0.2)',
-                backgroundColor: 'rgba(212, 175, 55, 0.05)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-              }}
-            >
-              Settings
-            </button>
-
-            <button
               onClick={() => setShowHowToPlay(true)}
               className="w-full text-left px-4 py-3 rounded-sm transition-all duration-200 font-semibold tracking-wide"
               style={{
@@ -526,111 +502,114 @@ export function GameMenu({ isOpen, onClose }: GameMenuProps) {
               Restart Case
             </button>
 
-            <div 
-              className="pt-4 mt-4"
-              style={{ borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}
-            >
+            {/* Development Tools - Only show in development mode */}
+            {process.env.NODE_ENV === 'development' && (
               <div 
-                className="text-xs mb-2 px-4 tracking-wider uppercase"
-                style={{ color: 'rgba(212, 175, 55, 0.5)' }}
+                className="pt-4 mt-4"
+                style={{ borderTop: '1px solid rgba(212, 175, 55, 0.2)' }}
               >
-                Development Tools - Jump to Checkpoint
+                <div 
+                  className="text-xs mb-2 px-4 tracking-wider uppercase"
+                  style={{ color: 'rgba(212, 175, 55, 0.5)' }}
+                >
+                  Development Tools - Jump to Checkpoint
+                </div>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      if (confirm('Jump to Game Start? This will reset the game to the beginning.')) {
+                        handleResetToGameStart()
+                      }
+                    }}
+                    className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                    style={{
+                      color: '#d4af37',
+                      border: '1px solid rgba(212, 175, 55, 0.2)',
+                      backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                    }}
+                  >
+                    ↻ Game Start
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('Jump to Act II? Contradiction will be proven, inner circle unlocked.')) {
+                        handleJumpToActII()
+                      }
+                    }}
+                    className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                    style={{
+                      color: '#d4af37',
+                      border: '1px solid rgba(212, 175, 55, 0.2)',
+                      backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                    }}
+                  >
+                    → Act II
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('Jump to Ready to Question Colin checkpoint? All evidence will be unlocked including both blackmail sets, study photos, and greenhouse footage.')) {
+                        handleReadyToQuestionColin()
+                      }
+                    }}
+                    className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                    style={{
+                      color: '#d4af37',
+                      border: '1px solid rgba(212, 175, 55, 0.2)',
+                      backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                    }}
+                  >
+                    ⚡ Ready to Question Colin
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('Jump to Victory Screen? All evidence will be unlocked and case marked as solved.')) {
+                        handleJumpToVictory()
+                      }
+                    }}
+                    className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
+                    style={{
+                      color: '#d4af37',
+                      border: '1px solid rgba(212, 175, 55, 0.2)',
+                      backgroundColor: 'rgba(212, 175, 55, 0.05)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
+                    }}
+                  >
+                    ★ Victory
+                  </button>
+                </div>
               </div>
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    if (confirm('Jump to Game Start? This will reset the game to the beginning.')) {
-                      handleResetToGameStart()
-                    }
-                  }}
-                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
-                  style={{
-                    color: '#d4af37',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                  }}
-                >
-                  ↻ Game Start
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm('Jump to Act II? Contradiction will be proven, inner circle unlocked.')) {
-                      handleJumpToActII()
-                    }
-                  }}
-                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
-                  style={{
-                    color: '#d4af37',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                  }}
-                >
-                  → Act II
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm('Jump to Ready to Question Colin checkpoint? All evidence will be unlocked including both blackmail sets, study photos, and greenhouse footage.')) {
-                      handleReadyToQuestionColin()
-                    }
-                  }}
-                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
-                  style={{
-                    color: '#d4af37',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                  }}
-                >
-                  ⚡ Ready to Question Colin
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm('Jump to Victory Screen? All evidence will be unlocked and case marked as solved.')) {
-                      handleJumpToVictory()
-                    }
-                  }}
-                  className="w-full text-left px-4 py-2 rounded-sm transition-all duration-200 font-semibold tracking-wide text-sm"
-                  style={{
-                    color: '#d4af37',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                    backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.15)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.4)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(212, 175, 55, 0.05)'
-                    e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.2)'
-                  }}
-                >
-                  ★ Victory
-                </button>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Footer */}
