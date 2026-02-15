@@ -1,0 +1,170 @@
+# Security Guidelines for Murder Mysteries App
+
+## Authentication & Authorization
+
+### Middleware Protection
+- **NEVER** disable or comment out route protection in `middleware.ts`
+- All `/game/*` and `/dashboard/*` routes MUST require authentication
+- Always verify session tokens before allowing access to protected pages
+
+### API Route Security
+- **ALWAYS** use `requireAuth()` from `@/lib/auth/session` at the start of protected API routes
+- **ALWAYS** verify that `sessionId` belongs to the authenticated user before performing actions
+- Never trust client-provided user IDs, always use the authenticated user's ID from the session
+
+**Example Pattern:**
+```typescript
+export async function POST(request: NextRequest) {
+  // 1. Authenticate the user
+  const user = await requireAuth()
+  
+  // 2. Parse request body
+  const { sessionId, ...otherData } = await request.json()
+  
+  // 3. Verify ownership
+  const { data: session } = await supabase
+    .from('game_sessions')
+    .select('*')
+    .eq('id', sessionId)
+    .eq('user_id', user.id)  // ← Critical: verify ownership
+    .single()
+  
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+  }
+  
+  // 4. Perform action
+}
+```
+
+## Database Security (Supabase)
+
+### Row Level Security (RLS)
+- **ALWAYS** enable RLS on new tables: `ALTER TABLE table_name ENABLE ROW LEVEL SECURITY;`
+- **ALWAYS** create policies that restrict access to the authenticated user's own data
+- Use `auth.uid()` to reference the current user in RLS policies
+
+**Example RLS Policy:**
+```sql
+CREATE POLICY "Users can only view their own data"
+  ON public.table_name FOR SELECT
+  USING (auth.uid() = user_id);
+```
+
+### Service Role Client
+- Only use `createServiceRoleClient()` in server-side API routes when you need to bypass RLS
+- Never expose service role keys to the frontend
+- When using service role client, always manually verify user ownership in your application logic
+
+### SQL Injection Prevention
+- Use parameterized queries (Supabase automatically handles this with `.eq()`, `.in()`, etc.)
+- **NEVER** construct raw SQL strings with user input
+- If using raw SQL (e.g., in migrations), use placeholders: `$1`, `$2`, etc.
+
+## Environment Variables
+
+### Secret Management
+- **NEVER** commit `.env.local` to version control
+- Keep `.env.local.example` updated but with placeholder values only
+- Rotate secrets regularly, especially after team member departures
+
+### Required Secrets
+These MUST remain secret (server-side only):
+- `NEXTAUTH_SECRET`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `GOOGLE_CLIENT_SECRET`
+- `GEMINI_API_KEY`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
+### Public Variables
+These are safe to expose (start with `NEXT_PUBLIC_`):
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_APP_URL`
+
+## Input Validation
+
+### API Request Validation
+- **ALWAYS** validate required fields at the start of API handlers
+- Return clear error messages with appropriate HTTP status codes (400 for bad input, 401 for auth, 403 for forbidden)
+- Validate enum types (e.g., contentType must be one of: 'suspect', 'scene', 'record')
+
+**Example:**
+```typescript
+if (!sessionId || !contentType || !contentId) {
+  return NextResponse.json(
+    { error: 'sessionId, contentType, and contentId are required' },
+    { status: 400 }
+  )
+}
+
+if (!['suspect', 'scene', 'record'].includes(contentType)) {
+  return NextResponse.json(
+    { error: 'contentType must be one of: suspect, scene, record' },
+    { status: 400 }
+  )
+}
+```
+
+### AI Input Sanitization
+- When sending user input to Gemini AI, be aware that users might try prompt injection
+- Limit message length to prevent abuse (e.g., max 1000 characters)
+- Rate limit AI requests per user to prevent cost abuse
+
+## Rate Limiting & Cost Protection
+
+### AI API Calls
+- Implement rate limiting on `/api/ai/chat` route
+- Consider adding per-user daily limits for AI interactions
+- Monitor Gemini API usage in production
+
+### Database Operations
+- Use pagination for large queries (limit + offset or cursor-based)
+- Add indexes on frequently queried columns (already done for most tables)
+- Avoid N+1 queries, use joins or batch operations when possible
+
+## Frontend Security
+
+### Client-Side Protection
+- Never store sensitive data in localStorage or sessionStorage
+- Use HTTP-only cookies for session tokens (NextAuth handles this)
+- Validate user input on forms before submission
+- Sanitize user-generated content before displaying (prevent XSS)
+
+### API Key Exposure
+- **NEVER** use service role keys or secret keys in frontend code
+- Only use `NEXT_PUBLIC_SUPABASE_ANON_KEY` with RLS enabled
+- The anon key is safe to expose because RLS policies protect the data
+
+## Deployment Security Checklist
+
+Before deploying to production:
+- [ ] All RLS policies are enabled and tested
+- [ ] Middleware route protection is active (no commented-out auth checks)
+- [ ] Environment variables are set in Vercel dashboard
+- [ ] Google OAuth redirect URLs include production domain
+- [ ] Supabase redirect URLs include production domain
+- [ ] `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` point to production domain
+- [ ] Error messages don't leak sensitive information
+- [ ] Rate limiting is configured for expensive operations
+- [ ] Sentry or error tracking is enabled for monitoring
+
+## Incident Response
+
+If a security issue is discovered:
+1. Immediately rotate affected credentials
+2. Review logs for unauthorized access
+3. Assess data exposure
+4. Update RLS policies or middleware as needed
+5. Deploy fix
+6. Notify affected users if data was compromised (legal requirement)
+
+## Security Audit Triggers
+
+Run a security review when:
+- Adding new API routes
+- Creating new database tables
+- Modifying authentication logic
+- Integrating third-party services
+- Before major deployments
