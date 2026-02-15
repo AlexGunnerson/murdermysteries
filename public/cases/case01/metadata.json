@@ -89,12 +89,16 @@
       "galaImages": [
         "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/vale_greenhouse.png",
         "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/lydia_greenhouse.jpg",
-        "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/reginald_greenhouse.jpg"
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/reginald_greenhouse.jpg",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/greenhouse_colin.jpg",
+        "/cases/case01/images/scenes/Scene 2 - Greenhouse/gala/greenhouse_martin.png"
       ],
       "galaAnnotations": {
         "vale_greenhouse.png": "Dr. Vale taking in Reginald's rare orchids he loved so very much. The conservatory was the one place Leonard truly seemed happy.",
         "lydia_greenhouse.jpg": "Lydia admiring the orchids during the afternoon tour. She always had a way of making even a greenhouse visit feel like a networking opportunity.",
-        "reginald_greenhouse.jpg": "Reginald in his element, surrounded by his prized collection. The greenhouse was his sanctuary, where he could cultivate beauty without the complications of human nature."
+        "reginald_greenhouse.jpg": "Reginald in his element, surrounded by his prized collection. The greenhouse was his sanctuary, where he could cultivate beauty without the complications of human nature.",
+        "greenhouse_colin.jpg": "Colin surveying the greenhouse during the afternoon tour, his watchful presence never far from the proceedings.",
+        "greenhouse_martin.png": "Martin among the orchids, appearing remarkably composed for once. The greenhouse tour was early in the day, before the drinking began in earnest."
       },
       "initiallyAvailable": true
     },
@@ -108,8 +112,8 @@
         "/cases/case01/images/scenes/Scene 3 - North Lawn/investigation/north_lawn_2.png"
       ],
       "galaImages": [
-        "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala1.png",
-        "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala2.png",
+        "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala1.jpg",
+        "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala2.jpg",
         "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala3.png",
         "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala4.png",
         "/cases/case01/images/scenes/Scene 3 - North Lawn/gala/lawn_gala5.jpg",
@@ -117,9 +121,9 @@
       ],
       "galaAnnotations": {
         "veronica_outside.png": "I needed a moment away from the heat of the ballroom. Standing there in the dark, watching the party through the glass, I realized how much I've come to prefer the silence over the performance.",
-        "lawn_gala1.png": "The afternoon luncheon in full bloom. White canopies, champagne flutes catching the sunlight, and the carefully curated conversation of society's polished few.",
-        "lawn_gala2.png": "The terrace during the luncheon hour. Everyone gathered in their finest, playing their parts in the grand performance of respectability.",
-        "lawn_gala3.png": "Looking out over the estate grounds from the terrace. The perfect setting for what was meant to be a perfect day.",
+        "lawn_gala1.jpg": "Leonard and Martin at the afternoon luncheon, an unlikely pair standing together amid the festivities.",
+        "lawn_gala2.jpg": "The afternoon luncheon in full view. Guests mingling between the tables, champagne flowing, everyone dressed in their finest. The estate watched over us like it always did, grand and unchanging.",
+        "lawn_gala3.png": "Always the gracious host, commanding attention even in casual conversation. He wore that smile so easily.",
         "lawn_gala4.png": "The lawn stretched out before us, every detail arranged to perfection. Reginald always said presentation was everything.",
         "lawn_gala5.jpg": "A view of the estate from the lawn. The house stood proud above us, holding all its secrets behind those elegant windows."
       },

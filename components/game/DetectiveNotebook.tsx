@@ -1525,13 +1525,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                       <span className="text-[#d4af37] text-xl">👥</span>
                       <div>
                         <p 
-                          className="text-[#d4af37] font-bold text-sm uppercase tracking-wider mb-1"
+                          className="text-[#d4af37] font-bold text-base uppercase tracking-wider mb-1"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           Suspects Available for Questioning:
                         </p>
                         <p 
-                          className="text-[#c5a065] text-base"
+                          className="text-[#c5a065] text-lg"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           {actIUnlockData.suspects.length} new suspect(s)
@@ -1545,13 +1545,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                       <span className="text-[#d4af37] text-xl">📄</span>
                       <div>
                         <p 
-                          className="text-[#d4af37] font-bold text-sm uppercase tracking-wider mb-1"
+                          className="text-[#d4af37] font-bold text-base uppercase tracking-wider mb-1"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           New Documents:
                         </p>
                         <p 
-                          className="text-[#c5a065] text-base"
+                          className="text-[#c5a065] text-lg"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           {actIUnlockData.records.length} new document(s)
@@ -1565,13 +1565,13 @@ export function DetectiveNotebook({ onAction, onOpenMenu }: DetectiveNotebookPro
                       <span className="text-[#d4af37] text-xl">🎭</span>
                       <div>
                         <p 
-                          className="text-[#d4af37] font-bold text-sm uppercase tracking-wider mb-1"
+                          className="text-[#d4af37] font-bold text-base uppercase tracking-wider mb-1"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           Case Stage:
                         </p>
                         <p 
-                          className="text-[#c5a065] text-base"
+                          className="text-[#c5a065] text-lg"
                           style={{ fontFamily: "'Courier Prime', monospace" }}
                         >
                           Advanced to {actIUnlockData.stage.replace('_', ' ').toUpperCase()}

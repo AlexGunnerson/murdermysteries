@@ -50,6 +50,7 @@ export interface ChecklistProgress {
   viewedScene: boolean
   madeNote: boolean
   viewedInvestigationBoard: boolean
+  viewedHint: boolean
 }
 
 export interface GameState {
@@ -80,7 +81,11 @@ export interface GameState {
   hasReadVeronicaLetter: boolean
   hasSeenBlackmailCommentary: boolean
   actIViewedClues: string[]  // Ordered array of viewed Act I clues
-  actIIViewedClues: string[]  // Ordered array of viewed Act II clues
+  actIIPhase1ViewedClues: string[]  // Act II Phase 1: Missing Evidence
+  actIIPhase2ViewedClues: string[]  // Act II Phase 2: Search Bedroom
+  actIIPhase3ViewedClues: string[]  // Act II Phase 3: Confront Vale
+  actIIPhase3AViewedClues: string[]  // Act II Phase 3A: Confront Vale with Motive
+  actIIPhase3BViewedClues: string[]  // Act II Phase 3B: Confront Vale with Alibi
   finalPhaseWhoViewedClues: string[]  // Ordered array of viewed Who clues
   finalPhaseMotiveViewedClues: string[]  // Ordered array of viewed Motive clues
   finalPhaseWhereViewedClues: string[]  // Ordered array of viewed Where clues
@@ -120,7 +125,11 @@ export interface GameState {
   markLetterAsRead: () => void
   markBlackmailCommentaryAsSeen: () => void
   addActIClue: (clueText: string) => void
-  addActIIClue: (clueText: string) => void
+  addActIIPhase1Clue: (clueText: string) => void
+  addActIIPhase2Clue: (clueText: string) => void
+  addActIIPhase3Clue: (clueText: string) => void
+  addActIIPhase3AClue: (clueText: string) => void
+  addActIIPhase3BClue: (clueText: string) => void
   addFinalPhaseWhoClue: (clueText: string) => void
   addFinalPhaseMotiveClue: (clueText: string) => void
   addFinalPhaseWhereClue: (clueText: string) => void
@@ -161,7 +170,11 @@ const initialState = {
   hasReadVeronicaLetter: false,
   hasSeenBlackmailCommentary: false,
   actIViewedClues: [],
-  actIIViewedClues: [],
+  actIIPhase1ViewedClues: [],
+  actIIPhase2ViewedClues: [],
+  actIIPhase3ViewedClues: [],
+  actIIPhase3AViewedClues: [],
+  actIIPhase3BViewedClues: [],
   finalPhaseWhoViewedClues: [],
   finalPhaseMotiveViewedClues: [],
   finalPhaseWhereViewedClues: [],
@@ -176,6 +189,7 @@ const initialState = {
     viewedScene: false,
     madeNote: false,
     viewedInvestigationBoard: false,
+    viewedHint: false,
   },
   isLoading: false,
   isSyncing: false,
@@ -325,7 +339,15 @@ export const useGameStore = create<GameState>()(
         setCurrentStage: (stage: 'start' | 'act_i' | 'act_ii') => {
           // Reset Act I clues when moving to Act II
           if (stage === 'act_ii') {
-            set({ currentStage: stage, actIViewedClues: [], actIIViewedClues: [] })
+            set({ 
+              currentStage: stage, 
+              actIViewedClues: [], 
+              actIIPhase1ViewedClues: [],
+              actIIPhase2ViewedClues: [],
+              actIIPhase3ViewedClues: [],
+              actIIPhase3AViewedClues: [],
+              actIIPhase3BViewedClues: []
+            })
           } else {
             set({ currentStage: stage })
           }
@@ -516,6 +538,7 @@ export const useGameStore = create<GameState>()(
               viewedScene: false,
               madeNote: false,
               viewedInvestigationBoard: false,
+              viewedHint: false,
             },
           }
           set(resetState)
@@ -604,9 +627,33 @@ export const useGameStore = create<GameState>()(
           }))
         },
 
-        addActIIClue: (clueText: string) => {
+        addActIIPhase1Clue: (clueText: string) => {
           set((state) => ({
-            actIIViewedClues: [...state.actIIViewedClues, clueText]
+            actIIPhase1ViewedClues: [...state.actIIPhase1ViewedClues, clueText]
+          }))
+        },
+
+        addActIIPhase2Clue: (clueText: string) => {
+          set((state) => ({
+            actIIPhase2ViewedClues: [...state.actIIPhase2ViewedClues, clueText]
+          }))
+        },
+
+        addActIIPhase3Clue: (clueText: string) => {
+          set((state) => ({
+            actIIPhase3ViewedClues: [...state.actIIPhase3ViewedClues, clueText]
+          }))
+        },
+
+        addActIIPhase3AClue: (clueText: string) => {
+          set((state) => ({
+            actIIPhase3AViewedClues: [...state.actIIPhase3AViewedClues, clueText]
+          }))
+        },
+
+        addActIIPhase3BClue: (clueText: string) => {
+          set((state) => ({
+            actIIPhase3BViewedClues: [...state.actIIPhase3BViewedClues, clueText]
           }))
         },
 

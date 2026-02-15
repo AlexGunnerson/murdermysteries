@@ -15,7 +15,10 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
     isGameCompleted, 
     gameStatus,
     actIViewedClues,
-    actIIViewedClues,
+    actIIPhase1ViewedClues,
+    actIIPhase2ViewedClues,
+    actIIPhase3AViewedClues,
+    actIIPhase3BViewedClues,
     finalPhaseWhoViewedClues,
     finalPhaseMotiveViewedClues,
     finalPhaseWhereViewedClues,
@@ -28,7 +31,10 @@ export default function VictoryPage({ params }: { params: Promise<{ caseId: stri
   // Calculate total hints used
   const totalHintsUsed = 
     actIViewedClues.length + 
-    actIIViewedClues.length + 
+    actIIPhase1ViewedClues.length +
+    actIIPhase2ViewedClues.length +
+    actIIPhase3AViewedClues.length +
+    actIIPhase3BViewedClues.length +
     finalPhaseWhoViewedClues.length + 
     finalPhaseMotiveViewedClues.length + 
     finalPhaseWhereViewedClues.length

@@ -15,7 +15,7 @@ interface GetClueModalProps {
 const ACT_I_CLUES = [
   "A man's habits are recorded somewhere. Do his final moments match those habits?",
   "The family physician keeps detailed records. What do those records say about Reginald's health?",
-  "Red wine was found near Reginald's body, but Dr. Vale's medical notes state that Reginald cannot drink red wine. This suggests the death was staged. Show Veronica proof of this contradiction to progress the story."
+  "Red wine was found near Reginald's body, but Dr. Vale's medical notes state that Reginald cannot drink red wine. This suggests the death was staged. Show Veronica proof of this contradiction to progress the investigation."
 ]
 
 // Act II Clues by Phase
@@ -27,6 +27,12 @@ const ACT_II_PHASE_1_CLUES = [
 
 const ACT_II_PHASE_2_CLUES = [
   "The bedroom holds memories. Some are displayed. Others are hidden."
+]
+
+const ACT_II_PHASE_3_CLUES = [
+  "What did you find hidden in the master bedroom? What does it reveal? Who needs to answer for it?",
+  "Analyze the blackmail found behind the painting and compare it to the blackmail found at the crime scene. What stands out? Who needs to answer for it?",
+  "Open your conversation with Dr. Vale and attach his blackmail document from behind the painting."
 ]
 
 const ACT_II_PHASE_3A_CLUES = [
@@ -68,10 +74,10 @@ function isInFinalPhase(gameState: {
 function getActIIPhaseAndClues(gameState: {
   unlockedContent: { scenes: Set<string>, records: Set<string> }
   chatHistory: Array<{ suspectId: string, role: 'user' | 'assistant', content: string }>
-}): { phase: string, clues: string[], maxClues: number } {
+}): { phase: string, phaseId: 'phase1' | 'phase2' | 'phase3' | 'phase3a' | 'phase3b' | 'complete', clues: string[], maxClues: number } {
   // Check if in final phase first
   if (isInFinalPhase(gameState)) {
-    return { phase: 'Final Phase - Make Accusation', clues: [], maxClues: 0 }
+    return { phase: 'Final Phase - Make Accusation', phaseId: 'complete', clues: [], maxClues: 0 }
   }
   
   const masterBedroomUnlocked = gameState.unlockedContent.scenes.has('scene_master_bedroom')
@@ -93,23 +99,27 @@ function getActIIPhaseAndClues(gameState: {
   if (secondBlackmailRetrieved) {
     // Scenario 3A: Phone records shown but not blackmail
     if (phoneLogsShownToVale && !blackmailShownToVale) {
-      return { phase: 'Phase 3A - Confront Vale with Motive', clues: ACT_II_PHASE_3A_CLUES, maxClues: 1 }
+      return { phase: 'Phase 3A - Confront Vale with Motive', phaseId: 'phase3a', clues: ACT_II_PHASE_3A_CLUES, maxClues: 1 }
     }
     // Scenario 3B: Blackmail shown but not phone records
     if (blackmailShownToVale && !phoneLogsShownToVale) {
-      return { phase: 'Phase 3B - Confront Vale with Alibi', clues: ACT_II_PHASE_3B_CLUES, maxClues: 1 }
+      return { phase: 'Phase 3B - Confront Vale with Alibi', phaseId: 'phase3b', clues: ACT_II_PHASE_3B_CLUES, maxClues: 1 }
     }
-    // If both or neither shown, player probably doesn't need hints for this phase
-    return { phase: 'Phase 3 - Complete', clues: [], maxClues: 0 }
+    // Both shown: Investigation complete
+    if (phoneLogsShownToVale && blackmailShownToVale) {
+      return { phase: 'Phase 3 - Complete', phaseId: 'complete', clues: [], maxClues: 0 }
+    }
+    // Neither shown: Player needs to confront Vale with the blackmail evidence
+    return { phase: 'Phase 3 - Confront Vale', phaseId: 'phase3', clues: ACT_II_PHASE_3_CLUES, maxClues: 3 }
   }
   
   // Phase 2: Master bedroom unlocked but painting not retrieved
   if (masterBedroomUnlocked) {
-    return { phase: 'Phase 2 - Search the Bedroom', clues: ACT_II_PHASE_2_CLUES, maxClues: 1 }
+    return { phase: 'Phase 2 - Search the Bedroom', phaseId: 'phase2', clues: ACT_II_PHASE_2_CLUES, maxClues: 1 }
   }
   
   // Phase 1: Master bedroom locked, need to notice Vale's missing page
-  return { phase: 'Phase 1 - Missing Evidence', clues: ACT_II_PHASE_1_CLUES, maxClues: 3 }
+  return { phase: 'Phase 1 - Missing Evidence', phaseId: 'phase1', clues: ACT_II_PHASE_1_CLUES, maxClues: 3 }
 }
 
 // Map stages to display names
@@ -131,12 +141,20 @@ type FinalPhaseCategory = 'who' | 'motive' | 'where' | null
 export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetClueModalProps) {
   const { 
     actIViewedClues, 
-    actIIViewedClues,
+    actIIPhase1ViewedClues,
+    actIIPhase2ViewedClues,
+    actIIPhase3ViewedClues,
+    actIIPhase3AViewedClues,
+    actIIPhase3BViewedClues,
     finalPhaseWhoViewedClues,
     finalPhaseMotiveViewedClues,
     finalPhaseWhereViewedClues,
     addActIClue, 
-    addActIIClue,
+    addActIIPhase1Clue,
+    addActIIPhase2Clue,
+    addActIIPhase3Clue,
+    addActIIPhase3AClue,
+    addActIIPhase3BClue,
     addFinalPhaseWhoClue,
     addFinalPhaseMotiveClue,
     updateChecklistProgress,
@@ -171,9 +189,24 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
   // For Act II, determine current phase and available clues
   const actIIPhaseInfo = !isActI && !inFinalPhase ? getActIIPhaseAndClues({ unlockedContent, chatHistory }) : null
   
+  // Get phase-specific viewed clues for Act II
+  const getActIIPhaseViewedClues = (phaseId: string | undefined): string[] => {
+    if (!phaseId) return []
+    switch (phaseId) {
+      case 'phase1': return actIIPhase1ViewedClues
+      case 'phase2': return actIIPhase2ViewedClues
+      case 'phase3': return actIIPhase3ViewedClues
+      case 'phase3a': return actIIPhase3AViewedClues
+      case 'phase3b': return actIIPhase3BViewedClues
+      default: return []
+    }
+  }
+  
+  const currentActIIPhaseViewedClues = getActIIPhaseViewedClues(actIIPhaseInfo?.phaseId)
+  
   // Determine available new clues (not yet viewed)
   const availableNewActIClues = isActI ? ACT_I_CLUES.filter(clue => !actIViewedClues.includes(clue)) : []
-  const availableNewActIIClues = actIIPhaseInfo?.clues.filter(clue => !actIIViewedClues.includes(clue)) ?? []
+  const availableNewActIIClues = actIIPhaseInfo?.clues.filter(clue => !currentActIIPhaseViewedClues.includes(clue)) ?? []
   
   // Get current viewed clues based on stage and category
   const getCurrentViewedClues = (): string[] => {
@@ -187,7 +220,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
     } else if (isActI) {
       return actIViewedClues
     } else {
-      return actIIViewedClues
+      return currentActIIPhaseViewedClues
     }
   }
   
@@ -243,9 +276,32 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
 
     // Get the next available clue (first one that hasn't been viewed)
     const nextClue = availableNewActIIClues[0]
-    addActIIClue(nextClue)
+    
+    // Add to the correct phase-specific array
+    switch (actIIPhaseInfo.phaseId) {
+      case 'phase1':
+        addActIIPhase1Clue(nextClue)
+        setCurrentClueIndex(actIIPhase1ViewedClues.length)
+        break
+      case 'phase2':
+        addActIIPhase2Clue(nextClue)
+        setCurrentClueIndex(actIIPhase2ViewedClues.length)
+        break
+      case 'phase3':
+        addActIIPhase3Clue(nextClue)
+        setCurrentClueIndex(actIIPhase3ViewedClues.length)
+        break
+      case 'phase3a':
+        addActIIPhase3AClue(nextClue)
+        setCurrentClueIndex(actIIPhase3AViewedClues.length)
+        break
+      case 'phase3b':
+        addActIIPhase3BClue(nextClue)
+        setCurrentClueIndex(actIIPhase3BViewedClues.length)
+        break
+    }
+    
     setViewMode('viewing')
-    setCurrentClueIndex(actIIViewedClues.length) // Will be the new index after adding
   }
 
   const handleFinalPhaseClue = (category: FinalPhaseCategory) => {
@@ -412,7 +468,7 @@ export function GetClueModal({ isOpen, onClose, currentStage, sessionId }: GetCl
                     className="text-[#e8e4da]/90 text-lg leading-relaxed"
                     style={{ fontFamily: "'Courier Prime', monospace" }}
                   >
-                    {inFinalPhase ? 'Build your case and make the accusation. Select a category for assistance.' : objectiveText}
+                    {inFinalPhase ? 'You\'re getting close to the killer... Select a category for assistance.' : objectiveText}
                   </p>
                 </div>
 
